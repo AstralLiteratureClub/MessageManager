@@ -1,0 +1,57 @@
+placeholders:
+  - name: prefix
+    value: "<red><b>Astral<reset>"
+    # This defaults to "type: default"
+  - name: legacy-example
+    value: "&c&lAstral&r" # Need to end every message with &r to reduce the risk of mini message parsing incorrectly
+    # Legacy serializers don't support "§" only "&"
+    type: legacy # This parses the message using only the message parser. It does not use mini-message
+  - name: message-example
+    value: "combat.enter.chat"
+    type: message
+    message-part: chat
+  - name: default-example
+    value: "<red><b>Astral<reset>"
+    type: default
+
+combat:
+  enter:
+    enabled: true
+    chat: "%prefix% <red>You're in combat! Do not log out!"
+    action-bar: "<red>You are currently in combat!"
+    title: "<red><b>COMBAT"
+    subtitle: "<gray>You have been hit! You are now in combat!"
+  leave: "%prefix% <red>You're no longer in combat!"
+  log:
+    enabled: false
+
+
+join-message:
+  # Legacy serializers don't support "§" only "&"
+  serializer: legacy # Doesn't use any of mini-message to serialize given formats. Placeholders support their own serializers
+  chat: "%legacy-prefix% %player% &cleft the &7server"
+
+quit-message:
+  enabled: false
+
+chat-format:
+  serializer: legacy
+  chat: "%luckperms_prefix%%player%%luckperms_suffix5 &7> &f%message%"
+  # Built in placeholders, so they can define something if x thing is not set.
+  # Even could build the message using placeholders, but it would take performance
+  placeholders:
+    - name: luckperms_prefix #If luckperms isn't found in the server, these placeholders will replace the placeholders
+      value: ""
+      type: default
+    - name: luckperms_suffix
+      value: ""
+    - name: antsfactions_clan
+      value: "&8[&7/Clan&8]"
+      type: "legacy"
+
+faction-join:
+  join:
+    chat:
+      - ""
+      - "You have joined a new faction!"
+      - ""
