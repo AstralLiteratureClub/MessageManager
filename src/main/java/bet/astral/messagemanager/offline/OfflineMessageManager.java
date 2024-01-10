@@ -19,15 +19,11 @@ public abstract class OfflineMessageManager<P extends JavaPlugin> extends Messag
 	protected boolean messagesExpire = true;
 	protected long timeToExpire = 604800000; // 7 weeks to expire
 
-	public OfflineMessageManager(P plugin, FileConfiguration config, Map<String, Message> map, MessageDatabase<P> messageDatabase) {
-		super(plugin, config, map);
-	}
-
-	public OfflineMessageManager(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders, MessageDatabase<P> messageDatabase) {
+	public OfflineMessageManager(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders, MessageDatabase<P> messageDatabase, PlayerDatabase<P> playerDatabase) {
 		super(plugin, config, messageMap, mainPlaceholders);
+		this.messageDatabase = messageDatabase;
+		this.playerDatabase = playerDatabase;
 	}
-	public abstract void setMessageDatabase();
-
 	public MessageDatabase<P> messageDatabase() {
 		return this.messageDatabase;
 	}
