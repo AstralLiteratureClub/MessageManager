@@ -73,6 +73,11 @@ public final class PlaceholderUtils {
 	}
 
 	public static List<Placeholder> createPlaceholders(String name, CommandSender commandSender){
+		if (commandSender instanceof Player player){
+			return createPlaceholders(name, player);
+		} else if (commandSender instanceof LivingEntity entity){
+			return createPlaceholders(name, entity);
+		}
 		List<Placeholder> placeholders = new LinkedList<>();
 		placeholders.add(createPlaceholder(name, "name", commandSender.getName()));
 		return placeholders;
@@ -82,7 +87,7 @@ public final class PlaceholderUtils {
 		placeholders.add(createPlaceholder(name,"uuid", entity.getUniqueId())); // unique id
 		placeholders.add(createPlaceholder(name,"id", entity.getEntityId())); // id -
 		// this is not unique id it's the entity id in the server
-		placeholders.addAll(createPlaceholders(name, "", entity.getLocation())); // location
+		placeholders.addAll(createPlaceholders(name, "entity_id", entity.getLocation())); // location
 		placeholders.add(createPlaceholder(name, "absorption", entity.getAbsorptionAmount())); // current absorption
 		placeholders.add(createPlaceholder(name, "max_absorption", entity.getAttribute(Attribute.GENERIC_MAX_ABSORPTION))); // max absorption
 		placeholders.add(createPlaceholder(name,"health", entity.getHealth())); // current health
@@ -135,55 +140,56 @@ public final class PlaceholderUtils {
 		placeholders.add(createPlaceholder(name,"seconds_lived", entity.getTicksLived()/20));
 		placeholders.add(createPlaceholder(name,"minutes_lived", entity.getTicksLived()/20/60));
 		placeholders.add(createPlaceholder(name,"ticks_lived", entity.getTicksLived()));
+		if (entity instanceof Player player){
+			placeholders.add(createPlaceholder(name,"health_scale", player.getHealthScale())); // health scale sent to the target
+			if (isValid(player.getPotentialBedLocation(), "bed"))
+				placeholders.addAll(createPlaceholders(name, "bed", player.getPotentialBedLocation())); // bed locationb
+			placeholders.addAll(createPlaceholders(name, "compass", player.getCompassTarget())); // compass target location
+			placeholders.add(createPlaceholder(name, "displayname", player.displayName())); // displayname
+			placeholders.add(createPlaceholder(name, "nickname", player.displayName())); // displayname
+			placeholders.add(createPlaceholder(name, "current_exp", player.getExp())); // current experience
+			placeholders.add(createPlaceholder(name, "exp_required", player.getExpToLevel())); // required experience to level
+			placeholders.add(createPlaceholder(name, "total_exp", player.getTotalExperience())); // total experience
+			placeholders.add(createPlaceholder(name, "fly_speed", player.getFlySpeed())); // fly speed
+			placeholders.add(createPlaceholder(name, "walk_speed", player.getWalkSpeed())); // walk speed
+			placeholders.add(createPlaceholder(name, "food_level", player.getFoodLevel())); // food level
+			placeholders.add(createPlaceholder(name, "saturation", player.getSaturation())); // saturation
+			placeholders.add(createPlaceholder(name, "saturation_regen_rate", player.getSaturatedRegenRate())); // saturation regen
+
+			GameMode gameMode = player.getGameMode();
+			placeholders.add(createPlaceholder(name, "gamemode", Component.translatable(gameMode))); // gamemode as translatable
+			placeholders.add(createPlaceholder(name, "gamemode_eng", gameMode == GameMode.CREATIVE ? "Creative" : gameMode == GameMode.SURVIVAL ? "Survival" : gameMode == GameMode.SPECTATOR ? "Spectator" : "Adventure")); // english gamemodes
+
+			placeholders.add(createPlaceholder(name,"is_flying", player.isFlying()));
+			placeholders.add(createPlaceholder(name,"is_sprinting", player.isSprinting()));
+			placeholders.add(createPlaceholder(name,"is_sleeping_deeply", player.isDeeplySleeping()));
+			placeholders.add(createPlaceholder(name,"is_sleeping_ignored", player.isSleepingIgnored()));
+
+			placeholders.add(createPlaceholder(name,"locale", player.locale()));
+			placeholders.add(createPlaceholder(name,"locale_display_name", player.locale().getDisplayName()));
+			placeholders.add(createPlaceholder(name,"locale_short", player.locale().toString().contains("_")?player.locale().toString().split("_")[0]:player.locale().toString()));
+			placeholders.add(createPlaceholder(name,"locale_country", player.locale().getCountry()));
+			placeholders.add(createPlaceholder(name,"locale_display_country", player.locale().getDisplayCountry()));
+
+			placeholders.add(createPlaceholder(name,"level", player.getLevel()));
+			placeholders.add(createPlaceholder(name,"sleep_ticks", player.getSleepTicks()));
+			placeholders.add(createPlaceholder(name,"idle_duration", player.getIdleDuration()));
+			placeholders.add(createPlaceholder(name,"time", player.getPlayerTime()));
+			placeholders.add(createPlaceholder(name,"time_offset", player.getPlayerTimeOffset()));
+
+			placeholders.add(createPlaceholder(name,"warden_warning_level", player.getWardenWarningLevel()));
+			placeholders.add(createPlaceholder(name,"warden_warning_cooldown", player.getWardenWarningCooldown()));
+			placeholders.add(createPlaceholder(name,"warden_time_since_warning", player.getWardenTimeSinceLastWarning()));
+
+			placeholders.addAll(createPlaceholders(name, (OfflinePlayer) player));
+		}
+
 		return placeholders;
 	}
 
 
 	public static List<Placeholder> createPlaceholders(String name, Player player){
-		List<Placeholder> placeholders = new LinkedList<>(createPlaceholders(name, (LivingEntity) player));
-		placeholders.addAll(createPlaceholders(name, (OfflinePlayer) player));
-
-		placeholders.add(createPlaceholder(name,"health_scale", player.getHealthScale())); // health scale sent to the target
-		if (isValid(player.getPotentialBedLocation(), "bed"))
-			placeholders.addAll(createPlaceholders(name, "bed", player.getPotentialBedLocation())); // bed locationb
-		placeholders.addAll(createPlaceholders(name, "compass", player.getCompassTarget())); // compass target location
-		placeholders.add(createPlaceholder(name, "displayname", player.displayName())); // displayname
-		placeholders.add(createPlaceholder(name, "nickname", player.displayName())); // displayname
-		placeholders.add(createPlaceholder(name, "current_exp", player.getExp())); // current experience
-		placeholders.add(createPlaceholder(name, "exp_required", player.getExpToLevel())); // required experience to level
-		placeholders.add(createPlaceholder(name, "total_exp", player.getTotalExperience())); // total experience
-		placeholders.add(createPlaceholder(name, "fly_speed", player.getFlySpeed())); // fly speed
-		placeholders.add(createPlaceholder(name, "walk_speed", player.getWalkSpeed())); // walk speed
-		placeholders.add(createPlaceholder(name, "food_level", player.getFoodLevel())); // food level
-		placeholders.add(createPlaceholder(name, "saturation", player.getSaturation())); // saturation
-		placeholders.add(createPlaceholder(name, "saturation_regen_rate", player.getSaturatedRegenRate())); // saturation regen
-
-		GameMode gameMode = player.getGameMode();
-		placeholders.add(createPlaceholder(name, "gamemode", Component.translatable(gameMode))); // gamemode as translatable
-		placeholders.add(createPlaceholder(name, "gamemode_eng", gameMode == GameMode.CREATIVE ? "Creative" : gameMode == GameMode.SURVIVAL ? "Survival" : gameMode == GameMode.SPECTATOR ? "Spectator" : "Adventure")); // english gamemodes
-
-		placeholders.add(createPlaceholder(name,"is_flying", player.isFlying()));
-		placeholders.add(createPlaceholder(name,"is_sprinting", player.isSprinting()));
-		placeholders.add(createPlaceholder(name,"is_sleeping_deeply", player.isDeeplySleeping()));
-		placeholders.add(createPlaceholder(name,"is_sleeping_ignored", player.isSleepingIgnored()));
-
-		placeholders.add(createPlaceholder(name,"locale", player.locale()));
-		placeholders.add(createPlaceholder(name,"locale_display_name", player.locale().getDisplayName()));
-		placeholders.add(createPlaceholder(name,"locale_short", player.locale().toString().contains("_")?player.locale().toString().split("_")[0]:player.locale().toString()));
-		placeholders.add(createPlaceholder(name,"locale_country", player.locale().getCountry()));
-		placeholders.add(createPlaceholder(name,"locale_display_country", player.locale().getDisplayCountry()));
-
-		placeholders.add(createPlaceholder(name,"level", player.getLevel()));
-		placeholders.add(createPlaceholder(name,"sleep_ticks", player.getSleepTicks()));
-		placeholders.add(createPlaceholder(name,"idle_duration", player.getIdleDuration()));
-		placeholders.add(createPlaceholder(name,"time", player.getPlayerTime()));
-		placeholders.add(createPlaceholder(name,"time_offset", player.getPlayerTimeOffset()));
-
-		placeholders.add(createPlaceholder(name,"warden_warning_level", player.getWardenWarningLevel()));
-		placeholders.add(createPlaceholder(name,"warden_warning_cooldown", player.getWardenWarningCooldown()));
-		placeholders.add(createPlaceholder(name,"warden_time_since_warning", player.getWardenTimeSinceLastWarning()));
-
-		return placeholders;
+		return createPlaceholders(name, (LivingEntity) player);
 	}
 
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull OfflinePlayer player){
@@ -399,9 +405,7 @@ public final class PlaceholderUtils {
 			return true;
 		if (isAirOrNull(entityEquipment.getItemInMainHand()))
 			return true;
-		if (isAirOrNull(entityEquipment.getItemInOffHand()))
-			return true;
-		return false;
+		return isAirOrNull(entityEquipment.getItemInOffHand());
 	}
 	public static boolean hasEmptySlot(PlayerInventory playerInventory){
 		if (isAirOrNull(playerInventory.getHelmet()))

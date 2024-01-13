@@ -363,9 +363,6 @@ public class MessageManager<P extends JavaPlugin> {
 	}
 
 
-
-
-
 	public void message(CommandSender to, String  messageKey, Placeholder... placeholders){
 		message(null, to, messageKey, 0, false, List.of(placeholders));
 	}
