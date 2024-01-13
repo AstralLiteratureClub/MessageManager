@@ -18,7 +18,7 @@ public interface Permission {
 		return new DoublePermission(this, permission);
 	}
 	default Permission with(Predicate<CommandSender> predicate) {
-		return new PredicatePermission(predicate);
+		return new DoublePermission(this, new PredicatePermission(predicate));
 	}
 
 	@NotNull
