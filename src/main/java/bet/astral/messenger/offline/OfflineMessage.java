@@ -1,7 +1,7 @@
-package bet.astral.messagemanager.offline;
+package bet.astral.messenger.offline;
 
-import bet.astral.messagemanager.Message;
-import bet.astral.messagemanager.placeholder.Placeholder;
+import bet.astral.messenger.Message;
+import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;

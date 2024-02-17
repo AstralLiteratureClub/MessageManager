@@ -1,4 +1,4 @@
-package bet.astral.messagemanager.permission;
+package bet.astral.messenger.permission;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;

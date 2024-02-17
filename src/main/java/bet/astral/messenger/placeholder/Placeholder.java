@@ -1,4 +1,4 @@
-package bet.astral.messagemanager.placeholder;
+package bet.astral.messenger.placeholder;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

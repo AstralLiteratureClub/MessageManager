@@ -1,8 +1,8 @@
 
-package bet.astral.messagemanager.database;
+package bet.astral.messenger.database;
 
-import bet.astral.messagemanager.offline.OfflineMessage;
-import bet.astral.messagemanager.offline.ParsedOfflineMessage;
+import bet.astral.messenger.offline.OfflineMessage;
+import bet.astral.messenger.offline.ParsedOfflineMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;

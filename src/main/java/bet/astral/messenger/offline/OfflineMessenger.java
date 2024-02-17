@@ -1,10 +1,10 @@
-package bet.astral.messagemanager.offline;
+package bet.astral.messenger.offline;
 
-import bet.astral.messagemanager.Message;
-import bet.astral.messagemanager.MessageManager;
-import bet.astral.messagemanager.database.MessageDatabase;
-import bet.astral.messagemanager.database.PlayerDatabase;
-import bet.astral.messagemanager.placeholder.Placeholder;
+import bet.astral.messenger.Message;
+import bet.astral.messenger.Messenger;
+import bet.astral.messenger.database.MessageDatabase;
+import bet.astral.messenger.database.PlayerDatabase;
+import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public abstract class OfflineMessageManager<P extends JavaPlugin> extends MessageManager<P> {
+public abstract class OfflineMessenger<P extends JavaPlugin> extends Messenger<P> {
 	protected MessageDatabase<P> messageDatabase;
 	protected PlayerDatabase<P> playerDatabase;
 	protected boolean messagesExpire = true;
-	protected long timeToExpire = 604800000; // 7 weeks to expire
+	protected long timeToExpire = 604800000; // 7 days to expire
 
-	public OfflineMessageManager(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders, MessageDatabase<P> messageDatabase, PlayerDatabase<P> playerDatabase) {
+	public OfflineMessenger(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders, MessageDatabase<P> messageDatabase, PlayerDatabase<P> playerDatabase) {
 		super(plugin, config, messageMap, mainPlaceholders);
 		this.messageDatabase = messageDatabase;
 		this.playerDatabase = playerDatabase;

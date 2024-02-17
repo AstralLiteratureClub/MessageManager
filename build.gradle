@@ -9,7 +9,7 @@ plugins {
 
 group 'bet.astral'
 version '1.5.1'
-description = 'MessageManager'
+description = 'Messenger'
 
 repositories {
     mavenLocal()
@@ -59,12 +59,13 @@ java {
 
 publishing {
     publications {
-        //noinspection GroovyAssignabilityCheck
-        maven(MavenPublication) {
-            from(components.java)
+        mavenJava(MavenPublication) {
+            artifactId project.name
+            from components.java
         }
     }
 }
+
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'

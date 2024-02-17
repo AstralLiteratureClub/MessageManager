@@ -1,4 +1,4 @@
-package bet.astral.messagemanager.database;
+package bet.astral.messenger.database;
 
 import lombok.Getter;
 

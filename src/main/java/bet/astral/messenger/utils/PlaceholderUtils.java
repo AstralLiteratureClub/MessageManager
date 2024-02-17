@@ -1,10 +1,10 @@
-package bet.astral.messagemanager.utils;
+package bet.astral.messenger.utils;
 
-import bet.astral.messagemanager.Message;
-import bet.astral.messagemanager.MessageManager;
-import bet.astral.messagemanager.placeholder.LegacyPlaceholder;
-import bet.astral.messagemanager.placeholder.MessagePlaceholder;
-import bet.astral.messagemanager.placeholder.Placeholder;
+import bet.astral.messenger.Message;
+import bet.astral.messenger.Messenger;
+import bet.astral.messenger.placeholder.LegacyPlaceholder;
+import bet.astral.messenger.placeholder.MessagePlaceholder;
+import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
@@ -55,7 +55,7 @@ public final class PlaceholderUtils {
 		return new Placeholder(name, value);
 	}
 
-	public static MessagePlaceholder placeholderMessage(MessageManager<?> manager,  String name, String messageKey, Message.Type type) {
+	public static MessagePlaceholder placeholderMessage(Messenger<?> manager, String name, String messageKey, Message.Type type) {
 		Message message = manager.getMessage(messageKey);
 		if (message == null) {
 			manager.loadMessage(messageKey);

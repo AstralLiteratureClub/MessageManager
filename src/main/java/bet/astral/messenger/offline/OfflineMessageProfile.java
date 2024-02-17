@@ -1,4 +1,4 @@
-package bet.astral.messagemanager.offline;
+package bet.astral.messenger.offline;
 
 import java.util.List;
 import java.util.UUID;

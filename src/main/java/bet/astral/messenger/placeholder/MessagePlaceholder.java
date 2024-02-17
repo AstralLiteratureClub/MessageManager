@@ -1,6 +1,6 @@
-package bet.astral.messagemanager.placeholder;
+package bet.astral.messenger.placeholder;
 
-import bet.astral.messagemanager.Message;
+import bet.astral.messenger.Message;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

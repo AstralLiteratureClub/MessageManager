@@ -1,8 +1,8 @@
-package bet.astral.messagemanager.database.message;
+package bet.astral.messenger.database.message;
 
-import bet.astral.messagemanager.database.MessageDatabase;
-import bet.astral.messagemanager.offline.OfflineMessage;
-import bet.astral.messagemanager.offline.ParsedOfflineMessage;
+import bet.astral.messenger.database.MessageDatabase;
+import bet.astral.messenger.offline.OfflineMessage;
+import bet.astral.messenger.offline.ParsedOfflineMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.CompletableFuture;

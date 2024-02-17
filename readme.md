@@ -126,17 +126,19 @@ public class ExamplePlugin extends JavaPlugin {
 ## Extending MessageManager
 This is an example pulled from my factions plugin I am developing.
 I am overriding methods to send player specific placeholders to support faction placeholders and other user placeholders
+
 ```java
 package bet.astral.factions.messenger;
 
-import bet.astral.messagemanager.MessageManager;
+import bet.astral.messenger.Messenger;
 
 public interface MessageLoader {
-	default void loadMessage(String key, MessageManager<?> messageManager){
+	default void loadMessage(String key, MessageManager<?> messageManager) {
 		messageManager.loadMessage(key);
 	}
 }
 ```
+
 ```java
 package bet.astral.factions.messenger;
 
@@ -145,12 +147,12 @@ import bet.astral.factions.manager.FactionManager;
 import bet.astral.factions.manager.UserManager;
 import bet.astral.factions.model.FUser;
 import bet.astral.factions.model.Faction;
-import bet.astral.messagemanager.Message;
-import bet.astral.messagemanager.database.DatabaseType;
-import bet.astral.messagemanager.database.MessageDatabase;
-import bet.astral.messagemanager.database.PlayerDatabase;
-import bet.astral.messagemanager.offline.OfflineMessageManager;
-import bet.astral.messagemanager.placeholder.Placeholder;
+import bet.astral.messenger.Message;
+import bet.astral.messenger.database.DatabaseType;
+import bet.astral.messenger.database.MessageDatabase;
+import bet.astral.messenger.database.PlayerDatabase;
+import bet.astral.messenger.offline.OfflineMessenger;
+import bet.astral.messenger.placeholder.Placeholder;
 import me.antritus.astral.cosmiccapital.api.providers.CosmicCapitalProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -162,9 +164,11 @@ import java.util.*;
 
 public class Messenger extends OfflineMessageManager<AstralFactions> implements MessageLoader {
 	private final AstralFactions main;
+
 	public Messenger(AstralFactions main, FileConfiguration messageConfig, DatabaseType databaseType) {
 		this(main, messageConfig, new HashMap<>(), "placeholders", databaseType);
 	}
+
 	public Messenger(AstralFactions main, FileConfiguration messageConfig, Map<String, Message> map, String defaultPlaceholders, DatabaseType databaseType) {
 		super(main, messageConfig, map, defaultPlaceholders, MessageDatabase.createDatabaseInstance(main, databaseType), PlayerDatabase.createDatabaseInstance(main, databaseType));
 		this.main = main;
@@ -177,7 +181,7 @@ public class Messenger extends OfflineMessageManager<AstralFactions> implements 
 
 	@Override
 	public List<Placeholder> createPlaceholders(String name, LivingEntity entity) {
-		if (entity instanceof Player player){
+		if (entity instanceof Player player) {
 			return this.createPlaceholders(name, player);
 		}
 		return super.createPlaceholders(name, entity);
@@ -189,19 +193,19 @@ public class Messenger extends OfflineMessageManager<AstralFactions> implements 
 
 		UserManager userManager = main.userManager();
 		FUser user = userManager.getKnownUser(player);
-		if (user.getFactionId() == null){
+		if (user.getFactionId() == null) {
 			return placeholders;
 		}
 
 		return placeholders;
 	}
 
-	public List<Placeholder> createPlaceholders(@NotNull String name, @NotNull FUser user){
+	public List<Placeholder> createPlaceholders(@NotNull String name, @NotNull FUser user) {
 		List<Placeholder> placeholders = new LinkedList<>();
-		if (user.getFactionId() != null){
+		if (user.getFactionId() != null) {
 			FactionManager factionManager = main.factionManager();
 			Faction faction = factionManager.getById(user.getFactionId());
-			if (faction != null){
+			if (faction != null) {
 				placeholders.add(createPlaceholder(name, "faction", faction.getTag()));
 				placeholders.addAll(createPlaceholders(name, faction));
 			}
@@ -210,7 +214,7 @@ public class Messenger extends OfflineMessageManager<AstralFactions> implements 
 		return placeholders;
 	}
 
-	public List<Placeholder> createPlaceholders(@NotNull String name, @NotNull Faction faction){
+	public List<Placeholder> createPlaceholders(@NotNull String name, @NotNull Faction faction) {
 		List<Placeholder> placeholders = new LinkedList<>();
 		placeholders.add(createPlaceholder(name, "tag", faction.getTag()));
 		placeholders.add(createPlaceholder(name, "id", faction.getUniqueId()));
@@ -239,17 +243,18 @@ public class Messenger extends OfflineMessageManager<AstralFactions> implements 
 		return placeholders;
 	}
 
-	public void message(CommandSender commandSender, String key, boolean defaultPlaceholders, Placeholder... placeholders){
+	public void message(CommandSender commandSender, String key, boolean defaultPlaceholders, Placeholder... placeholders) {
 
 	}
-	public void message(CommandSender commandSender, String key, boolean defaultPlaceholders, List<Placeholder> placeholders){
+
+	public void message(CommandSender commandSender, String key, boolean defaultPlaceholders, List<Placeholder> placeholders) {
 		if (commandSender instanceof Player entity) {
 			placeholders = new LinkedList<>(placeholders);
 			placeholders.addAll(createPlaceholders("player", entity));
 		} else {
 			placeholders = new LinkedList<>(placeholders);
 		}
-		message(commandSender, key, defaultPlaceholders,  placeholders.toArray(Placeholder[]::new));
+		message(commandSender, key, defaultPlaceholders, placeholders.toArray(Placeholder[]::new));
 	}
 
 }

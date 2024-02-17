@@ -1,10 +1,10 @@
-package bet.astral.messagemanager;
+package bet.astral.messenger;
 
-import bet.astral.messagemanager.permission.Permission;
-import bet.astral.messagemanager.placeholder.LegacyPlaceholder;
-import bet.astral.messagemanager.placeholder.MessagePlaceholder;
-import bet.astral.messagemanager.placeholder.Placeholder;
-import bet.astral.messagemanager.utils.PlaceholderUtils;
+import bet.astral.messenger.permission.Permission;
+import bet.astral.messenger.placeholder.LegacyPlaceholder;
+import bet.astral.messenger.placeholder.MessagePlaceholder;
+import bet.astral.messenger.placeholder.Placeholder;
+import bet.astral.messenger.utils.PlaceholderUtils;
 import com.google.common.collect.ImmutableMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * OfflineMessage manager which loads messages in runtime and parses them.
  * @param <P> Plugin
  */
-public class MessageManager<P extends JavaPlugin> {
+public class Messenger<P extends JavaPlugin> {
 	protected Pattern placeholder_pattern = Pattern.compile("%([^%]+)%");
 	protected final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
@@ -49,10 +49,10 @@ public class MessageManager<P extends JavaPlugin> {
 	protected final List<String> disabledMessages;
 	public boolean useConsoleComponentLogger = false;
 
-	public MessageManager(P plugin, FileConfiguration config, Map<String, Message> map) {
+	public Messenger(P plugin, FileConfiguration config, Map<String, Message> map) {
 		this(plugin, config, map, "placeholders");
 	}
-	public MessageManager(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders) {
+	public Messenger(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders) {
 		this.plugin = plugin;
 		this.config = config;
 		this.immutablePlaceholders = this.loadPlaceholders(mainPlaceholders);
@@ -498,9 +498,9 @@ public class MessageManager<P extends JavaPlugin> {
 					List<Placeholder> newPlaceholders = new ArrayList<>(placeholders);
 					if (senderSpecificPlaceholders)
 						newPlaceholders.addAll(createPlaceholders("player", to));
-					Component messageComponent = MessageManager.this.parse(message, type, newPlaceholders);
-					if (MessageManager.this.useConsoleComponentLogger) {
-						ComponentLogger logger = MessageManager.this.plugin.getComponentLogger();
+					Component messageComponent = Messenger.this.parse(message, type, newPlaceholders);
+					if (Messenger.this.useConsoleComponentLogger) {
+						ComponentLogger logger = Messenger.this.plugin.getComponentLogger();
 						logger.info(messageComponent);
 					} else {
 						to.sendMessage(messageComponent);
@@ -524,7 +524,7 @@ public class MessageManager<P extends JavaPlugin> {
 						List<Placeholder> newPlaceholders = new ArrayList<>(placeholders);
 						if (senderSpecificPlaceholders)
 							newPlaceholders.addAll(createPlaceholders("player", player));
-						Component messageComponent = MessageManager.this.parse(message, type, newPlaceholders);
+						Component messageComponent = Messenger.this.parse(message, type, newPlaceholders);
 						switch (type) {
 							case CHAT:
 								to.sendMessage(messageComponent);
