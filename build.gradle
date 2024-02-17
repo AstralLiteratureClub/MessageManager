@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'bet.astral'
-version '1.5-dev'
+version '1.5.1'
 description = 'MessageManager'
 
 repositories {
