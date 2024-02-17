@@ -13,6 +13,7 @@ import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.TitlePart;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
@@ -88,7 +89,7 @@ public class MessageManager<P extends JavaPlugin> {
 					placeholder = new LegacyPlaceholder(name, value);
 					break;
 				case "message":
-					Message message = (Message)this.messagesMap.get(value);
+					Message message = this.messagesMap.get(value);
 					String messagePart = (String)map.get("message-part");
 					if (messagePart == null) {
 						messagePart = "chat";
@@ -409,8 +410,11 @@ public class MessageManager<P extends JavaPlugin> {
 		message(permission, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
 	public void message(Permission permission, CommandSender to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		if (permission == null){
+			permission = Permission.empty;
+		}
 		if (!this.disabledMessages.contains(messageKey)) {
-			if (!permission.checkPermission(to)){
+			if (!permission.checkPermission(to)) {
 				return;
 			}
 			Message message = this.messagesMap.get(messageKey);
@@ -443,16 +447,19 @@ public class MessageManager<P extends JavaPlugin> {
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
 		Component messageComponent = Objects.requireNonNull(message.componentValue(type));
 		String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
-		Map<String, Placeholder> placeholderMap = new WeakHashMap<>(message.placeholders());
-		placeholderMap.putAll(this.immutablePlaceholders); // Built in placeholders from the message
+		Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders);
+		placeholderMap.putAll(message.placeholders()); // Built in placeholders from the message
 		placeholderMap.putAll(asPlaceholderMap(placeholders));
 		Matcher matcher = placeholder_pattern.matcher(plain);
 		while (matcher.find()){
 			@RegExp String found = plain.substring(matcher.start(), matcher.end());
+			Bukkit.broadcastMessage(found);
 			messageComponent = messageComponent.replaceText(builder -> {
-				if (placeholderMap.get(found) != null) {
-					Component placeholder = placeholderMap.get(found) != null ? placeholderMap.get(found).componentValue() : Component.text(found);
-					builder.match(found).replacement(placeholder);
+				Placeholder placeholder = placeholderMap.get(found);
+				if (placeholder != null){
+					Component placeholderValue = placeholder.componentValue();
+					Bukkit.broadcast(placeholderValue);
+					builder.match(found).replacement(placeholderValue);
 				}
 			});
 		}
