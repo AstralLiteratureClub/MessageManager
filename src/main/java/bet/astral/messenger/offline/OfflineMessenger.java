@@ -19,8 +19,8 @@ public abstract class OfflineMessenger<P extends JavaPlugin> extends Messenger<P
 	protected boolean messagesExpire = true;
 	protected long timeToExpire = 604800000; // 7 days to expire
 
-	public OfflineMessenger(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders, MessageDatabase<P> messageDatabase, PlayerDatabase<P> playerDatabase) {
-		super(plugin, config, messageMap, mainPlaceholders);
+	public OfflineMessenger(P plugin, FileConfiguration config, Map<String, Message> messageMap, MessageDatabase<P> messageDatabase, PlayerDatabase<P> playerDatabase) {
+		super(plugin, config, messageMap);
 		this.messageDatabase = messageDatabase;
 		this.playerDatabase = playerDatabase;
 	}

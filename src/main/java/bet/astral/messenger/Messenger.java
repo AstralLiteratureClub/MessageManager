@@ -49,13 +49,10 @@ public class Messenger<P extends JavaPlugin> {
 	protected final List<String> disabledMessages;
 	public boolean useConsoleComponentLogger = false;
 
-	public Messenger(P plugin, FileConfiguration config, Map<String, Message> map) {
-		this(plugin, config, map, "placeholders");
-	}
-	public Messenger(P plugin, FileConfiguration config, Map<String, Message> messageMap, String mainPlaceholders) {
+	public Messenger(P plugin, FileConfiguration config, Map<String, Message> messageMap) {
 		this.plugin = plugin;
 		this.config = config;
-		this.immutablePlaceholders = this.loadPlaceholders(mainPlaceholders);
+		this.immutablePlaceholders = ImmutableMap.of();
 		this.messagesMap = messageMap;
 		this.disabledMessages = new LinkedList<>();
 	}
@@ -64,15 +61,18 @@ public class Messenger<P extends JavaPlugin> {
 		return plugin;
 	}
 
-	protected ImmutableMap<String, Placeholder> loadPlaceholders(String key) {
+	public ImmutableMap<String, Placeholder> loadPlaceholders(String key) {
+		Bukkit.broadcastMessage("Loading placeholders: "+ key);
 		Map<String, Placeholder> placeholderMap = new HashMap<>();
 		List<Map<?, ?>> placeholderMapList = this.config.getMapList(key);
+		Bukkit.broadcastMessage("Loading placeholders 2: "+ key );
 
 		for (Map<?, ?> map : placeholderMapList){
 			Placeholder placeholder;
 			String name = (String)map.get("name");
 			String value = (String)map.get("value");
 			String type = (String)map.get("type");
+			Bukkit.broadcastMessage("Placeholder: "+ name);
 			if (type == null) {
 				type = "default";
 			}
@@ -108,6 +108,7 @@ public class Messenger<P extends JavaPlugin> {
 					throw new RuntimeException("Unknown placeholder serializer type: " + type);
 			}
 			placeholderMap.put(placeholder.key(), placeholder);
+			Bukkit.broadcastMessage("Loaded placeholder: "+ placeholder.key()+ " " + placeholder.componentValue());
 		}
 
 		return ImmutableMap.copyOf(placeholderMap);
@@ -127,10 +128,18 @@ public class Messenger<P extends JavaPlugin> {
 	 * @param newPlaceholders new placeholders
 	 * @return old placeholders
 	 */
-	protected Map<String, Placeholder> overridePlaceholders(Map<String, Placeholder> newPlaceholders){
+	public Map<String, Placeholder> overrideDefaultPlaceholders(Map<String, Placeholder> newPlaceholders){
 		Map<String, Placeholder> placeholderMap = immutablePlaceholders;
 		this.immutablePlaceholders = ImmutableMap.copyOf(newPlaceholders);
 		return placeholderMap;
+	}
+
+	@Nullable
+	public Placeholder overrideDefaultPlaceholder(String key, Placeholder placeholder) {
+		Map<String, Placeholder> placeholderMap = new HashMap<>(this.immutablePlaceholders);
+		Placeholder oldPlaceholder = placeholderMap.put(key, placeholder);
+		this.immutablePlaceholders = ImmutableMap.copyOf(placeholderMap);
+		return oldPlaceholder;
 	}
 
 	@Nullable
@@ -292,13 +301,7 @@ public class Messenger<P extends JavaPlugin> {
 	}
 
 
-	@Nullable
-	public Placeholder overrideDefaultPlaceholder(String key, Placeholder placeholder) {
-		Map<String, Placeholder> placeholderMap = new HashMap<>(this.immutablePlaceholders);
-		Placeholder oldPlaceholder = placeholderMap.put(key, placeholder);
-		this.immutablePlaceholders = ImmutableMap.copyOf(placeholderMap);
-		return oldPlaceholder;
-	}
+
 
 
 	public void broadcast(String  messageKey, Placeholder... placeholders){
@@ -447,20 +450,27 @@ public class Messenger<P extends JavaPlugin> {
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
 		Component messageComponent = Objects.requireNonNull(message.componentValue(type));
 		String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
-		Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders);
-		placeholderMap.putAll(message.placeholders()); // Built in placeholders from the message
-		placeholderMap.putAll(asPlaceholderMap(placeholders));
+		Map<String, Placeholder> placeholderMap = new WeakHashMap<>();
+		if (this.immutablePlaceholders != null && !this.immutablePlaceholders.isEmpty()){
+			placeholderMap.putAll(immutablePlaceholders);
+		}
+		if (message.placeholders()!=null && !message.placeholders().isEmpty()){
+			placeholderMap.putAll(message.placeholders()); // Built in placeholders from the message
+		}
+		if (placeholders!=null && !placeholders.isEmpty()){
+			placeholderMap.putAll(asPlaceholderMap(placeholders));
+		}
+
 		Matcher matcher = placeholder_pattern.matcher(plain);
 		while (matcher.find()){
 			@RegExp String found = plain.substring(matcher.start(), matcher.end());
-			Bukkit.broadcastMessage(found);
+			Placeholder placeholder = placeholderMap.get(found);
+			if (placeholder == null)  {
+				continue;
+			}
 			messageComponent = messageComponent.replaceText(builder -> {
-				Placeholder placeholder = placeholderMap.get(found);
-				if (placeholder != null){
-					Component placeholderValue = placeholder.componentValue();
-					Bukkit.broadcast(placeholderValue);
-					builder.match(found).replacement(placeholderValue);
-				}
+				Component placeholderValue = placeholder.componentValue();
+				builder.match(found).replacement(placeholderValue);
 			});
 		}
 
