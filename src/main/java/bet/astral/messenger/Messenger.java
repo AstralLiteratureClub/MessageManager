@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -234,8 +235,13 @@ public class Messenger<P extends JavaPlugin> {
 						componentMap.put(Message.Type.ACTION_BAR, serializer.deserialize(actionBarObj));
 					}
 
-					Map<String, Placeholder> builtInPlaceholders = this.loadPlaceholders(messageKey + ".placeholders");
-					message = new Message(messageKey, componentMap, builtInPlaceholders);
+					Object object = config.get(messageKey+".placeholders");
+					if (object!=null){
+						Map<String, Placeholder> builtInPlaceholders = this.loadPlaceholders(messageKey + ".placeholders");
+						message = new Message(messageKey, componentMap, builtInPlaceholders);
+					} else {
+						message = new Message(messageKey, componentMap);
+					}
 					this.messagesMap.put(messageKey, message);
 					return message;
 				}
@@ -468,20 +474,16 @@ public class Messenger<P extends JavaPlugin> {
 			placeholderMap.putAll(asPlaceholderMap(placeholders));
 		}
 
-		Matcher matcher = placeholder_pattern.matcher(plain);
-		while (matcher.find()){
-			@RegExp String found = plain.substring(matcher.start(), matcher.end());
-			Placeholder placeholder = placeholderMap.get(found);
-			if (placeholder == null)  {
-				continue;
+		AtomicReference<Component> finalMessageComponent = new AtomicReference<>(messageComponent);
+		placeholderMap.forEach((key, value)-> {
+			if (plain.contains(key)){
+				finalMessageComponent.set(finalMessageComponent.get().replaceText(builder->{
+					builder.match("%"+key+"%").replacement(value.componentValue());
+				}));
 			}
-			messageComponent = messageComponent.replaceText(builder -> {
-				Component placeholderValue = placeholder.componentValue();
-				builder.match(found).replacement(placeholderValue);
-			});
-		}
+		});
 
-		return messageComponent;
+		return finalMessageComponent.get();
 
 		// Old methods
 
@@ -560,5 +562,10 @@ public class Messenger<P extends JavaPlugin> {
 				}).runTaskLaterAsynchronously(this.plugin, delay);
 			}
 		}
+	}
+
+
+	public ComponentLogger getLogger(){
+		return plugin.getComponentLogger();
 	}
 }
