@@ -62,11 +62,11 @@ public class Messenger<P extends JavaPlugin> {
 	}
 
 	public ImmutableMap<String, Placeholder> loadPlaceholders(String key) {
-		Bukkit.broadcastMessage("Loading placeholders: "+ key);
+		plugin.getLogger().info("Loading message placeholders \""+key+"\"");
 		Map<String, Placeholder> placeholderMap = new HashMap<>();
 		List<Map<?, ?>> placeholderMapList = this.config.getMapList(key);
-		Bukkit.broadcastMessage("Loading placeholders 2: "+ key );
 
+		plugin.getLogger().info("Parsing placeholders \""+key+"\"");
 		for (Map<?, ?> map : placeholderMapList){
 			Placeholder placeholder;
 			String name = (String)map.get("name");
@@ -111,6 +111,7 @@ public class Messenger<P extends JavaPlugin> {
 			Bukkit.broadcastMessage("Loaded placeholder: "+ placeholder.key()+ " " + placeholder.componentValue());
 		}
 
+		plugin.getLogger().info("Loaded message placeholders \""+key+"\"");
 		return ImmutableMap.copyOf(placeholderMap);
 	}
 
@@ -145,6 +146,12 @@ public class Messenger<P extends JavaPlugin> {
 	@Nullable
 	public Message loadMessage(String messageKey) {
 		Object messageSection = this.config.get(messageKey);
+		if (messageSection == null){
+			plugin.getLogger().severe("Couldn't find message key for " + messageKey + " creating a temporal message for it!");
+			Message message = new Message(messageKey, Component.text(messageKey));
+			messagesMap.put(messageKey, message);
+			return message;
+		}
 		Message message;
 		if (messageSection instanceof String) {
 			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
