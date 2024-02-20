@@ -26,13 +26,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -40,13 +38,13 @@ import java.util.regex.Pattern;
  * @param <P> Plugin
  */
 public class Messenger<P extends JavaPlugin> {
-	protected Pattern placeholder_pattern = Pattern.compile("%([^%]+)%");
 	protected final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
 	private final P plugin;
 	protected final FileConfiguration config;
 	private ImmutableMap<String, Placeholder> immutablePlaceholders;
 	protected final Map<String, Message> messagesMap;
+	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
 	protected final List<String> disabledMessages;
 	public boolean useConsoleComponentLogger = false;
 
@@ -249,15 +247,15 @@ public class Messenger<P extends JavaPlugin> {
 		}
 	}
 
-	public Placeholder placeholder(String name, String value, boolean legacy) {
+	public Placeholder createPlaceholder(String name, String value, boolean legacy) {
 		return legacy ? new LegacyPlaceholder(name, value) : new Placeholder(name, value, false);
 	}
 
-	public Placeholder placeholder(String name, Component value) {
+	public Placeholder createPlaceholder(String name, Component value) {
 		return new Placeholder(name, value);
 	}
 
-	public MessagePlaceholder placeholderMessage(String name, String messageKey, Message.Type type) {
+	public MessagePlaceholder createPlaceholderMessage(String name, String messageKey, Message.Type type) {
 		Message message = this.messagesMap.get(messageKey);
 		if (message == null) {
 			this.loadMessage(messageKey);
@@ -478,33 +476,12 @@ public class Messenger<P extends JavaPlugin> {
 		placeholderMap.forEach((key, value)-> {
 			if (plain.contains(key)){
 				finalMessageComponent.set(finalMessageComponent.get().replaceText(builder->{
-					builder.match("%"+key+"%").replacement(value.componentValue());
+					builder.match("(?i)%"+key+"%").replacement(value.componentValue());
 				}));
 			}
 		});
 
 		return finalMessageComponent.get();
-
-		// Old methods
-
-		/*
-		for (Placeholder placeholder : placeholders) {
-			if (placeholder.isComponentValue()) {
-				messageComponent = messageComponent.replaceText((builder) -> builder.match("%" + placeholder.key() + "%").replacement(placeholder.componentValue()));
-			} else {
-				messageComponent = messageComponent.replaceText((builder) -> builder.match("%" + placeholder.key() + "%").replacement(placeholder.stringValue()));
-			}
-		}
-
-		for (Placeholder placeholder : this.immutablePlaceholders.values()) {
-			if (placeholder.isComponentValue()) {
-				messageComponent = messageComponent.replaceText((builder) -> builder.match("%" + placeholder.key() + "%").replacement(placeholder.componentValue()));
-			} else {
-				messageComponent = messageComponent.replaceText((builder) -> builder.match("%" + placeholder.key() + "%").replacement(placeholder.stringValue()));
-			}
-		}
-		return messageComponent;
-		 */
 	}
 	protected void sendConsole(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
 		sendConsole(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
