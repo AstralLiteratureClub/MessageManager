@@ -113,7 +113,7 @@ public final class PlaceholderUtils {
 		}
 		placeholders.add(createPlaceholder(name,"block_underneath", entity.getWorld().getBlockAt(entity.getLocation()).getRelative(BlockFace.DOWN))); // block below entity
 		placeholders.add(createPlaceholder(name,"can_pickup_items", entity.getCanPickupItems())); // can pick items
-		placeholders.add(createPlaceholder(name, "custom_name", entity.customName())); // custom name
+		placeholders.add(createPlaceholder(name, "custom_name", entity.customName() != null ? entity.customName() : entity.name())); // custom name
 		placeholders.add(createPlaceholder(name,"direction", direction(false, direction(entity.getLocation().getYaw())))); // direction | long -> NORTH,
 		// SOUTH, WEST, etc
 		placeholders.add(createPlaceholder(name,"direction_short", direction(true, direction(entity.getLocation().getYaw())))); // direction | short -> N,
@@ -206,6 +206,9 @@ public final class PlaceholderUtils {
 	}
 
 	public static Placeholder createPlaceholder(@NotNull String namespace, @NotNull String key, Object value){
+		if (value == null){
+			return Placeholder.emptyPlaceholder(namespace);
+		}
 		if (value instanceof Component component) {
 			return new Placeholder(namespace+"_"+key, component);
 		} else if (value instanceof String s){
