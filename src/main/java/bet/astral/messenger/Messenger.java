@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
  * @param <P> Plugin
  */
 public class Messenger<P extends JavaPlugin> {
+	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 	protected final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
 	private final P plugin;
@@ -278,7 +280,7 @@ public class Messenger<P extends JavaPlugin> {
 
 
 	public List<Placeholder> createPlaceholders(String name, Player player){
-		return PlaceholderUtils.createPlaceholders(name, player);
+		return PlaceholderUtils.createPlaceholders(name, (LivingEntity) player);
 	}
 	public List<Placeholder> createPlaceholders(String name, OfflinePlayer player){
 		return PlaceholderUtils.createPlaceholders(name, player);
@@ -461,10 +463,7 @@ public class Messenger<P extends JavaPlugin> {
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
 		Component messageComponent = Objects.requireNonNull(message.componentValue(type));
 		String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
-		Map<String, Placeholder> placeholderMap = new WeakHashMap<>();
-		if (this.immutablePlaceholders != null && !this.immutablePlaceholders.isEmpty()){
-			placeholderMap.putAll(immutablePlaceholders);
-		}
+		Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders != null ? this.immutablePlaceholders : Collections.emptyMap());
 		if (message.placeholders()!=null && !message.placeholders().isEmpty()){
 			placeholderMap.putAll(message.placeholders()); // Built in placeholders from the message
 		}
@@ -473,15 +472,60 @@ public class Messenger<P extends JavaPlugin> {
 		}
 
 		AtomicReference<Component> finalMessageComponent = new AtomicReference<>(messageComponent);
-		placeholderMap.forEach((key, value)-> {
-			if (plain.contains(key)){
-				finalMessageComponent.set(finalMessageComponent.get().replaceText(builder->{
-					builder.match("(?i)%"+key+"%").replacement(value.componentValue());
+		Matcher matcher = PLACEHOLDER_PATTERN.matcher(plain);
+		while (matcher.find()){
+			String name = matcher.group().substring(1, matcher.group().length()-1);
+			Pattern pattern = compiledPatterns.get(name.toLowerCase());
+			if (pattern == null){
+				pattern = Pattern.compile("%(?i)"+name+"%");
+				compiledPatterns.put(name.toLowerCase(), pattern);
+			}
+			Placeholder placeholder = placeholderMap.get(name);
+			if (placeholder == null){
+				continue;
+			}
+
+			Pattern finalPattern = pattern;
+			finalMessageComponent.set(finalMessageComponent.get().replaceText(builder->{
+				builder.match(finalPattern).replacement(placeholder.componentValue());
+			}));
+		}
+		return finalMessageComponent.get();
+	}
+
+	public List<Component> parseAsList(@NotNull String key, List<Placeholder> placeholders) {
+		List<String> strings = config.getStringList(key);
+		List<Component> components = new ArrayList<>();
+		for (String string : strings) {
+			Component messageComponent = miniMessage.deserialize(string);
+			String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
+			Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders != null ? this.immutablePlaceholders : Collections.emptyMap());
+
+			if (placeholders != null && !placeholders.isEmpty()) {
+				placeholderMap.putAll(asPlaceholderMap(placeholders));
+			}
+
+			AtomicReference<Component> finalMessageComponent = new AtomicReference<>(messageComponent);
+			Matcher matcher = PLACEHOLDER_PATTERN.matcher(plain);
+			while (matcher.find()) {
+				String name = matcher.group().substring(1, matcher.group().length() - 1);
+				Pattern pattern = compiledPatterns.get(name.toLowerCase());
+				if (pattern == null) {
+					pattern = Pattern.compile("%(?i)" + name + "%");
+					compiledPatterns.put(name.toLowerCase(), pattern);
+				}
+				Placeholder placeholder = placeholderMap.get(name);
+				if (placeholder == null) {
+					continue;
+				}
+
+				Pattern finalPattern = pattern;
+				finalMessageComponent.set(finalMessageComponent.get().replaceText(builder -> {
+					builder.match(finalPattern).replacement(placeholder.componentValue());
 				}));
 			}
-		});
-
-		return finalMessageComponent.get();
+		}
+		return components;
 	}
 	protected void sendConsole(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
 		sendConsole(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
