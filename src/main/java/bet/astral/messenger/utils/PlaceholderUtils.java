@@ -19,6 +19,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -69,12 +70,12 @@ public final class PlaceholderUtils {
 	}
 
 	public static List<Placeholder> createPlaceholders(Player player){
-		return createPlaceholders("player", player);
+		return createPlaceholders("player", (LivingEntity) player);
 	}
 
 	public static List<Placeholder> createPlaceholders(String name, CommandSender commandSender){
 		if (commandSender instanceof Player player){
-			return createPlaceholders(name, player);
+			return createPlaceholders(name, (Entity) player);
 		} else if (commandSender instanceof LivingEntity entity){
 			return createPlaceholders(name, entity);
 		}
@@ -180,23 +181,19 @@ public final class PlaceholderUtils {
 			placeholders.add(createPlaceholder(name,"warden_warning_level", player.getWardenWarningLevel()));
 			placeholders.add(createPlaceholder(name,"warden_warning_cooldown", player.getWardenWarningCooldown()));
 			placeholders.add(createPlaceholder(name,"warden_time_since_warning", player.getWardenTimeSinceLastWarning()));
-
 			placeholders.addAll(createPlaceholders(name, (OfflinePlayer) player));
 		}
 
+
 		return placeholders;
 	}
-
-
-	public static List<Placeholder> createPlaceholders(String name, Player player){
-		return createPlaceholders(name, (LivingEntity) player);
-	}
-
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull OfflinePlayer player){
-		List<Placeholder> placeholders = new LinkedList<>(createPlaceholders(name, (LivingEntity) player));
-		placeholders.add(createPlaceholder(name, "first_join", dateFormat.format(Instant.ofEpochSecond(player.getFirstPlayed())))); // first join formatted
+		List<Placeholder> placeholders = new LinkedList<>();
+		placeholders.add(createPlaceholder(name, "name", player.getName()));
+		placeholders.add(new Placeholder(name, Component.text(player.getName())));
+		placeholders.add(createPlaceholder(name, "first_join", dateFormat.format(Date.from(Instant.ofEpochSecond(player.getFirstPlayed()))))); // first join formatted
 		placeholders.add(createPlaceholder(name, "first_join_unix", player.getFirstPlayed())); // first join in default form
-		placeholders.add(createPlaceholder(name, "last_played", dateFormat.format(Instant.ofEpochSecond(player.getLastSeen())))); // last time
+		placeholders.add(createPlaceholder(name, "last_played", dateFormat.format(Date.from(Instant.ofEpochSecond(player.getLastSeen()))))); // last time
 		// player was online formatted
 		placeholders.add(createPlaceholder(name, "last_played_unix", player.getLastSeen())); // last time player was online
 		placeholders.add(createPlaceholder(name, "has_played_before", player.hasPlayedBefore())); // has played before
