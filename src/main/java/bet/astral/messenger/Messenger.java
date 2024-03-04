@@ -6,6 +6,8 @@ import bet.astral.messenger.placeholder.MessagePlaceholder;
 import bet.astral.messenger.placeholder.Placeholder;
 import bet.astral.messenger.utils.PlaceholderUtils;
 import com.google.common.collect.ImmutableMap;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -47,6 +49,7 @@ public class Messenger<P extends JavaPlugin> {
 	private ImmutableMap<String, Placeholder> immutablePlaceholders;
 	protected final Map<String, Message> messagesMap;
 	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
+	protected final Map<String, Boolean> foundNotExisting = new HashMap<>();
 	protected final List<String> disabledMessages;
 	public boolean useConsoleComponentLogger = false;
 
@@ -144,6 +147,14 @@ public class Messenger<P extends JavaPlugin> {
 		return oldPlaceholder;
 	}
 
+	public boolean checkIfExists(@NotNull String messageKey){
+		if (foundNotExisting.containsKey(messageKey)){
+			return foundNotExisting.get(messageKey);
+		}
+		loadMessage(messageKey);
+		return foundNotExisting.get(messageKey);
+	}
+
 	@Nullable
 	public Message loadMessage(String messageKey) {
 		Object messageSection = this.config.get(messageKey);
@@ -151,6 +162,7 @@ public class Messenger<P extends JavaPlugin> {
 			plugin.getLogger().severe("Couldn't find message key for " + messageKey + " creating a temporal message for it!");
 			Message message = new Message(messageKey, Component.text(messageKey));
 			messagesMap.put(messageKey, message);
+			foundNotExisting.put(messageKey, false);
 			return message;
 		}
 		Message message;
@@ -158,6 +170,7 @@ public class Messenger<P extends JavaPlugin> {
 			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
 			message = new Message(messageKey, messageComponent);
 			this.messagesMap.put(messageKey, message);
+			foundNotExisting.put(messageKey, true);
 			return message;
 		} else {
 			Object chatObj;
@@ -176,18 +189,22 @@ public class Messenger<P extends JavaPlugin> {
 
 				if (component == null) {
 					this.disabledMessages.add(messageKey);
+					foundNotExisting.put(messageKey, true);
 					return null;
 				} else {
 					message = new Message(messageKey, component);
 					this.messagesMap.put(messageKey, message);
+					foundNotExisting.put(messageKey, true);
 					return message;
 				}
 			} else if (!(messageSection instanceof MemorySection memorySection)) {
+				foundNotExisting.put(messageKey, false);
 				throw new IllegalStateException("OfflineMessage configuration for " + messageKey + " is illegal. Please fix it!");
 			} else {
 				boolean disabled = memorySection.getBoolean("disabled", false);
 				if (disabled) {
 					this.disabledMessages.add(messageKey);
+					foundNotExisting.put(messageKey, true);
 					return null;
 				} else {
 					Object componentSerializer = switch (memorySection.getString("serializer", "default").toLowerCase()) {
@@ -243,6 +260,7 @@ public class Messenger<P extends JavaPlugin> {
 						message = new Message(messageKey, componentMap);
 					}
 					this.messagesMap.put(messageKey, message);
+					foundNotExisting.put(messageKey, true);
 					return message;
 				}
 			}
@@ -380,58 +398,63 @@ public class Messenger<P extends JavaPlugin> {
 	}
 
 
-	public void message(CommandSender to, String  messageKey, Placeholder... placeholders){
+	public void message(Audience to, String  messageKey, Placeholder... placeholders){
 		message(null, to, messageKey, 0, false, List.of(placeholders));
 	}
-	public void message(CommandSender to, String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Audience to, String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(null, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
-	public void message(CommandSender to, String messageKey, List<Placeholder> placeholders) {
+	public void message(Audience to, String messageKey, List<Placeholder> placeholders) {
 		message(null, to, messageKey, 0, false, placeholders);
 	}
-	public void message(CommandSender to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+	public void message(Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		message(null, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, Placeholder... placeholders){
+	public void message(Permission permission, Audience to, String messageKey, Placeholder... placeholders){
 		message(permission, to, messageKey, 0, false, List.of(placeholders));
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(permission, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, List<Placeholder> placeholders) {
+	public void message(Permission permission, Audience to, String messageKey, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, 0, false, placeholders);
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
 	}
-	public void message(CommandSender to, String messageKey, int delay, List<Placeholder> placeholders){
+	public void message(Audience to, String messageKey, int delay, List<Placeholder> placeholders){
 		message(null, to, messageKey, delay, false, placeholders);
 	}
-	public void message(CommandSender to, String messageKey, int delay, Placeholder... placeholders){
+	public void message(Audience to, String messageKey, int delay, Placeholder... placeholders){
 		message(null, to, messageKey, delay, false, List.of(placeholders));
 	}
-	public void message(CommandSender to, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(null, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
-	public void message(CommandSender to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
+	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
 		message(null, to, messageKey, delay, senderSpecificPlaceholders, placeholders);
 	}
-	public void message(Permission permission, CommandSender to, String  messageKey, int delay, Placeholder... placeholders){
+	public void message(Permission permission, Audience to, String  messageKey, int delay, Placeholder... placeholders){
 		message(permission, to, messageKey, delay, false, List.of(placeholders));
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, int delay, List<Placeholder> placeholders) {
+	public void message(Permission permission, Audience to, String messageKey, int delay, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, delay, false, placeholders);
 	}
-	public void message(Permission permission, CommandSender to, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Permission permission, Audience to, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(permission, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
-	public void message(Permission permission, CommandSender to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
-		if (permission == null){
-			permission = Permission.empty;
-		}
+	public void message(Permission permission, Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		if (!this.disabledMessages.contains(messageKey)) {
-			if (!permission.checkPermission(to)) {
-				return;
+			if (permission != null) {
+				if (to instanceof CommandSender sender){
+					if (!permission.checkPermission(sender)){
+						return;
+					}
+				} else if (to instanceof ForwardingAudience forwardingAudience){
+					to = forwardingAudience.filterAudience(audience -> audience instanceof CommandSender sender && permission.checkPermission(sender));
+				}else {
+					return;
+				}
 			}
 			Message message = this.messagesMap.get(messageKey);
 			if (message == null) {
@@ -550,14 +573,14 @@ public class Messenger<P extends JavaPlugin> {
 			}).runTaskLaterAsynchronously(this.plugin, delay);
 		}
 	}
-	protected void send(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
+	protected void send(final @NotNull Audience to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
 		send(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
 
-	protected void send(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
+	protected void send(final @NotNull Audience to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
 		if (message.componentValue(type) != null) {
 			if (!(to instanceof Player player)) {
-				this.sendConsole(to, message, type, delay, senderSpecificPlaceholders, placeholders);
+				this.sendConsole((CommandSender) to, message, type, delay, senderSpecificPlaceholders, placeholders);
 			} else {
 				(new BukkitRunnable() {
 					public void run() {

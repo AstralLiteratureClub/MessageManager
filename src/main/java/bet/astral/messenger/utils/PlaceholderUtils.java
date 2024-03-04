@@ -202,16 +202,17 @@ public final class PlaceholderUtils {
 		return placeholders;
 	}
 
-	public static Placeholder createPlaceholder(@NotNull String namespace, @NotNull String key, Object value){
+	public static Placeholder createPlaceholder(@Nullable String namespace, @NotNull String key, Object value){
+		String prefix = namespace != null && !namespace.isEmpty() ? namespace+"_"+key : key;
 		if (value == null){
-			return Placeholder.emptyPlaceholder(namespace);
+			return Placeholder.emptyPlaceholder(prefix);
 		}
 		if (value instanceof Component component) {
-			return new Placeholder(namespace+"_"+key, component);
+			return new Placeholder(prefix, component);
 		} else if (value instanceof String s){
-			return new Placeholder(namespace+"_"+key, s);
+			return new Placeholder(prefix, s);
 		}
-		return new Placeholder(namespace+"_"+key, value);
+		return new Placeholder(prefix, value);
 	}
 
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable Location location) {
