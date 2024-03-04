@@ -15,7 +15,6 @@ import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.TitlePart;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Biome;
@@ -66,17 +65,14 @@ public class Messenger<P extends JavaPlugin> {
 	}
 
 	public ImmutableMap<String, Placeholder> loadPlaceholders(String key) {
-		plugin.getLogger().info("Loading message placeholders \""+key+"\"");
 		Map<String, Placeholder> placeholderMap = new HashMap<>();
 		List<Map<?, ?>> placeholderMapList = this.config.getMapList(key);
 
-		plugin.getLogger().info("Parsing placeholders \""+key+"\"");
 		for (Map<?, ?> map : placeholderMapList){
 			Placeholder placeholder;
 			String name = (String)map.get("name");
 			String value = (String)map.get("value");
 			String type = (String)map.get("type");
-			Bukkit.broadcastMessage("Placeholder: "+ name);
 			if (type == null) {
 				type = "default";
 			}
@@ -112,10 +108,8 @@ public class Messenger<P extends JavaPlugin> {
 					throw new RuntimeException("Unknown placeholder serializer type: " + type);
 			}
 			placeholderMap.put(placeholder.key(), placeholder);
-			Bukkit.broadcastMessage("Loaded placeholder: "+ placeholder.key()+ " " + placeholder.componentValue());
 		}
 
-		plugin.getLogger().info("Loaded message placeholders \""+key+"\"");
 		return ImmutableMap.copyOf(placeholderMap);
 	}
 
