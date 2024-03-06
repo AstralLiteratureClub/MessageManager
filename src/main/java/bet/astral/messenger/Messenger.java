@@ -1,5 +1,7 @@
 package bet.astral.messenger;
 
+import bet.astral.messenger.cloud.CaptionMessenger;
+import bet.astral.messenger.cloud.PlainMessage;
 import bet.astral.messenger.permission.Permission;
 import bet.astral.messenger.placeholder.LegacyPlaceholder;
 import bet.astral.messenger.placeholder.MessagePlaceholder;
@@ -27,6 +29,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.caption.Caption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +44,7 @@ import java.util.regex.Pattern;
  * OfflineMessage manager which loads messages in runtime and parses them.
  * @param <P> Plugin
  */
-public class Messenger<P extends JavaPlugin> {
+public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 	protected final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
@@ -47,9 +52,11 @@ public class Messenger<P extends JavaPlugin> {
 	protected final FileConfiguration config;
 	private ImmutableMap<String, Placeholder> immutablePlaceholders;
 	protected final Map<String, Message> messagesMap;
+	protected final Map<Caption, PlainMessage> captionMap;
 	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
 	protected final Map<String, Boolean> foundNotExisting = new HashMap<>();
 	protected final List<String> disabledMessages;
+	private CommandManager<CommandSender> commandManager;
 	public boolean useConsoleComponentLogger = false;
 
 	public Messenger(P plugin, FileConfiguration config, Map<String, Message> messageMap) {
@@ -57,6 +64,7 @@ public class Messenger<P extends JavaPlugin> {
 		this.config = config;
 		this.immutablePlaceholders = ImmutableMap.of();
 		this.messagesMap = messageMap;
+		this.captionMap = new HashMap<>();
 		this.disabledMessages = new LinkedList<>();
 	}
 
@@ -147,6 +155,53 @@ public class Messenger<P extends JavaPlugin> {
 		}
 		loadMessage(messageKey);
 		return foundNotExisting.get(messageKey);
+	}
+
+
+	@Override
+	public Map<Caption, PlainMessage> captionMessages() {
+		return captionMap;
+	}
+
+	@Override
+	public CommandManager<CommandSender> commandManager() {
+		return commandManager;
+	}
+	@Override
+	public @NotNull PlainMessage loadMessage(@NotNull Caption caption) {
+		Object messageSection = this.config.get(caption.key());
+		PlainMessage message;
+		if (messageSection instanceof String) {
+			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
+			message = new PlainMessage(caption.key(), messageComponent);
+			this.messagesMap.put(caption.key(), message);
+			foundNotExisting.put(caption.key(), true);
+		} else {
+			plugin.getLogger().severe("Couldn't find message key for " + caption.key() + " creating a temporal message for it!");
+			message = new PlainMessage(caption.key(), Component.text(caption.key()));
+			messagesMap.put(caption.key(), message);
+			foundNotExisting.put(caption.key(), false);
+		}
+		return message;
+	}
+
+	@Override
+	public PlainMessage getMessage(Caption caption) {
+		return captionMap.get(caption);
+	}
+
+	@Override
+	public void registerCommandManager(CommandManager<CommandSender> commandManager) throws IllegalStateException {
+		if (this.commandManager != null) {
+			throw new IllegalStateException("Command manager is already registered!");
+ 		}
+		this.commandManager = commandManager;
+		this.commandManager.captionRegistry()
+				.registerProvider(this);
+	}
+	@Override
+	public @org.checkerframework.checker.nullness.qual.Nullable String provide(@NonNull Caption caption, @NonNull CommandSender recipient) {
+		return parse(recipient, caption);
 	}
 
 	@Nullable
@@ -325,10 +380,6 @@ public class Messenger<P extends JavaPlugin> {
 		return placeholderMap;
 	}
 
-
-
-
-
 	public void broadcast(String  messageKey, Placeholder... placeholders){
 		broadcast(null, messageKey, 0, false, List.of(placeholders));
 	}
@@ -390,7 +441,6 @@ public class Messenger<P extends JavaPlugin> {
 			this.message(this.plugin.getServer().getConsoleSender(), messageKey, delay, senderSpecificPlaceholders, placeholders);
 		}
 	}
-
 
 	public void message(Audience to, String  messageKey, Placeholder... placeholders){
 		message(null, to, messageKey, 0, false, List.of(placeholders));
@@ -475,6 +525,19 @@ public class Messenger<P extends JavaPlugin> {
 
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, Placeholder... placeholders) {
 		return parse(message, type, List.of(placeholders));
+	}
+
+	@Override
+	public String parse(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
+		if (captionMap.get(caption) == null){
+			return null;
+		}
+		return PlainTextComponentSerializer.plainText().serialize(parseAsComponent(sender, caption, placeholders));
+	}
+
+	@Override
+	public Component parseAsComponent(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
+		return parse(captionMap.get(caption), Message.Type.CHAT, placeholders);
 	}
 
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
@@ -606,4 +669,5 @@ public class Messenger<P extends JavaPlugin> {
 	public ComponentLogger getLogger(){
 		return plugin.getComponentLogger();
 	}
+
 }
