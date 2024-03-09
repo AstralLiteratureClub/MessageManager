@@ -607,9 +607,6 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		}
 		return components;
 	}
-	protected void sendConsole(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
-		sendConsole(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
 
 	protected void sendConsole(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
 		if (message.componentValue(type) != null) {
@@ -636,7 +633,12 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 
 	protected void send(final @NotNull Audience to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
 		if (message.componentValue(type) != null) {
-			if (!(to instanceof Player player)) {
+			if (to instanceof ForwardingAudience forwardingAudience){
+				for (Audience audience : forwardingAudience.audiences()){
+					send(audience, message, type, delay, senderSpecificPlaceholders, placeholders);
+				}
+				return;
+			} else if (!(to instanceof Player player)) {
 				this.sendConsole((CommandSender) to, message, type, delay, senderSpecificPlaceholders, placeholders);
 			} else {
 				(new BukkitRunnable() {
