@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface CaptionMessenger extends CaptionProvider<CommandSender> {
-	Map<Caption, PlainMessage> captionMessages();
+	Map<String, PlainMessage> captionMessages();
 	CommandManager<CommandSender> commandManager();
 	@NotNull
 	PlainMessage loadMessage(Caption caption);

@@ -52,7 +52,7 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 	protected final FileConfiguration config;
 	private ImmutableMap<String, Placeholder> immutablePlaceholders;
 	protected final Map<String, Message> messagesMap;
-	protected final Map<Caption, PlainMessage> captionMap;
+	protected final Map<String, PlainMessage> captionMap;
 	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
 	protected final Map<String, Boolean> foundNotExisting = new HashMap<>();
 	protected final List<String> disabledMessages;
@@ -159,7 +159,7 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 
 
 	@Override
-	public Map<Caption, PlainMessage> captionMessages() {
+	public Map<String, PlainMessage> captionMessages() {
 		return captionMap;
 	}
 
@@ -174,12 +174,12 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		if (messageSection instanceof String) {
 			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
 			message = new PlainMessage(caption.key(), messageComponent);
-			this.messagesMap.put(caption.key(), message);
+			this.captionMap.put(caption.key(), message);
 			foundNotExisting.put(caption.key(), true);
 		} else {
 			plugin.getLogger().severe("Couldn't find message key for " + caption.key() + " creating a temporal message for it!");
 			message = new PlainMessage(caption.key(), Component.text(caption.key()));
-			messagesMap.put(caption.key(), message);
+			captionMap.put(caption.key(), message);
 			foundNotExisting.put(caption.key(), false);
 		}
 		return message;
@@ -187,7 +187,7 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 
 	@Override
 	public PlainMessage getMessage(Caption caption) {
-		return captionMap.get(caption);
+		return captionMap.get(caption.key());
 	}
 
 	@Override
@@ -529,7 +529,7 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 
 	@Override
 	public String parse(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
-		if (captionMap.get(caption) == null){
+		if (captionMap.get(caption.key()) == null){
 			return null;
 		}
 		return PlainTextComponentSerializer.plainText().serialize(parseAsComponent(sender, caption, placeholders));
@@ -537,7 +537,7 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 
 	@Override
 	public Component parseAsComponent(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
-		return parse(captionMap.get(caption), Message.Type.CHAT, placeholders);
+		return parse(captionMap.get(caption.key()), Message.Type.CHAT, placeholders);
 	}
 
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
