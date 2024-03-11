@@ -32,6 +32,10 @@ dependencies {
     implementation 'org.incendo:cloud-core:'+cloudVersion
     implementation 'org.incendo:cloud-paper:'+cloudVersion
     implementation 'org.incendo:cloud-minecraft-extras:'+cloudVersion
+    var cloudTranslations = "1.0.0-SNAPSHOT"
+    // Cloud - Translations
+    implementation 'org.incendo:cloud-translations-core:'+cloudTranslations
+    implementation 'org.incendo:cloud-translations-bukkit:'+cloudTranslations
 
 
     // message component api

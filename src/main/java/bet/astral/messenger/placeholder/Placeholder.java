@@ -3,10 +3,12 @@ package bet.astral.messenger.placeholder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.caption.CaptionVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Placeholder {
+public class Placeholder implements CaptionVariable {
 	protected static final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
 	protected static final LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
@@ -46,6 +48,9 @@ public class Placeholder {
 			this(key, objectValue.toString(), isLegacy);
 	}
 
+	public static Placeholder of(CaptionVariable variable){
+		return new Placeholder(variable.key(), variable.value());
+	}
 
 	public static Placeholder emptyPlaceholder(@NotNull String key){
 		return new Placeholder(key, key, false);
@@ -70,8 +75,14 @@ public class Placeholder {
 		return stringValue;
 	}
 
+	@NotNull
 	public String key() {
 		return key;
+	}
+
+	@Override
+	public @NonNull String value() {
+		return stringValue;
 	}
 
 	public boolean isComponentValue() {

@@ -1,31 +1,24 @@
 package bet.astral.messenger.cloud;
 
-import bet.astral.messenger.placeholder.Placeholder;
+import bet.astral.messenger.Message;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionFormatter;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 
-public interface CaptionMessenger extends CaptionProvider<CommandSender> {
-	Map<String, PlainMessage> captionMessages();
+public interface CaptionMessenger extends CaptionProvider<CommandSender>, CaptionFormatter<CommandSender, Component> {
+	@Nullable
 	CommandManager<CommandSender> commandManager();
-	@NotNull
-	PlainMessage loadMessage(Caption caption);
-	PlainMessage getMessage(Caption caption);
-	String parse(CommandSender sender, Caption caption, List<Placeholder> placeholders);
-	default String parse(CommandSender sender, Caption caption, Placeholder... placeholders) {
-		return parse(sender, caption, List.of(placeholders));
-	}
-	default Component parseAsComponent(CommandSender sender, Caption caption, Placeholder... placeholders) {
-		return parseAsComponent(sender, caption, List.of(placeholders));
-	}
-	Component parseAsComponent(CommandSender sender, Caption caption, List<Placeholder> placeholders);
-
+	@Nullable
+	Message loadMessage(@NotNull Caption caption);
+	@Nullable
+	Message getMessage(@NotNull Caption caption);
 	/**
 	 * Registers the command manager to this messenger.
 	 * If the command manager is already registered, an exception will be thrown

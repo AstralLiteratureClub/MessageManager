@@ -1,8 +1,8 @@
 package bet.astral.messenger;
 
 import bet.astral.messenger.cloud.CaptionMessenger;
-import bet.astral.messenger.cloud.PlainMessage;
 import bet.astral.messenger.permission.Permission;
+import bet.astral.messenger.placeholder.CaptionVariableToPlaceholder;
 import bet.astral.messenger.placeholder.LegacyPlaceholder;
 import bet.astral.messenger.placeholder.MessagePlaceholder;
 import bet.astral.messenger.placeholder.Placeholder;
@@ -32,6 +32,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionProvider;
+import org.incendo.cloud.caption.CaptionVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +54,6 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 	protected final FileConfiguration config;
 	private ImmutableMap<String, Placeholder> immutablePlaceholders;
 	protected final Map<String, Message> messagesMap;
-	protected final Map<String, PlainMessage> captionMap;
 	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
 	protected final Map<String, Boolean> foundNotExisting = new HashMap<>();
 	protected final List<String> disabledMessages;
@@ -64,7 +65,6 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		this.config = config;
 		this.immutablePlaceholders = ImmutableMap.of();
 		this.messagesMap = messageMap;
-		this.captionMap = new HashMap<>();
 		this.disabledMessages = new LinkedList<>();
 	}
 
@@ -157,38 +157,24 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		return foundNotExisting.get(messageKey);
 	}
 
-
-	@Override
-	public Map<String, PlainMessage> captionMessages() {
-		return captionMap;
-	}
-
 	@Override
 	public CommandManager<CommandSender> commandManager() {
 		return commandManager;
 	}
 	@Override
-	public @NotNull PlainMessage loadMessage(@NotNull Caption caption) {
-		Object messageSection = this.config.get(caption.key());
-		PlainMessage message;
-		if (messageSection instanceof String) {
-			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
-			message = new PlainMessage(caption.key(), messageComponent);
-			this.captionMap.put(caption.key(), message);
-			foundNotExisting.put(caption.key(), true);
-		} else {
-			plugin.getLogger().severe("Couldn't find message key for " + caption.key() + " creating a temporal message for it!");
-			message = new PlainMessage(caption.key(), Component.text(caption.key()));
-			captionMap.put(caption.key(), message);
-			foundNotExisting.put(caption.key(), false);
+	public @Nullable Message loadMessage(@NotNull Caption caption) {
+		Message message = loadMessage(caption.key());
+		if (message != null) {
+			commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(caption, (sender) -> provide(caption, sender)));
 		}
 		return message;
 	}
 
 	@Override
-	public PlainMessage getMessage(Caption caption) {
-		return captionMap.get(caption.key());
+	public @Nullable Message getMessage(@NotNull Caption caption) {
+		return messagesMap.get(caption.key());
 	}
+
 
 	@Override
 	public void registerCommandManager(CommandManager<CommandSender> commandManager) throws IllegalStateException {
@@ -198,10 +184,15 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		this.commandManager = commandManager;
 		this.commandManager.captionRegistry()
 				.registerProvider(this);
+		commandManager.captionRegistry().registerProvider(this);
 	}
 	@Override
 	public @org.checkerframework.checker.nullness.qual.Nullable String provide(@NonNull Caption caption, @NonNull CommandSender recipient) {
-		return parse(recipient, caption);
+		Message message = getMessage(caption.key());
+		if (message == null){
+			return null;
+		}
+		return PlainTextComponentSerializer.plainText().serialize(formatCaption(caption, recipient, caption.key()));
 	}
 
 	@Nullable
@@ -527,17 +518,15 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		return parse(message, type, List.of(placeholders));
 	}
 
-	@Override
-	public String parse(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
-		if (captionMap.get(caption.key()) == null){
-			return null;
-		}
-		return PlainTextComponentSerializer.plainText().serialize(parseAsComponent(sender, caption, placeholders));
-	}
 
 	@Override
-	public Component parseAsComponent(CommandSender sender, Caption caption, List<Placeholder> placeholders) {
-		return parse(captionMap.get(caption.key()), Message.Type.CHAT, placeholders);
+	public @NonNull Component formatCaption(@NonNull Caption captionKey, @NonNull CommandSender recipient, @NonNull String caption, @NonNull List<@NonNull CaptionVariable> variables) {
+		Message message = messagesMap.get(captionKey.key());
+		if (message == null){
+			return Component.empty();
+		}
+		List<Placeholder> placeholders = variables.stream().map(CaptionVariableToPlaceholder::apply).toList();;
+		return parse(message, Message.Type.CHAT, placeholders);
 	}
 
 	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {

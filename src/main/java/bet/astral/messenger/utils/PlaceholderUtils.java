@@ -75,7 +75,7 @@ public final class PlaceholderUtils {
 
 	public static List<Placeholder> createPlaceholders(String name, CommandSender commandSender){
 		if (commandSender instanceof Player player){
-			return createPlaceholders(name, (Entity) player);
+			return createPlaceholders(name, (LivingEntity) player);
 		} else if (commandSender instanceof LivingEntity entity){
 			return createPlaceholders(name, entity);
 		}
