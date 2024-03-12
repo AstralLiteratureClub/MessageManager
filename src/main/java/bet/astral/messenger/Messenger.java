@@ -1,7 +1,6 @@
 package bet.astral.messenger;
 
 import bet.astral.messenger.cloud.CaptionMessenger;
-import bet.astral.messenger.permission.Permission;
 import bet.astral.messenger.placeholder.CaptionVariableToPlaceholder;
 import bet.astral.messenger.placeholder.LegacyPlaceholder;
 import bet.astral.messenger.placeholder.MessagePlaceholder;
@@ -34,6 +33,7 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.permission.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -418,17 +418,17 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 	}
 	public void broadcast(Permission permission, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		if (permission == null) {
-			permission = Permission.empty;
+			permission = Permission.EMPTY;
 		}
 
 		for (Player player : this.plugin.getServer().getOnlinePlayers()) {
-			if (permission.checkPermission(player)) {
+			if (commandManager.testPermission(player, permission).allowed()) {
 				this.message(player, messageKey, delay, placeholders);
 			}
 		}
 
 		ConsoleCommandSender consoleSender = this.plugin.getServer().getConsoleSender();
-		if (permission.checkPermission(consoleSender)) {
+		if (commandManager.testPermission(consoleSender, permission).allowed()) {
 			this.message(this.plugin.getServer().getConsoleSender(), messageKey, delay, senderSpecificPlaceholders, placeholders);
 		}
 	}
@@ -482,11 +482,12 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		if (!this.disabledMessages.contains(messageKey)) {
 			if (permission != null) {
 				if (to instanceof CommandSender sender){
-					if (!permission.checkPermission(sender)){
+					if (commandManager.testPermission(sender, permission).denied()){
 						return;
 					}
 				} else if (to instanceof ForwardingAudience forwardingAudience){
-					to = forwardingAudience.filterAudience(audience -> audience instanceof CommandSender sender && permission.checkPermission(sender));
+					to = forwardingAudience.filterAudience(audience -> audience instanceof CommandSender sender &&
+							commandManager.testPermission(sender, permission).allowed());
 				}else {
 					return;
 				}
