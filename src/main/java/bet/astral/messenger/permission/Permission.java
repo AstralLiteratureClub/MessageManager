@@ -1,6 +1,8 @@
 package bet.astral.messenger.permission;
 
+import jdk.jshell.spi.SPIResolutionException;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public interface Permission {
+@Deprecated(forRemoval = true)
+public interface Permission extends org.incendo.cloud.permission.Permission {
 	Permission empty = Permission.of("");
 	boolean checkPermission(CommandSender commandSender);
 
@@ -18,13 +21,11 @@ public interface Permission {
 	default Permission with(Permission permission) {
 		return new DoublePermission(this, permission);
 	}
-	default Permission with(Predicate<CommandSender> predicate) {
-		return new DoublePermission(this, new PredicatePermission(predicate));
-	}
+
 
 	@NotNull
-	default Collection<Permission> permissions() {
-		Collection<Permission> permissions = new ArrayList<>();
+	default Collection<org.incendo.cloud.permission.Permission> permissions() {
+		Collection<org.incendo.cloud.permission.Permission> permissions = new ArrayList<>();
 		if (this instanceof DoublePermission doublePermission){
 			permissions.addAll(doublePermission.getOne().permissions());
 			permissions.addAll(doublePermission.getTwo().permissions());
@@ -53,6 +54,8 @@ public interface Permission {
 		return new DoublePermission(new PredicatePermission(predicate), new PredicatePermission(predicate2));
 	}
 
+
+
 	static Permission of(String @NotNull ... permissions){
 		Permission permission = empty;
 		for (String permissionStr : permissions){
@@ -71,7 +74,7 @@ public interface Permission {
 	static Permission of(Predicate<CommandSender> @NotNull ... predicates){
 		Permission permission = empty;
 		for (Predicate<CommandSender> predicate : predicates){
-			permission = permission.with(predicate);
+			permission = permission.with(Permission.of(predicate));
 		}
 		return permission;
 	}

@@ -2,9 +2,11 @@ package bet.astral.messenger.permission;
 
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Contract;
 
 @Getter
+@Deprecated(forRemoval = true)
 public class DoublePermission implements Permission {
 	private final Permission one;
 	private final Permission two;
@@ -18,5 +20,10 @@ public class DoublePermission implements Permission {
 	@Override
 	public boolean checkPermission(CommandSender commandSender) {
 		return one.checkPermission(commandSender) && two.checkPermission(commandSender);
+	}
+
+	@Override
+	public @NonNull String permissionString() {
+		return one.permissionString()+", "+two.permissionString();
 	}
 }
