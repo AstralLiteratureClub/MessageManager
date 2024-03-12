@@ -20,4 +20,8 @@ public class PlaceholderList extends LinkedList<Placeholder> {
 	public void add(int index, String name, Object info) {
 		add(index, PlaceholderUtils.createPlaceholder(null, name, index));
 	}
+
+	public void add(String prefix, Placeholderable placeholderable){
+		this.addAll(placeholderable.asPlaceholder(prefix));
+	}
 }
