@@ -1,6 +1,7 @@
 package bet.astral.messenger.placeholder;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -8,7 +9,7 @@ import org.incendo.cloud.caption.CaptionVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Placeholder implements CaptionVariable {
+public class Placeholder implements CaptionVariable, ComponentLike {
 	protected static final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
 	protected static final LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
@@ -87,5 +88,17 @@ public class Placeholder implements CaptionVariable {
 
 	public boolean isComponentValue() {
 		return isComponentValue;
+	}
+
+	@Override
+	public @NotNull Component asComponent() {
+		if (componentValue == null){
+			if (isLegacy){
+				return legacyAmpersand.deserialize(stringValue);
+			} else {
+				return miniMessage.deserialize(stringValue);
+			}
+		}
+		return componentValue;
 	}
 }
