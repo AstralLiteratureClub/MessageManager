@@ -1,6 +1,7 @@
 package bet.astral.messenger.offline;
 
-import bet.astral.messenger.Message;
+import bet.astral.messenger.message.message.Message;
+import bet.astral.messenger.message.MessageType;
 import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -14,11 +15,11 @@ public class OfflineMessage extends Message {
 		return RandomStringUtils.random(7, true, true);
 	}
 	private String id;
-	public OfflineMessage(@NotNull String key, @NotNull Map<Type, Component> messages, @Nullable Map<String, Placeholder> builtInComponents) {
+	public OfflineMessage(@NotNull String key, @NotNull Map<MessageType, Component> messages, @Nullable Map<String, Placeholder> builtInComponents) {
 		super(key, messages, builtInComponents);
 	}
 
-	public OfflineMessage(@NotNull String key, @NotNull Map<Type, Component> messages) {
+	public OfflineMessage(@NotNull String key, @NotNull Map<MessageType, Component> messages) {
 		super(key, messages);
 	}
 

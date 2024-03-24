@@ -9,6 +9,8 @@ import org.incendo.cloud.caption.CaptionVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class Placeholder implements CaptionVariable, ComponentLike {
 	protected static final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
@@ -51,6 +53,10 @@ public class Placeholder implements CaptionVariable, ComponentLike {
 
 	public static Placeholder of(CaptionVariable variable){
 		return new Placeholder(variable.key(), variable.value());
+	}
+
+	public static PlaceholderList of(List<CaptionVariable> variables){
+		return new PlaceholderList(variables.stream().map(Placeholder::of).toList());
 	}
 
 	public static Placeholder emptyPlaceholder(@NotNull String key){

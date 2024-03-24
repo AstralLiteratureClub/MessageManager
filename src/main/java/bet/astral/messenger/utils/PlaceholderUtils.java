@@ -1,9 +1,6 @@
 package bet.astral.messenger.utils;
 
-import bet.astral.messenger.Message;
-import bet.astral.messenger.Messenger;
 import bet.astral.messenger.placeholder.LegacyPlaceholder;
-import bet.astral.messenger.placeholder.MessagePlaceholder;
 import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
@@ -19,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -56,18 +52,6 @@ public final class PlaceholderUtils {
 		return new Placeholder(name, value);
 	}
 
-	public static MessagePlaceholder placeholderMessage(Messenger<?> manager, String name, String messageKey, Message.Type type) {
-		Message message = manager.getMessage(messageKey);
-		if (message == null) {
-			manager.loadMessage(messageKey);
-			message = manager.getMessage(messageKey);
-			if (message == null) {
-				return MessagePlaceholder.emptyPlaceholder(name);
-			}
-		}
-
-		return MessagePlaceholder.create(name, message, type);
-	}
 
 	public static List<Placeholder> createPlaceholders(Player player){
 		return createPlaceholders("player", (LivingEntity) player);
@@ -454,4 +438,22 @@ public final class PlaceholderUtils {
 	}
 
 
+	public static Map<String, Placeholder> asMap(Collection<Placeholder> placeholders) {
+		Map<String, Placeholder> placeholderMap = new HashMap<>();
+		if (placeholders.isEmpty()){
+			return placeholderMap;
+		}
+		for (Placeholder placeholder : placeholders){
+			placeholderMap.put(placeholder.key(), placeholder);
+		}
+		return placeholderMap;
+	}
+
+	public static Set<Placeholder> asSet(Map<String, Placeholder> placeholders) {
+		return new HashSet<>(placeholders.values());
+	}
+
+	public static List<Placeholder> asList(Map<String, Placeholder> placeholders) {
+		return new LinkedList<>(placeholders.values());
+	}
 }

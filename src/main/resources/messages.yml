@@ -14,6 +14,8 @@ placeholders:
     value: "<red><b>Astral<reset>"
     type: default
 
+
+
 combat:
   enter:
     enabled: true
@@ -36,7 +38,9 @@ quit-message:
 
 chat-format:
   serializer: legacy
-  chat: "%luckperms_prefix%%player%%luckperms_suffix5 &7> &f%message%"
+  chat:
+    parser: random
+    value: "%luckperms_prefix%%player%%luckperms_suffix5 &7> &f%message%"
   # Built in placeholders, so they can define something if x thing is not set.
   # Even could build the message using placeholders, but it would take performance
   placeholders:

@@ -1,9 +1,10 @@
 package bet.astral.messenger.offline;
 
-import bet.astral.messenger.Message;
+import bet.astral.messenger.message.message.Message;
 import bet.astral.messenger.Messenger;
 import bet.astral.messenger.database.MessageDatabase;
 import bet.astral.messenger.database.PlayerDatabase;
+import bet.astral.messenger.message.MessageType;
 import bet.astral.messenger.placeholder.Placeholder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
@@ -60,10 +61,10 @@ public abstract class OfflineMessenger<P extends JavaPlugin> extends Messenger<P
 			if (senderSpecificPlaceholders){
 				placeholderList.addAll(createPlaceholders("player", to));
 			}
-			Component chat_parsed = parse(message, Message.Type.CHAT, placeholderList);
-			Component action_bar_parsed = parse(message, Message.Type.ACTION_BAR, placeholderList);
-			Component title_parsed = parse(message, Message.Type.TITLE, placeholderList);
-			Component subtitle_parsed = parse(message, Message.Type.SUBTITLE, placeholderList);
+			Component chat_parsed = parse(message, MessageType.CHAT, placeholderList);
+			Component action_bar_parsed = parse(message, MessageType.ACTION_BAR, placeholderList);
+			Component title_parsed = parse(message, MessageType.TITLE, placeholderList);
+			Component subtitle_parsed = parse(message, MessageType.SUBTITLE, placeholderList);
 			ParsedOfflineMessage parsedOfflineMessage = new ParsedOfflineMessage(messageKey, chat_parsed, action_bar_parsed, title_parsed, subtitle_parsed, System.currentTimeMillis()+timeToExpire, messagesExpire);
 
 			messageDatabase.save(parsedOfflineMessage);
