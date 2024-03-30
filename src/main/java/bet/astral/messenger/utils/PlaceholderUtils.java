@@ -44,6 +44,7 @@ public final class PlaceholderUtils {
 	public final static DecimalFormat decimalFormat2 = new DecimalFormat(".00");
 
 	private PlaceholderUtils(){}
+	@Deprecated(forRemoval = true)
 	public static Placeholder placeholder(String name, String value, boolean legacy) {
 		return legacy ? new LegacyPlaceholder(name, value) : new Placeholder(name, value, false);
 	}
@@ -53,10 +54,12 @@ public final class PlaceholderUtils {
 	}
 
 
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(Player player){
 		return createPlaceholders("player", (LivingEntity) player);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(String name, CommandSender commandSender){
 		if (commandSender instanceof Player player){
 			return createPlaceholders(name, (LivingEntity) player);
@@ -67,6 +70,7 @@ public final class PlaceholderUtils {
 		placeholders.add(createPlaceholder(name, "name", commandSender.getName()));
 		return placeholders;
 	}
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(String name, LivingEntity entity){
 		List<Placeholder> placeholders = new LinkedList<>();
 		placeholders.add(createPlaceholder(name,"uuid", entity.getUniqueId())); // unique id
@@ -171,10 +175,13 @@ public final class PlaceholderUtils {
 
 		return placeholders;
 	}
-	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull OfflinePlayer player){
+	@Deprecated(forRemoval = true)
+	public static List<Placeholder> createPlaceholders(@Nullable String name, @NotNull OfflinePlayer player){
 		List<Placeholder> placeholders = new LinkedList<>();
 		placeholders.add(createPlaceholder(name, "name", player.getName()));
-		placeholders.add(new Placeholder(name, Component.text(player.getName())));
+		if (name != null) {
+			placeholders.add(new Placeholder(name, Component.text(player.getName())));
+		}
 		placeholders.add(createPlaceholder(name, "first_join", dateFormat.format(Date.from(Instant.ofEpochSecond(player.getFirstPlayed()))))); // first join formatted
 		placeholders.add(createPlaceholder(name, "first_join_unix", player.getFirstPlayed())); // first join in default form
 		placeholders.add(createPlaceholder(name, "last_played", dateFormat.format(Date.from(Instant.ofEpochSecond(player.getLastSeen()))))); // last time
@@ -186,6 +193,7 @@ public final class PlaceholderUtils {
 		return placeholders;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static Placeholder createPlaceholder(@Nullable String namespace, @NotNull String key, Object value){
 		String prefix = namespace != null && !namespace.isEmpty() ? namespace+"_"+key : key;
 		if (value == null){
@@ -199,6 +207,7 @@ public final class PlaceholderUtils {
 		return new Placeholder(prefix, value);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable Location location) {
 		if (location == null){
 			return Collections.emptyList();
@@ -216,6 +225,7 @@ public final class PlaceholderUtils {
 		placeholders.add(createPlaceholder(name, defaultVal(name2) + "_world", location.getWorld().getName()));
 		return placeholders;
 	}
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable Biome biome) {
 		if (biome == null){
 			return Collections.emptyList();
@@ -226,6 +236,7 @@ public final class PlaceholderUtils {
 		return placeholders;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable ItemStack itemStack){
 		if (itemStack == null){
 			return Collections.emptyList();
@@ -258,13 +269,16 @@ public final class PlaceholderUtils {
 		return placeholders;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static String defaultVal(String name){
 		return name.isEmpty() ? "" : name;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static String improveKeyName(Keyed key){
 		return improveKeyName(key.key());
 	}
+	@Deprecated(forRemoval = true)
 	public static String improveKeyName(Key key) {
 		if (key == null) {
 			return "null";
@@ -281,6 +295,7 @@ public final class PlaceholderUtils {
 		return builder.toString();
 	}
 
+	@Deprecated(forRemoval = true)
 	public static String improveName(String name){
 		name = name.replaceAll("[_-]", " ").toLowerCase();
 		StringBuilder builder = new StringBuilder();
@@ -292,12 +307,14 @@ public final class PlaceholderUtils {
 
 		return builder.toString();
 	}
+	@Deprecated(forRemoval = true)
 	public static boolean isValid(@Nullable Location location, @NotNull String material){
 		if (location == null || location.getWorld() == null)
 			return false;
 		Block block = location.getWorld().getBlockAt(location);
 		return (block.getType().name().toLowerCase().contains(material.toLowerCase()));
 	}
+	@Deprecated(forRemoval = true)
 	public static boolean isValid(@Nullable Location location, @NotNull Material material){
 		if (location == null || location.getWorld() == null)
 			return false;
@@ -305,6 +322,7 @@ public final class PlaceholderUtils {
 		return (block.getType() == material);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static Component formatNumber(boolean colored, double ping, double target, double worst){
 		String format = decimalFormat0.format(ping);
 		if (colored){
@@ -318,6 +336,7 @@ public final class PlaceholderUtils {
 			return Component.text(format);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static BlockFace direction(float yaw){
 		switch (Math.round(yaw/45f) & 0x7) {
 			default ->{
@@ -346,6 +365,7 @@ public final class PlaceholderUtils {
 			}
 		}
 	}
+	@Deprecated(forRemoval = true)
 	public static String direction(boolean shortened, BlockFace blockFace){
 		switch (blockFace){
 			case NORTH -> {
@@ -375,10 +395,12 @@ public final class PlaceholderUtils {
 		}
 		return "N";
 	}
+	@Deprecated(forRemoval = true)
 	public static boolean isAirOrNull(@Nullable ItemStack itemStack){
 		return itemStack == null || itemStack.isEmpty();
 	}
 
+	@Deprecated(forRemoval = true)
 	public static boolean hasEmptySlot(EntityEquipment entityEquipment){
 		if (isAirOrNull(entityEquipment.getHelmet()))
 			return true;
@@ -392,6 +414,7 @@ public final class PlaceholderUtils {
 			return true;
 		return isAirOrNull(entityEquipment.getItemInOffHand());
 	}
+	@Deprecated(forRemoval = true)
 	public static boolean hasEmptySlot(PlayerInventory playerInventory){
 		if (isAirOrNull(playerInventory.getHelmet()))
 			return true;
@@ -408,6 +431,7 @@ public final class PlaceholderUtils {
 		return playerInventory.contains(Material.AIR);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static int emptySlots(EntityEquipment inv){
 		int slots = 0;
 		for (ItemStack armor : inv.getArmorContents()){
@@ -420,6 +444,7 @@ public final class PlaceholderUtils {
 			slots++;
 		return slots;
 	}
+	@Deprecated(forRemoval = true)
 	public static int emptySlots(PlayerInventory inv){
 		int slots = 0;
 		for (ItemStack armor : inv.getArmorContents()){
@@ -438,6 +463,7 @@ public final class PlaceholderUtils {
 	}
 
 
+	@Deprecated(forRemoval = true)
 	public static Map<String, Placeholder> asMap(Collection<Placeholder> placeholders) {
 		Map<String, Placeholder> placeholderMap = new HashMap<>();
 		if (placeholders.isEmpty()){
@@ -449,10 +475,12 @@ public final class PlaceholderUtils {
 		return placeholderMap;
 	}
 
+	@Deprecated(forRemoval = true)
 	public static Set<Placeholder> asSet(Map<String, Placeholder> placeholders) {
 		return new HashSet<>(placeholders.values());
 	}
 
+	@Deprecated(forRemoval = true)
 	public static List<Placeholder> asList(Map<String, Placeholder> placeholders) {
 		return new LinkedList<>(placeholders.values());
 	}

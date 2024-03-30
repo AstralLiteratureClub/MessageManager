@@ -73,7 +73,7 @@ public class PlaceholderManager {
 
 	@NotNull
 	public List<Placeholder> playerPlaceholders(@Nullable String prefix, @NotNull Player player){
-		return null;
+		return PlaceholderUtils.createPlaceholders(prefix, (LivingEntity) player);
 	}
 
 	@NotNull
@@ -81,7 +81,7 @@ public class PlaceholderManager {
 		if (player instanceof Player p){
 			return playerPlaceholders(prefix, p);
 		}
-		return null;
+		return PlaceholderUtils.createPlaceholders(prefix, player);
 	}
 
 	@NotNull
@@ -89,7 +89,7 @@ public class PlaceholderManager {
 		if (entity instanceof Player player){
 			return playerPlaceholders(prefix, player);
 		}
-		return null;
+		return PlaceholderUtils.createPlaceholders(prefix, entity);
 	}
 
 	@NotNull
@@ -107,7 +107,7 @@ public class PlaceholderManager {
 		} else if (commandSender instanceof LivingEntity entity){
 			return entityPlaceholders(prefix, entity);
 		}
-		return null;
+		return PlaceholderUtils.createPlaceholders(prefix, commandSender);
 	}
 
 	public ImmutableMap<String, Placeholder> loadPlaceholders(String key, MemorySection config) {
