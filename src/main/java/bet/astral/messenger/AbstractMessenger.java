@@ -1,6 +1,7 @@
 package bet.astral.messenger;
 
 import bet.astral.messenger.cloud.AbstractCommandMessenger;
+import bet.astral.messenger.message.MessageType;
 import bet.astral.messenger.message.message.IMessage;
 import bet.astral.messenger.message.message.Message;
 import bet.astral.messenger.message.part.IMessagePart;
@@ -11,22 +12,27 @@ import bet.astral.messenger.placeholder.Placeholder;
 import bet.astral.messenger.placeholder.PlaceholderManager;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.Logger;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import org.bukkit.configuration.MemorySection;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.permission.Permission;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
 
 @Getter
-public abstract class AbstractMessenger<P, Comp, Audience> extends AbstractCommandMessenger<Comp, Audience> {
+public abstract class AbstractMessenger<P, Comp, CommandSender> extends AbstractCommandMessenger<Comp, CommandSender> {
 	protected final P main;
 	@Setter
 	protected Logger logger;
 	protected Map<String, IMessage<IMessagePart<Comp>, Comp>> messages;
 	protected Map<String, IMessageSerializer<?, ?, Comp>> deserializers = new HashMap<>();
+	protected Set<IMessageSerializer<?, ?, Comp>> titleDeserializers;
 	@Setter
 	private PlaceholderManager placeholderManager;
 	@Getter
@@ -36,18 +42,51 @@ public abstract class AbstractMessenger<P, Comp, Audience> extends AbstractComma
 	@Getter
 	@Setter
 	private boolean consoleLogger = false;
-	private final AudienceForwarder<Audience, Comp> forwarder;
 	public final Class<Comp> componentType;
 
-	public AbstractMessenger(CommandManager<Audience> commandManager, P main, Map<String, IMessage<IMessagePart<Comp>, Comp>> messages, @NotNull IMessageTypeSerializer<Comp> messageTypeSerializer, AudienceForwarder<Audience, Comp> forwarder, Class<Comp> componentType) {
+	public AbstractMessenger(CommandManager<CommandSender> commandManager, P main, Map<String, IMessage<IMessagePart<Comp>, Comp>> messages, @NotNull IMessageTypeSerializer<Comp> messageTypeSerializer, Class<Comp> componentType) {
 		super(commandManager);
 		this.main = main;
 		this.messages = messages;
 		this.messageTypeSerializer = messageTypeSerializer;
-		this.forwarder = forwarder;
+		this.titleDeserializers = new HashSet<>();
 		this.componentType = componentType;
 		deserializers.put("default", new DefaultMessageSerializer<>(messageTypeSerializer, Message.class));
 	}
+
+	@Nullable
+	public abstract IMessage<?, Comp> loadMessage(@NotNull String messageKey);
+	@NotNull
+	public Map<String, Placeholder> loadPlaceholder(@NotNull String key, @NotNull MemorySection configuration) {
+		return getPlaceholderManager().loadPlaceholders(key, configuration);
+	}
+
+	@Nullable
+	public IMessage<?, Comp> getMessage(@NotNull String messageKey) {
+		return messages.get(messageKey);
+	}
+	@NotNull
+	public CompletableFuture<IMessage<?, Comp>> getMessageOrLoad(@NotNull String messageKey) {
+		return CompletableFuture.supplyAsync(()->{
+			IMessage<?, Comp> message = messages.get(messageKey);
+			if (message == null){
+				return loadMessage(messageKey);
+			}
+			return message;
+		});
+	}
+
+	@Nullable
+	public abstract Component parse(@NotNull IMessage<?, Component> message, @NotNull MessageType type, List<Placeholder> placeholders);
+
+	public void addTitleSerializer(IMessageSerializer<?, ?, Comp> serializer){
+		this.titleDeserializers.add(serializer);
+	}
+
+	public void removeTitleSerializer(IMessageSerializer<?, ?, Comp> serializer){
+		this.titleDeserializers.remove(serializer);
+	}
+
 
 	public void broadcast(String  messageKey, Placeholder... placeholders){
 		broadcast(null, messageKey, 0, false, List.of(placeholders));

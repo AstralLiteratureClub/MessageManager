@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface CaptionMessenger<Comp, Sender> extends CaptionProvider<Sender>, CaptionFormatter<Sender, Comp> {
 	@Nullable
-	CommandManager<Sender> commandManager();
+	CommandManager<Sender> getCommandManager();
 	@Nullable
 	IMessage<?, Comp> loadMessage(@NotNull Caption caption);
 	@Nullable

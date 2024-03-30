@@ -14,7 +14,7 @@ public abstract class AbstractCommandMessenger<Comp, Sender> implements CaptionM
 	}
 
 	@Override
-	public @NotNull CommandManager<Sender> commandManager() {
+	public @NotNull CommandManager<Sender> getCommandManager() {
 		return commandManager;
 	}
 

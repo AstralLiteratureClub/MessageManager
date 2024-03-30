@@ -22,9 +22,4 @@ public interface PlayerMessengerAudience<P extends JavaPlugin> extends Messenger
 	}
 	@NotNull
 	UUID  getUniqueId();
-
-	@Override
-	default List<Placeholder> createPlaceholders() {
-		return messenger().getPlaceholderManager().offlinePlayerPlaceholders(asOfflinePlayer());
-	}
 }

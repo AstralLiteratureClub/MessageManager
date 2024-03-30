@@ -1,7 +1,5 @@
 package bet.astral.messenger.placeholder;
 
-import bet.astral.messenger.message.MessageType;
-import bet.astral.messenger.message.message.IMessage;
 import bet.astral.messenger.utils.PlaceholderUtils;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
@@ -10,12 +8,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,61 +42,70 @@ public class PlaceholderManager {
 		return PlaceholderUtils.asList(placeholders);
 	}
 
+	@SafeVarargs
 	@NotNull
-	public List<Placeholder> combine(@NotNull Collection<Placeholder> placeholders, @NotNull Collection<Placeholder>... placeholderListArray){
+	public final List<Placeholder> combine(@NotNull Collection<Placeholder> placeholders, @Nullable Collection<Placeholder>... placeholderListArray){
 		PlaceholderList placeholderList = new PlaceholderList();
 		placeholders = new LinkedList<>(placeholders);
 		for (Collection<Placeholder> placeholderListCop : placeholderListArray){
+			if (placeholderListCop == null) {
+				continue;
+			}
 			placeholders.addAll(placeholderListCop);
 		}
 		return placeholderList;
 	}
 
+	@SafeVarargs
 	@NotNull
-	public Map<String, Placeholder> combine(@NotNull Map<String, Placeholder> placeholders, @NotNull Map<String, Placeholder>... placeholderListArray){
+	public final Map<String, Placeholder> combine(@NotNull Map<String, Placeholder> placeholders, @Nullable Map<String, Placeholder>... placeholderListArray){
 		placeholders = new HashMap<>(placeholders);
 		for (Map<String, Placeholder> placeholderMap : placeholderListArray){
+			if (placeholderMap == null) {
+				continue;
+			}
 			placeholders.putAll(placeholderMap);
 		}
 		return placeholders;
 	}
 
 
+
 	@NotNull
-	public List<Placeholder> playerPlaceholders(@NotNull Player player){
+	public List<Placeholder> playerPlaceholders(@Nullable String prefix, @NotNull Player player){
 		return null;
 	}
 
 	@NotNull
-	public List<Placeholder> offlinePlayerPlaceholders(@NotNull OfflinePlayer player){
+	public List<Placeholder> offlinePlayerPlaceholders(@Nullable String prefix, @NotNull OfflinePlayer player){
 		if (player instanceof Player p){
-			return playerPlaceholders(p);
+			return playerPlaceholders(prefix, p);
 		}
 		return null;
 	}
 
 	@NotNull
-	public List<Placeholder> entityPlaceholders(@NotNull LivingEntity entity){
+	public List<Placeholder> entityPlaceholders(@Nullable String prefix, @NotNull LivingEntity entity){
 		if (entity instanceof Player player){
-			return playerPlaceholders(player);
+			return playerPlaceholders(prefix, player);
 		}
 		return null;
 	}
 
 	@NotNull
-	public List<Placeholder> placeholders(@NotNull Audience audience){
+	public List<Placeholder> placeholders(@Nullable String prefix, @NotNull Audience audience){
 		if (audience instanceof CommandSender sender){
-			return this.senderPlaceholders(sender);
+			return this.senderPlaceholders(prefix, sender);
 		}
 		return Collections.emptyList();
 	}
 
 	@NotNull
-	public List<Placeholder> senderPlaceholders(@NotNull CommandSender commandSender){
+	public List<Placeholder> senderPlaceholders(@Nullable String prefix, @NotNull CommandSender commandSender){
 		if (commandSender instanceof Player player){
-			return playerPlaceholders(player);
+			return playerPlaceholders(prefix, player);
 		} else if (commandSender instanceof LivingEntity entity){
-			return entityPlaceholders(entity);
+			return entityPlaceholders(prefix, entity);
 		}
 		return null;
 	}

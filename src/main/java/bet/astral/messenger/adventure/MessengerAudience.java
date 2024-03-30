@@ -2,20 +2,15 @@ package bet.astral.messenger.adventure;
 
 import bet.astral.messenger.Messenger;
 import bet.astral.messenger.placeholder.Placeholder;
-import net.kyori.adventure.audience.Audience;
+import bet.astral.messenger.placeholder.Placeholderable;
 import net.kyori.adventure.audience.ForwardingAudience;
-import net.kyori.adventure.text.Component;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.permission.Permission;
 
 import java.util.List;
 
-public interface MessengerAudience<P extends JavaPlugin> extends ForwardingAudience {
-	Messenger<P, Component, Audience> messenger();
-
-	default List<Placeholder> createPlaceholders(){
-		return messenger().getPlaceholderManager().placeholders(this);
-	}
+public interface MessengerAudience<P extends JavaPlugin> extends ForwardingAudience, Placeholderable {
+	Messenger<P> messenger();
 
 	default void message(String  messageKey, Placeholder... placeholders){
 		messenger().message(this, messageKey, 0, false, List.of(placeholders));

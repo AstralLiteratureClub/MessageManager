@@ -3,11 +3,12 @@ package bet.astral.messenger.message.serializer;
 import bet.astral.messenger.message.message.IMessage;
 import bet.astral.messenger.message.MessageType;
 import bet.astral.messenger.message.part.DefaultMessagePart;
+import bet.astral.messenger.message.part.IMessagePart;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DefaultMessageSerializer<M extends IMessage<DefaultMessagePart<C>, C>, C> implements IMessageSerializer<M, DefaultMessagePart<C>, C> {
+public class DefaultMessageSerializer<M extends IMessage<IMessagePart<C>, C>, C> implements IMessageSerializer<M, IMessagePart<C>, C> {
 	private final IMessageTypeSerializer<C> serializer;
 	private final Class<M> type;
 	public DefaultMessageSerializer(IMessageTypeSerializer<C> serializer, Class<M> type) {
