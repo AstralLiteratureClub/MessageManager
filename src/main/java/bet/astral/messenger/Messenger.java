@@ -476,7 +476,6 @@ public class Messenger<P extends JavaPlugin> extends AbstractMessenger<P, Compon
 	}
 
 	public ComponentLogger getLogger() {
-		return (ComponentLogger) super.getLogger();
+		return getMain().getComponentLogger();
 	}
-
 }
