@@ -51,6 +51,14 @@ public class Placeholder implements CaptionVariable, ComponentLike {
 			this(key, objectValue.toString(), isLegacy);
 	}
 
+	protected Placeholder(@NotNull String key, boolean isComponentValue) {
+		this.componentValue = null;
+		this.stringValue = "";
+		this.key = key;
+		this.isComponentValue = isComponentValue;
+		this.isLegacy = false;
+	}
+
 	public static Placeholder of(CaptionVariable variable){
 		return new Placeholder(variable.key(), variable.value());
 	}
