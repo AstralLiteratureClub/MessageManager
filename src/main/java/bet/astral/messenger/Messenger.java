@@ -42,8 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static bet.astral.messenger.message.MessageType.SUBTITLE;
-import static bet.astral.messenger.message.MessageType.TITLE;
+import static bet.astral.messenger.message.MessageType.*;
 
 /**
  * OfflineMessage manager which loads messages in runtime and parses them.
@@ -132,24 +131,17 @@ public class Messenger<P extends JavaPlugin> extends AbstractMessenger<P, Compon
 			this.messagesMap.put(messageKey, message);
 			foundNotExisting.put(messageKey, true);
 			return message;
-		} else {
+		} else if (messageSection instanceof List<?>){
+			List<String> list = this.config.getStringList(messageKey);
+			IMessageSerializer<?, ?, Component> serializer = getDeserializers().get("default");
+			IMessagePart<Component> part = serializer.deserialize(list, MessageType.CHAT);
+			message = new AdventureMessage(messageKey, part);
+
+			this.messagesMap.put(messageKey, message);
+			return message;
+		}else {
 			Object chatObj;
-			if (this.config.getList(messageKey) != null && !Objects.requireNonNull(this.config.getList(messageKey)).isEmpty()) {
-				List<String> list = this.config.getStringList(messageKey);
-				Component component = null;
-				IMessageSerializer<?, ?, Component> serializer = getDeserializers().get("default");
-				IMessagePart<Component> part = serializer.deserialize(list, MessageType.CHAT);
-				if (component == null) {
-					this.disabledMessages.add(messageKey);
-					foundNotExisting.put(messageKey, true);
-					return null;
-				} else {
-					message = new AdventureMessage(messageKey, new DefaultMessagePart<>(MessageType.CHAT));
-					this.messagesMap.put(messageKey, message);
-					foundNotExisting.put(messageKey, true);
-					return message;
-				}
-			} else if (!(messageSection instanceof MemorySection memorySection)) {
+			if (!(messageSection instanceof MemorySection memorySection)) {
 				foundNotExisting.put(messageKey, false);
 				throw new IllegalStateException("OfflineMessage configuration for " + messageKey + " is illegal. Please fix it!");
 			} else {
@@ -168,19 +160,12 @@ public class Messenger<P extends JavaPlugin> extends AbstractMessenger<P, Compon
 
 					Map<MessageType, IMessagePart<Component>> componentMap = new HashMap<>();
 					if (chatObj != null) {
-						Component component;
 						if (chatObj instanceof List) {
 							List<String> list = memorySection.getStringList("chat");
-							component = null;
-							for (String val : list){
-								if (component != null) {
-									component = component.appendNewline();
-									component = component.append(MiniMessage.miniMessage().deserialize(val));
-								} else {
-									component = MiniMessage.miniMessage().deserialize(val);
-								}
-							}
-							componentMap.put(MessageType.CHAT, new DefaultMessagePart<>(MessageType.CHAT));
+							IMessageSerializer<?, ?, Component> serializer = getDeserializers().get("default");
+							IMessagePart<Component> part = serializer.deserialize(list, MessageType.CHAT);
+
+							componentMap.put(MessageType.CHAT, part);
 						} else {
 							componentMap.put(MessageType.CHAT, tryToLoad(chatObj, MessageType.CHAT));
 						}
