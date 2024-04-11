@@ -34,4 +34,14 @@ public class ComponentTypeSerializer implements IMessageTypeSerializer<Component
 		}
 		return finalComp;
 	}
+
+	@Override
+	public @NotNull Component appendSpace(@NotNull Component component) {
+		return component.appendSpace();
+	}
+
+	@Override
+	public @NotNull Component appendNewLine(@NotNull Component component) {
+		return component.appendNewline();
+	}
 }

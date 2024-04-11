@@ -43,6 +43,6 @@ public class DefaultMessageSerializer<M extends IMessage<IMessagePart<C>, C>, C>
 
 	@Override
 	public @NotNull DefaultMessagePart<C> deserialize(@NotNull List<String> serialized, @NotNull MessageType type) {
-		return create(type, serializer.combine(serialized.stream().map(serializer::deserialize).toList()));
+		return create(type, serializer.combine(serialized.stream().map(serializer::deserialize).map(serializer::appendNewLine).toList()));
 	}
 }
