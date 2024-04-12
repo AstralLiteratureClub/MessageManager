@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class AdventurePlaceholderMessenger extends PlaceholderManager {
+public class AdventurePlaceholderManager extends PlaceholderManager {
 	public List<Placeholder> audiencePlaceholders(@Nullable String prefix, @NotNull Audience audience){
 		if (audience instanceof Player player){
 			return playerPlaceholders(prefix, player);

@@ -1,6 +1,6 @@
 package bet.astral.messenger;
 
-import bet.astral.messenger.adventure.AdventurePlaceholderMessenger;
+import bet.astral.messenger.adventure.AdventurePlaceholderManager;
 import bet.astral.messenger.message.adventure.AdventureMessage;
 import bet.astral.messenger.message.adventure.serializer.ComponentTitleSerializer;
 import bet.astral.messenger.message.adventure.serializer.ComponentTypeSerializer;
@@ -71,22 +71,22 @@ public class Messenger<P extends JavaPlugin> extends AbstractMessenger<P, Compon
 		this.messagesMap = new HashMap<>();
 		IMessageTypeSerializer<Component> serializer = new ComponentTypeSerializer();
 		setMessageTypeSerializer(serializer);
-		setPlaceholderManager(new AdventurePlaceholderMessenger());
+		setPlaceholderManager(new AdventurePlaceholderManager());
 		getDeserializers().put("default", new DefaultMessageSerializer<>(serializer, AdventureMessage.class));
 		getDeserializers().put("title", new ComponentTitleSerializer<>(serializer, AdventureMessage.class));
 	}
 
 	@Override
-	public AdventurePlaceholderMessenger getPlaceholderManager() {
-		return (AdventurePlaceholderMessenger) super.getPlaceholderManager();
+	public AdventurePlaceholderManager getPlaceholderManager() {
+		return (AdventurePlaceholderManager) super.getPlaceholderManager();
 	}
 
-	public void setPlaceholderManager(AdventurePlaceholderMessenger placeholderManager){
+	public void setPlaceholderManager(AdventurePlaceholderManager placeholderManager){
 		super.setPlaceholderManager(placeholderManager);
 	}
 	@Override
 	public void setPlaceholderManager(PlaceholderManager placeholderManager) {
-		if (placeholderManager instanceof AdventurePlaceholderMessenger){
+		if (placeholderManager instanceof AdventurePlaceholderManager){
 			super.setPlaceholderManager(placeholderManager);
 		} else {
 			throw new IllegalStateException("Only adventure placeholder manager or children classes of it are allowed in Messenger!");
