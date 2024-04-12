@@ -16,6 +16,37 @@ public class PlaceholderList extends LinkedList<Placeholder> {
 		super(c);
 	}
 
+	public static PlaceholderList combine(@NotNull Collection<Placeholder> placeholders1, @NotNull Collection<Placeholder>... placeholders2) {
+		PlaceholderList placeholders = new PlaceholderList();
+		placeholders.addAll(placeholders1);
+		for (Collection<Placeholder> placeholderCollection : placeholders2){
+			placeholders.addAll(placeholderCollection);
+		}
+		return placeholders;
+	}
+	public static PlaceholderList combine(@NotNull Collection<Placeholder> placeholders1, @NotNull Placeholder... placeholders2){
+		PlaceholderList placeholders = new PlaceholderList();
+		placeholders.addAll(placeholders1);
+		placeholders.addAll(placeholders2);
+		return placeholders;
+	}
+	public static PlaceholderList combine(@NotNull Placeholder[] placeholders1, @NotNull Collection<Placeholder>... placeholders2){
+		PlaceholderList placeholders = new PlaceholderList();
+		placeholders.addAll(placeholders1);
+		for (Collection<Placeholder> placeholderCollection : placeholders2){
+			placeholders.addAll(placeholderCollection);
+		}
+		return placeholders;
+	}
+	public static PlaceholderList combine(@NotNull Placeholder[] placeholders1, @NotNull Placeholder[]... placeholders2){
+		PlaceholderList placeholders = new PlaceholderList();
+		placeholders.addAll(placeholders1);
+		for (Placeholder[] placeholderCollection : placeholders2){
+			placeholders.addAll(placeholderCollection);
+		}
+		return placeholders;
+	}
+
 	public boolean add(String name, Object info) {
 		return add(PlaceholderUtils.createPlaceholder(null, name, info));
 	}
