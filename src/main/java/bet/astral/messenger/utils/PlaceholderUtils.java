@@ -49,6 +49,7 @@ public final class PlaceholderUtils {
 		return legacy ? new LegacyPlaceholder(name, value) : new Placeholder(name, value, false);
 	}
 
+	@Deprecated(forRemoval = true)
 	public static Placeholder placeholder(String name, Component value) {
 		return new Placeholder(name, value);
 	}
@@ -193,7 +194,7 @@ public final class PlaceholderUtils {
 		return placeholders;
 	}
 
-	@Deprecated(forRemoval = true)
+	@NotNull
 	public static Placeholder createPlaceholder(@Nullable String namespace, @NotNull String key, Object value){
 		String prefix = namespace != null && !namespace.isEmpty() ? namespace+"_"+key : key;
 		if (value == null){
