@@ -1,5 +1,6 @@
 package bet.astral.messenger.placeholder;
 
+import net.kyori.adventure.text.ComponentLike;
 import org.incendo.cloud.caption.CaptionVariable;
 
 import java.util.List;
@@ -9,6 +10,8 @@ public interface CaptionVariableToPlaceholder{
 	static Placeholder apply(CaptionVariable captionVariable) {
 		if (captionVariable instanceof Placeholder placeholder) {
 			return placeholder;
+		} else if (captionVariable instanceof ComponentLike componentLike){
+			return new Placeholder(captionVariable.key(), componentLike.asComponent());
 		}
 		return Placeholder.of(captionVariable);
 	}
