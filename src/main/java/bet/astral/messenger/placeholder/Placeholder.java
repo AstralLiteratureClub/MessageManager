@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Placeholder implements CaptionVariable, ComponentLike, RichVariable {
+public class Placeholder implements CaptionVariable, ComponentLike, RichVariable, PlaceholderValue,PlaceholderComponentValue {
 	protected static final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected static final LegacyComponentSerializer legacyAmpersand = LegacyComponentSerializer.legacyAmpersand();
 	protected static final LegacyComponentSerializer legacySection = LegacyComponentSerializer.legacySection();
@@ -25,9 +25,9 @@ public class Placeholder implements CaptionVariable, ComponentLike, RichVariable
 	private final boolean isComponentValue;
 	private final boolean isLegacy;
 
-	public Placeholder(@NotNull String key, @NotNull Component componentValue) {
-		this.componentValue = componentValue;
-		this.stringValue = MiniMessage.miniMessage().serialize(componentValue);
+	public Placeholder(@NotNull String key, @NotNull ComponentLike componentValue) {
+		this.componentValue = componentValue.asComponent();
+		this.stringValue = MiniMessage.miniMessage().serialize(componentValue.asComponent());
 		this.key = key;
 		this.isComponentValue = true;
 		this.isLegacy = false;
@@ -50,6 +50,13 @@ public class Placeholder implements CaptionVariable, ComponentLike, RichVariable
 	public Placeholder(@NotNull String key, @NotNull CaptionVariable variable){
 		this(key, variable.value());
 	}
+	public Placeholder(@NotNull String key, @NotNull PlaceholderComponentValue objectValue) {
+		this(key, (ComponentLike) objectValue);
+	}
+	public Placeholder(@NotNull String key, @NotNull PlaceholderValue objectValue) {
+		this(key, objectValue.getValue());
+	}
+
 	public Placeholder(@NotNull String key, @NotNull Object objectValue) {
 		this(key, objectValue.toString(), false);
 	}
@@ -126,5 +133,10 @@ public class Placeholder implements CaptionVariable, ComponentLike, RichVariable
 			}
 		}
 		return componentValue;
+	}
+
+	@Override
+	public @NotNull String getValue() {
+		return value();
 	}
 }
