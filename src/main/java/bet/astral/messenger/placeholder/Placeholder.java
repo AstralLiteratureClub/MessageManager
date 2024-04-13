@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.minecraft.extras.caption.RichVariable;
@@ -50,11 +51,22 @@ public class Placeholder implements CaptionVariable, ComponentLike, RichVariable
 	public Placeholder(@NotNull String key, @NotNull CaptionVariable variable){
 		this(key, variable.value());
 	}
-	public Placeholder(@NotNull String key, @NotNull PlaceholderComponentValue objectValue) {
-		this(key, (ComponentLike) objectValue);
-	}
 	public Placeholder(@NotNull String key, @NotNull PlaceholderValue objectValue) {
-		this(key, objectValue.getValue());
+		if (objectValue instanceof PlaceholderComponentValue componentValue){
+			this.componentValue = componentValue.asComponent();
+			this.stringValue = MiniMessage.miniMessage().serialize(this.componentValue);
+			this.isLegacy = false;
+		} else if (objectValue instanceof PlaceholderLegacyValue legacyValue){
+			this.componentValue = LegacyComponentSerializer.legacyAmpersand().deserialize(legacyValue.asLegacy());
+			this.stringValue = LegacyComponentSerializer.legacyAmpersand().serialize(this.componentValue);
+			this.isLegacy = true;
+		} else {
+			this.componentValue = PlainTextComponentSerializer.plainText().deserialize(objectValue.getValue());
+			this.stringValue = objectValue.getValue();
+			this.isLegacy = false;
+		}
+		this.key = key;
+		this.isComponentValue = false;
 	}
 
 	public Placeholder(@NotNull String key, @NotNull Object objectValue) {

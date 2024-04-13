@@ -3,10 +3,7 @@ package bet.astral.messenger.placeholder;
 import bet.astral.messenger.utils.PlaceholderUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class PlaceholderList extends LinkedList<Placeholder> {
 	public PlaceholderList() {
@@ -48,10 +45,17 @@ public class PlaceholderList extends LinkedList<Placeholder> {
 	}
 
 	public boolean add(String name, Object info) {
+
 		return add(PlaceholderUtils.createPlaceholder(null, name, info));
 	}
 	public void add(int index, String name, Object info) {
-		add(index, PlaceholderUtils.createPlaceholder(null, name, index));
+		add(index, PlaceholderUtils.createPlaceholder(null, name, info));
+	}
+	public void add(String name,  PlaceholderValue placeholderValue){
+		add(placeholderValue.toPlaceholder(name));
+	}
+	public void add(int index, String name,  PlaceholderValue placeholderValue){
+		add(index, placeholderValue.toPlaceholder(name));
 	}
 
 	public void addAll(Placeholder... placeholders){

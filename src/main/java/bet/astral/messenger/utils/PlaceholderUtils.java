@@ -2,6 +2,7 @@ package bet.astral.messenger.utils;
 
 import bet.astral.messenger.placeholder.LegacyPlaceholder;
 import bet.astral.messenger.placeholder.Placeholder;
+import bet.astral.messenger.placeholder.PlaceholderValue;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
@@ -200,7 +201,9 @@ public final class PlaceholderUtils {
 		if (value == null){
 			return Placeholder.emptyPlaceholder(prefix);
 		}
-		if (value instanceof Component component) {
+		if (value instanceof PlaceholderValue placeholderValue){
+			return placeholderValue.toPlaceholder(prefix);
+		} else if (value instanceof Component component) {
 			return new Placeholder(prefix, component);
 		} else if (value instanceof String s){
 			return new Placeholder(prefix, s);
