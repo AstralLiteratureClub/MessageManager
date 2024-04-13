@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public interface PlaceholderComponentValue extends PlaceholderValue, ComponentLike {
 	@NotNull
 	@Override
-	default Placeholder asPlaceholder(@NotNull String prefix){
+	default Placeholder toPlaceholder(@NotNull String prefix){
 		return new Placeholder(prefix, asComponent());
 	}
 

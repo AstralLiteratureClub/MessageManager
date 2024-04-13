@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PlaceholderValue {
 	@NotNull
-	default Placeholder asPlaceholder(@NotNull String prefix){
+	default Placeholder toPlaceholder(@NotNull String prefix){
 		return new Placeholder(prefix, getValue());
 	}
 	@NotNull
