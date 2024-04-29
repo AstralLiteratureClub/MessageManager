@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.translation.Translatable;
 import org.bukkit.configuration.MemorySection;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.permission.Permission;
@@ -88,96 +89,192 @@ public abstract class AbstractMessenger<P, Comp, CommandSender> extends Abstract
 	}
 
 
-	public void broadcast(String  messageKey, Placeholder... placeholders){
+	public void broadcast(String messageKey, Placeholder... placeholders){
 		broadcast(null, messageKey, 0, false, List.of(placeholders));
 	}
-	public void broadcast(String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void broadcast(Translatable translatable, Placeholder... placeholders){
+		broadcast(null, translatable, 0, false, List.of(placeholders));
+	}
+	public void broadcast(String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		broadcast(null, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
+	}
+	public void broadcast(Translatable translatable, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		broadcast(null, translatable, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
 	public void broadcast(String messageKey, List<Placeholder> placeholders) {
 		broadcast(null, messageKey, 0, false, placeholders);
 	}
+	public void broadcast(Translatable translatable, List<Placeholder> placeholders) {
+		broadcast(null, translatable, 0, false, placeholders);
+	}
 	public void broadcast(String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		broadcast(null, messageKey, 0, senderSpecificPlaceholders, placeholders);
+	}
+	public void broadcast(Translatable translatable, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		broadcast(null, translatable, 0, senderSpecificPlaceholders, placeholders);
 	}
 	public void broadcast(Permission permission, String messageKey, Placeholder... placeholders){
 		broadcast(permission, messageKey, 0, false, List.of(placeholders));
 	}
+	public void broadcast(Permission permission, Translatable translatable, Placeholder... placeholders){
+		broadcast(permission, translatable, 0, false, List.of(placeholders));
+	}
 	public void broadcast(Permission permission, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		broadcast(permission, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
+	}
+	public void broadcast(Permission permission, Translatable translatable, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		broadcast(permission, translatable, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
 	public void broadcast(Permission permission, String messageKey, List<Placeholder> placeholders) {
 		broadcast(permission, messageKey, 0, false, placeholders);
 	}
+	public void broadcast(Permission permission, Translatable translatable, List<Placeholder> placeholders) {
+		broadcast(permission, translatable, 0, false, placeholders);
+	}
 	public void broadcast(Permission permission, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		broadcast(permission, messageKey, 0, senderSpecificPlaceholders, placeholders);
+	}
+	public void broadcast(Permission permission, Translatable translatable, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		broadcast(permission, translatable, 0, senderSpecificPlaceholders, placeholders);
 	}
 	public void broadcast(String messageKey, int delay, List<Placeholder> placeholders){
 		broadcast(null, messageKey, delay, false, placeholders);
 	}
+	public void broadcast(Translatable translatable, int delay, List<Placeholder> placeholders){
+		broadcast(null, translatable, delay, false, placeholders);
+	}
 	public void broadcast(String messageKey, int delay, Placeholder... placeholders){
 		broadcast(null, messageKey, delay, false, List.of(placeholders));
+	}
+	public void broadcast(Translatable translatable, int delay, Placeholder... placeholders){
+		broadcast(null, translatable, delay, false, List.of(placeholders));
 	}
 	public void broadcast(String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		broadcast(null, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
+	public void broadcast(Translatable translatable, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		broadcast(null, translatable, delay, senderSpecificPlaceholders, List.of(placeholders));
+	}
 	public void broadcast(String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
 		broadcast(null, messageKey, delay, senderSpecificPlaceholders, placeholders);
 	}
-	public void broadcast(Permission permission, String  messageKey, int delay, Placeholder... placeholders){
+	public void broadcast(Translatable translatable, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
+		broadcast(null, translatable, delay, senderSpecificPlaceholders, placeholders);
+	}
+	public void broadcast(Permission permission, String messageKey, int delay, Placeholder... placeholders){
 		broadcast(permission, messageKey, delay, false, List.of(placeholders));
+	}
+	public void broadcast(Permission permission, Translatable translatable, int delay, Placeholder... placeholders){
+		broadcast(permission, translatable, delay, false, List.of(placeholders));
 	}
 	public void broadcast(Permission permission, String messageKey, int delay, List<Placeholder> placeholders) {
 		broadcast(permission, messageKey, delay, false, placeholders);
 	}
-	public void broadcast(Permission permission, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void broadcast(Permission permission, Translatable translatable, int delay, List<Placeholder> placeholders) {
+		broadcast(permission, translatable, delay, false, placeholders);
+	}
+	public void broadcast(Permission permission, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		broadcast(permission, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
+	public void broadcast(Permission permission, Translatable translatable, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		broadcast(permission, translatable, delay, senderSpecificPlaceholders, List.of(placeholders));
+	}
 	public abstract void broadcast(Permission permission, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders);
-	public void message(Audience to, String  messageKey, Placeholder... placeholders){
+	public void broadcast(Permission permission, Translatable translatable, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		broadcast(permission, translatable.translationKey(), delay, senderSpecificPlaceholders, placeholders);
+	}
+	public void message(Audience to, String messageKey, Placeholder... placeholders){
 		message(null, to, messageKey, 0, false, List.of(placeholders));
 	}
-	public void message(Audience to, String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Audience to, Translatable translatable, Placeholder... placeholders){
+		message(null, to, translatable, 0, false, List.of(placeholders));
+	}
+	public void message(Audience to, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(null, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
+	}
+	public void message(Audience to, Translatable translatable, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		message(null, to, translatable, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
 	public void message(Audience to, String messageKey, List<Placeholder> placeholders) {
 		message(null, to, messageKey, 0, false, placeholders);
 	}
+	public void message(Audience to, Translatable translatable, List<Placeholder> placeholders) {
+		message(null, to, translatable, 0, false, placeholders);
+	}
 	public void message(Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		message(null, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
+	}
+	public void message(Audience to, Translatable translatable, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		message(null, to, translatable, 0, senderSpecificPlaceholders, placeholders);
 	}
 	public void message(Permission permission, Audience to, String messageKey, Placeholder... placeholders){
 		message(permission, to, messageKey, 0, false, List.of(placeholders));
 	}
+	public void message(Permission permission, Audience to, Translatable translatable, Placeholder... placeholders){
+		message(permission, to, translatable, 0, false, List.of(placeholders));
+	}
 	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(permission, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
+	}
+	public void message(Permission permission, Audience to, Translatable translatable, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		message(permission, to, translatable, 0, senderSpecificPlaceholders, List.of(placeholders));
 	}
 	public void message(Permission permission, Audience to, String messageKey, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, 0, false, placeholders);
 	}
+	public void message(Permission permission, Audience to, Translatable translatable, List<Placeholder> placeholders) {
+		message(permission, to, translatable, 0, false, placeholders);
+	}
 	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
+	}
+	public void message(Permission permission, Audience to, Translatable translatable, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		message(permission, to, translatable, 0, senderSpecificPlaceholders, placeholders);
 	}
 	public void message(Audience to, String messageKey, int delay, List<Placeholder> placeholders){
 		message(null, to, messageKey, delay, false, placeholders);
 	}
+	public void message(Audience to, Translatable translatable, int delay, List<Placeholder> placeholders){
+		message(null, to, translatable, delay, false, placeholders);
+	}
 	public void message(Audience to, String messageKey, int delay, Placeholder... placeholders){
 		message(null, to, messageKey, delay, false, List.of(placeholders));
+	}
+	public void message(Audience to, Translatable translatable, int delay, Placeholder... placeholders){
+		message(null, to, translatable, delay, false, List.of(placeholders));
 	}
 	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(null, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
+	public void message(Audience to, Translatable translatable, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		message(null, to, translatable, delay, senderSpecificPlaceholders, List.of(placeholders));
+	}
 	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
 		message(null, to, messageKey, delay, senderSpecificPlaceholders, placeholders);
 	}
-	public void message(Permission permission, Audience to, String  messageKey, int delay, Placeholder... placeholders){
+	public void message(Audience to, Translatable translatable, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
+		message(null, to, translatable, delay, senderSpecificPlaceholders, placeholders);
+	}
+	public void message(Permission permission, Audience to, String messageKey, int delay, Placeholder... placeholders){
 		message(permission, to, messageKey, delay, false, List.of(placeholders));
+	}
+	public void message(Permission permission, Audience to, Translatable translatable, int delay, Placeholder... placeholders){
+		message(permission, to, translatable, delay, false, List.of(placeholders));
 	}
 	public void message(Permission permission, Audience to, String messageKey, int delay, List<Placeholder> placeholders) {
 		message(permission, to, messageKey, delay, false, placeholders);
 	}
-	public void message(Permission permission, Audience to, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+	public void message(Permission permission, Audience to, Translatable translatable, int delay, List<Placeholder> placeholders) {
+		message(permission, to, translatable, delay, false, placeholders);
+	}
+	public void message(Permission permission, Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
 		message(permission, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
 	}
+	public void message(Permission permission, Audience to, Translatable translatable, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
+		message(permission, to, translatable, delay, senderSpecificPlaceholders, List.of(placeholders));
+	}
 	public abstract void message(Permission permission, Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders);
+	public void message(Permission permission, Audience to, Translatable translatable, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
+		message(permission, to, translatable.translationKey(), delay, senderSpecificPlaceholders, placeholders);
+	}
 }
