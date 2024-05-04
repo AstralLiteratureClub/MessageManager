@@ -20,6 +20,13 @@ public class AdventureMessagePart extends DefaultMessagePart<Component> implemen
 	public AdventureMessagePart(MessageType type) {
 		super(type);
 	}
+	public AdventureMessagePart(MessageType type, ComponentLike value, IMessageTypeSerializer<Component> serializer) {
+		super(type, value.asComponent(), serializer);
+	}
+
+	public AdventureMessagePart(MessageType type, ComponentLike value) {
+		super(type, value.asComponent());
+	}
 
 	@Override
 	public String getString() {
