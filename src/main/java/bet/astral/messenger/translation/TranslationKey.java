@@ -1,12 +1,14 @@
 package bet.astral.messenger.translation;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.translation.Translatable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.minecraft.extras.caption.TranslatableCaption;
 import org.jetbrains.annotations.NotNull;
 
-public class TranslationKey implements Translatable, Caption {
+public class TranslationKey implements Translatable, Caption, ComponentLike {
 	public static TranslationKey of(String key){
 		return new TranslationKey(key);
 	}
@@ -29,6 +31,11 @@ public class TranslationKey implements Translatable, Caption {
 
 	public @NotNull Caption asTranslatableCaption(){
 		return TranslatableCaption.translatableCaption(key);
+	}
+
+	@Override
+	public @NotNull Component asComponent() {
+		return Component.translatable(this);
 	}
 }
 
