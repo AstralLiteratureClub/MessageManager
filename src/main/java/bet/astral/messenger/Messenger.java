@@ -1,31 +1,31 @@
 package bet.astral.messenger;
 
-import bet.astral.messenger.cloud.CaptionMessenger;
-import bet.astral.messenger.placeholder.CaptionVariableToPlaceholder;
-import bet.astral.messenger.placeholder.LegacyPlaceholder;
-import bet.astral.messenger.placeholder.MessagePlaceholder;
-import bet.astral.messenger.placeholder.Placeholder;
-import bet.astral.messenger.utils.PlaceholderUtils;
-import com.google.common.collect.ImmutableMap;
+import bet.astral.messenger.adventure.AdventurePlaceholderManager;
+import bet.astral.messenger.message.adventure.AdventureMessage;
+import bet.astral.messenger.message.adventure.serializer.ComponentTitleSerializer;
+import bet.astral.messenger.message.adventure.serializer.ComponentTypeSerializer;
+import bet.astral.messenger.message.message.IMessage;
+import bet.astral.messenger.message.MessageType;
+import bet.astral.messenger.message.part.DefaultMessagePart;
+import bet.astral.messenger.message.part.IMessagePart;
+import bet.astral.messenger.message.serializer.DefaultMessageSerializer;
+import bet.astral.messenger.message.serializer.IMessageSerializer;
+import bet.astral.messenger.message.serializer.IMessageTitleSerializer;
+import bet.astral.messenger.message.serializer.IMessageTypeSerializer;
+import bet.astral.messenger.placeholder.*;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.ComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.TitlePart;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -42,111 +42,55 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static bet.astral.messenger.message.MessageType.*;
+
 /**
  * OfflineMessage manager which loads messages in runtime and parses them.
  * @param <P> Plugin
  */
-public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
+public class Messenger<P extends JavaPlugin> extends AbstractMessenger<P, Component, CommandSender> {
 	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 	protected final MiniMessage miniMessage = MiniMessage.miniMessage();
 	protected final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
-	private final P plugin;
 	protected final FileConfiguration config;
-	private ImmutableMap<String, Placeholder> immutablePlaceholders;
-	protected final Map<String, Message> messagesMap;
+	protected final Map<String, IMessage<?, Component>> messagesMap;
 	protected final Map<String, Pattern> compiledPatterns = new HashMap<>();
 	protected final Map<String, Boolean> foundNotExisting = new HashMap<>();
+
 	protected final List<String> disabledMessages;
-	private CommandManager<CommandSender> commandManager;
-	public boolean useConsoleComponentLogger = false;
 
-	public Messenger(P plugin, FileConfiguration config, Map<String, Message> messageMap) {
-		this.plugin = plugin;
-		this.config = config;
-		this.immutablePlaceholders = ImmutableMap.of();
-		this.messagesMap = messageMap;
+	public Messenger(P main,
+	                 CommandManager<CommandSender> commandManager,
+	                 Map<String, IMessage<IMessagePart<Component>, Component>> messages,
+	                 @NotNull IMessageTypeSerializer<Component> messageTypeSerializer,
+	                 FileConfiguration fileConfiguration
+	) {
+		super(commandManager, main, messages, messageTypeSerializer, Component.class);
+		config = fileConfiguration;
 		this.disabledMessages = new LinkedList<>();
+		this.messagesMap = new HashMap<>();
+		IMessageTypeSerializer<Component> serializer = new ComponentTypeSerializer();
+		setMessageTypeSerializer(serializer);
+		setPlaceholderManager(new AdventurePlaceholderManager());
+		getDeserializers().put("default", new DefaultMessageSerializer<>(serializer, AdventureMessage.class));
+		getDeserializers().put("title", new ComponentTitleSerializer<>(serializer, AdventureMessage.class));
 	}
 
-	public final P plugin(){
-		return plugin;
+	@Override
+	public AdventurePlaceholderManager getPlaceholderManager() {
+		return (AdventurePlaceholderManager) super.getPlaceholderManager();
 	}
 
-	public ImmutableMap<String, Placeholder> loadPlaceholders(String key) {
-		Map<String, Placeholder> placeholderMap = new HashMap<>();
-		List<Map<?, ?>> placeholderMapList = this.config.getMapList(key);
-
-		for (Map<?, ?> map : placeholderMapList){
-			Placeholder placeholder;
-			String name = (String)map.get("name");
-			String value = (String)map.get("value");
-			String type = (String)map.get("type");
-			if (type == null) {
-				type = "default";
-			}
-
-			switch (type) {
-				case "default":
-				case "mini-message":
-				case "minimessage":
-					Component componentValue = this.miniMessage.deserialize(value);
-					placeholder = new Placeholder(name, componentValue);
-					break;
-				case "legacy":
-				case "bukkit":
-					placeholder = new LegacyPlaceholder(name, value);
-					break;
-				case "message":
-					Message message = this.messagesMap.get(value);
-					String messagePart = (String)map.get("message-part");
-					if (messagePart == null) {
-						messagePart = "chat";
-					}
-
-					messagePart = messagePart.replaceAll("-", "_");
-					messagePart = messagePart.replaceAll(" ", "_");
-					Message.Type messageType = Message.Type.valueOf(messagePart);
-					if (message == null) {
-						placeholder = MessagePlaceholder.emptyPlaceholder(name);
-					} else {
-						placeholder = MessagePlaceholder.create(name, message, messageType);
-					}
-					break;
-				default:
-					throw new RuntimeException("Unknown placeholder serializer type: " + type);
-			}
-			placeholderMap.put(placeholder.key(), placeholder);
+	public void setPlaceholderManager(AdventurePlaceholderManager placeholderManager){
+		super.setPlaceholderManager(placeholderManager);
+	}
+	@Override
+	public void setPlaceholderManager(PlaceholderManager placeholderManager) {
+		if (placeholderManager instanceof AdventurePlaceholderManager){
+			super.setPlaceholderManager(placeholderManager);
+		} else {
+			throw new IllegalStateException("Only adventure placeholder manager or children classes of it are allowed in Messenger!");
 		}
-
-		return ImmutableMap.copyOf(placeholderMap);
-	}
-
-	/**
-	 * Returns the global placeholders
-	 * @return global placeholder
-	 */
-	@NotNull
-	protected Map<String, Placeholder> defaultPlaceholders(){
-		return immutablePlaceholders;
-	}
-
-	/**
-	 * Overrides the global placeholders and returns the old global placeholders
-	 * @param newPlaceholders new placeholders
-	 * @return old placeholders
-	 */
-	public Map<String, Placeholder> overrideDefaultPlaceholders(Map<String, Placeholder> newPlaceholders){
-		Map<String, Placeholder> placeholderMap = immutablePlaceholders;
-		this.immutablePlaceholders = ImmutableMap.copyOf(newPlaceholders);
-		return placeholderMap;
-	}
-
-	@Nullable
-	public Placeholder overrideDefaultPlaceholder(String key, Placeholder placeholder) {
-		Map<String, Placeholder> placeholderMap = new HashMap<>(this.immutablePlaceholders);
-		Placeholder oldPlaceholder = placeholderMap.put(key, placeholder);
-		this.immutablePlaceholders = ImmutableMap.copyOf(placeholderMap);
-		return oldPlaceholder;
 	}
 
 	public boolean checkIfExists(@NotNull String messageKey){
@@ -157,87 +101,47 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		return foundNotExisting.get(messageKey);
 	}
 
-	@Override
-	public CommandManager<CommandSender> commandManager() {
-		return commandManager;
+	public IMessage<?, Component> createMessage(String key, Map<MessageType, IMessagePart<Component>> parts, Map<String, Placeholder> placeholders){
+		return new AdventureMessage(key, parts, placeholders);
 	}
+
 	@Override
-	public @Nullable Message loadMessage(@NotNull Caption caption) {
-		Message message = loadMessage(caption.key());
+	public @Nullable IMessage<?, Component> loadMessage(@NotNull Caption caption) {
+		IMessage<?, Component> message = loadMessage(caption.key());
 		if (message != null) {
-			commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(caption, (sender) -> provide(caption, sender)));
+			getCommandManager().captionRegistry().registerProvider(CaptionProvider.forCaption(caption, (sender) -> provide(caption, sender)));
 		}
 		return message;
 	}
 
-	@Override
-	public @Nullable Message getMessage(@NotNull Caption caption) {
-		return messagesMap.get(caption.key());
-	}
-
-
-	@Override
-	public void registerCommandManager(CommandManager<CommandSender> commandManager) throws IllegalStateException {
-		if (this.commandManager != null) {
-			throw new IllegalStateException("Command manager is already registered!");
- 		}
-		this.commandManager = commandManager;
-		this.commandManager.captionRegistry()
-				.registerProvider(this);
-		commandManager.captionRegistry().registerProvider(this);
-	}
-	@Override
-	public @org.checkerframework.checker.nullness.qual.Nullable String provide(@NonNull Caption caption, @NonNull CommandSender recipient) {
-		Message message = getMessage(caption.key());
-		if (message == null){
-			return null;
-		}
-		return PlainTextComponentSerializer.plainText().serialize(formatCaption(caption, recipient, caption.key()));
-	}
-
-	@Nullable
-	public Message loadMessage(String messageKey) {
+	// TODO Make so you can make messages randomized from configs
+	public @Nullable IMessage<?, Component> loadMessage(@NotNull String messageKey) {
 		Object messageSection = this.config.get(messageKey);
 		if (messageSection == null){
-			plugin.getLogger().severe("Couldn't find message key for " + messageKey + " creating a temporal message for it!");
-			Message message = new Message(messageKey, Component.text(messageKey));
+			getLogger().error("Couldn't find message key for " + messageKey + " creating a temporal message for it!");
+			IMessage<?, Component> message = new AdventureMessage(messageKey, new DefaultMessagePart<>(MessageType.CHAT, getMessageTypeSerializer().deserialize(messageKey)));
 			messagesMap.put(messageKey, message);
 			foundNotExisting.put(messageKey, false);
 			return message;
 		}
-		Message message;
+		IMessage<?, Component> message;
 		if (messageSection instanceof String) {
 			Component messageComponent = this.miniMessage.deserialize((String)messageSection);
-			message = new Message(messageKey, messageComponent);
+			message = new AdventureMessage(messageKey, new DefaultMessagePart<>(MessageType.CHAT, messageComponent));
 			this.messagesMap.put(messageKey, message);
 			foundNotExisting.put(messageKey, true);
 			return message;
-		} else {
+		} else if (messageSection instanceof List<?>){
+			List<String> list = this.config.getStringList(messageKey);
+			IMessageSerializer<?, ?, Component> serializer = getDeserializers().get("default");
+			IMessagePart<Component> part = serializer.deserialize(list, MessageType.CHAT);
+			message = new AdventureMessage(messageKey, part);
+
+			this.messagesMap.put(messageKey, message);
+			return message;
+		}else {
 			Object chatObj;
-			if (this.config.getList(messageKey) != null) {
-				List<String> list = this.config.getStringList(messageKey);
-				Component component = null;
-
-				for(Iterator<String> val = list.iterator(); val.hasNext(); component = component.append(this.miniMessage.deserialize((String)chatObj))) {
-					chatObj = val.next();
-					if (component != null) {
-						component = component.appendNewline();
-					} else {
-						component = Component.text().build();
-					}
-				}
-
-				if (component == null) {
-					this.disabledMessages.add(messageKey);
-					foundNotExisting.put(messageKey, true);
-					return null;
-				} else {
-					message = new Message(messageKey, component);
-					this.messagesMap.put(messageKey, message);
-					foundNotExisting.put(messageKey, true);
-					return message;
-				}
-			} else if (!(messageSection instanceof MemorySection memorySection)) {
+			if (!(messageSection instanceof MemorySection memorySection)) {
 				foundNotExisting.put(messageKey, false);
 				throw new IllegalStateException("OfflineMessage configuration for " + messageKey + " is illegal. Please fix it!");
 			} else {
@@ -245,59 +149,46 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 				if (disabled) {
 					this.disabledMessages.add(messageKey);
 					foundNotExisting.put(messageKey, true);
+					message = new AdventureMessage(messageKey, new DefaultMessagePart<>(MessageType.CHAT));
+					this.messagesMap.put(messageKey, message);
 					return null;
 				} else {
-					Object componentSerializer = switch (memorySection.getString("serializer", "default").toLowerCase()) {
-						case "default", "mini-message", "minimessage" -> this.miniMessage;
-						case "legacy", "bukkit" -> this.legacySerializer;
-						default -> throw new RuntimeException("Unknown message parser for type: " + memorySection.getString("serializer"));
-					};
-
 					chatObj = memorySection.get("chat");
 					String titleObj = memorySection.getString("title");
 					String subtitleObj = memorySection.getString("subtitle");
 					String actionBarObj = memorySection.getString("action-bar");
-					//noinspection unchecked
-					ComponentSerializer<Component, Component, String> serializer = (ComponentSerializer<Component, Component, String>) componentSerializer;
-					Map<Message.Type, Component> componentMap = new HashMap<>();
+
+					Map<MessageType, IMessagePart<Component>> componentMap = new HashMap<>();
 					if (chatObj != null) {
-						Component component;
 						if (chatObj instanceof List) {
 							List<String> list = memorySection.getStringList("chat");
-							component = null;
-							for (String val : list){
-								if (component != null) {
-									component = component.appendNewline();
-									component = component.append(serializer.deserialize(val));
-								} else {
-									component = serializer.deserialize(val);
-								}
-							}
-							componentMap.put(Message.Type.CHAT, component);
+							IMessageSerializer<?, ?, Component> serializer = getDeserializers().get("default");
+							IMessagePart<Component> part = serializer.deserialize(list, MessageType.CHAT);
+
+							componentMap.put(MessageType.CHAT, part);
 						} else {
-							component = serializer.deserialize((String)chatObj);
-							componentMap.put(Message.Type.CHAT, component);
+							componentMap.put(MessageType.CHAT, tryToLoad(chatObj, MessageType.CHAT));
 						}
 					}
 
 					if (titleObj != null) {
-						componentMap.put(Message.Type.TITLE, serializer.deserialize(titleObj));
+						componentMap.put(TITLE, tryToLoad(titleObj, TITLE));
 					}
 
 					if (subtitleObj != null) {
-						componentMap.put(Message.Type.SUBTITLE, serializer.deserialize(subtitleObj));
+						componentMap.put(MessageType.SUBTITLE, tryToLoad(subtitleObj, MessageType.SUBTITLE));
 					}
 
 					if (actionBarObj != null) {
-						componentMap.put(Message.Type.ACTION_BAR, serializer.deserialize(actionBarObj));
+						componentMap.put(MessageType.ACTION_BAR, tryToLoad(actionBarObj, MessageType.ACTION_BAR));
 					}
 
 					Object object = config.get(messageKey+".placeholders");
 					if (object!=null){
-						Map<String, Placeholder> builtInPlaceholders = this.loadPlaceholders(messageKey + ".placeholders");
-						message = new Message(messageKey, componentMap, builtInPlaceholders);
+						Map<String, Placeholder> builtInPlaceholders = this.loadPlaceholder(messageKey + ".placeholders", config);
+						message = new AdventureMessage(messageKey, componentMap, builtInPlaceholders);
 					} else {
-						message = new Message(messageKey, componentMap);
+						message = new AdventureMessage(messageKey, componentMap);
 					}
 					this.messagesMap.put(messageKey, message);
 					foundNotExisting.put(messageKey, true);
@@ -306,242 +197,142 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 			}
 		}
 	}
+	@Nullable
+	private IMessagePart<Component> tryToLoad(Object object, MessageType type){
+		if (object instanceof MemorySection section){
+			String serializerType = section.getString("serializer", type == TITLE || type == SUBTITLE ? "title" : "default");
 
-	public Placeholder createPlaceholder(String name, String value, boolean legacy) {
-		return legacy ? new LegacyPlaceholder(name, value) : new Placeholder(name, value, false);
-	}
-
-	public Placeholder createPlaceholder(String name, Component value) {
-		return new Placeholder(name, value);
-	}
-
-	public MessagePlaceholder createPlaceholderMessage(String name, String messageKey, Message.Type type) {
-		Message message = this.messagesMap.get(messageKey);
-		if (message == null) {
-			this.loadMessage(messageKey);
-			message = this.messagesMap.get(messageKey);
-			if (message == null) {
-				return MessagePlaceholder.emptyPlaceholder(name);
+			IMessageSerializer<?, ?, Component> serializer = getDeserializers().get(serializerType);
+			if (serializer == null){
+				serializer = getDeserializers().get("default");
 			}
+			if (section.get("value") == null){
+				throw new IllegalArgumentException("Couldn't find value for message with key " + section.getCurrentPath()+ ".");
+			}
+
+			if (section.get("value") instanceof List<?>){
+				if (type== TITLE || type == MessageType.SUBTITLE) {
+					if (serializer instanceof IMessageTitleSerializer<?, ?> titleSerializer){
+						//noinspection unchecked
+						return (IMessagePart<Component>) titleSerializer.load(section, type);
+					}
+					return serializer.deserialize(section.getStringList("value"), type);
+				}
+				return serializer.deserialize(section.getStringList("value"), type);
+			} else if (section.get("value") instanceof String){
+				if (type== TITLE || type == MessageType.SUBTITLE) {
+					if (serializer instanceof IMessageTitleSerializer<?, ?> titleSerializer){
+						//noinspection unchecked
+						return (IMessagePart<Component>) titleSerializer.load(section, type);
+					}
+					return serializer.deserialize(section.getStringList("value"), type);
+				}
+				return serializer.deserialize(Objects.requireNonNull(section.getString("value")), type);
+			} else {
+				return null;
+			}
+		} else if (object instanceof String s){
+			IMessageSerializer<?, ?, Component> serializer = getDeserializers().get(type == TITLE ? "title" : "default");
+			return serializer.deserialize(s, type);
 		}
-
-		return MessagePlaceholder.create(name, message, type);
-	}
-
-	public List<Placeholder> createPlaceholders(Player player){
-		return PlaceholderUtils.createPlaceholders(player);
-	}
-
-	public List<Placeholder> createPlaceholders(String name, LivingEntity entity){
-		return PlaceholderUtils.createPlaceholders(name, entity);
+		return null;
 	}
 
 
-	public List<Placeholder> createPlaceholders(String name, Player player){
-		return PlaceholderUtils.createPlaceholders(name, (LivingEntity) player);
-	}
-	public List<Placeholder> createPlaceholders(String name, OfflinePlayer player){
-		return PlaceholderUtils.createPlaceholders(name, player);
-	}
-	public List<Placeholder> createPlaceholders(String name, CommandSender sender){
-		return PlaceholderUtils.createPlaceholders(name, sender);
-	}
-	protected Placeholder createPlaceholder(@NotNull String namespace, @NotNull String key, Object value){
-		return PlaceholderUtils.createPlaceholder(namespace, key, value);
-	}
-
-	protected List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable Location location) {
-		return PlaceholderUtils.createPlaceholders(name, name2, location);
-	}
-	protected List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable Biome biome) {
-		return PlaceholderUtils.createPlaceholders(name, name2, biome);
-	}
-
-	protected List<Placeholder> createPlaceholders(@NotNull String name, @NotNull String name2, @Nullable ItemStack itemStack){
-		return PlaceholderUtils.createPlaceholders(name, name2, itemStack);
+	protected Map<String, Placeholder> asPlaceholderMap(List<Placeholder> placeholders) {
+		return getPlaceholderManager().asMap(placeholders);
 	}
 
 
-	protected Map<String, Placeholder> asPlaceholderMap(List<Placeholder> placeholders){
-		if (placeholders.isEmpty()){
-			return Collections.emptyMap();
-		}
-		Map<String, Placeholder> placeholderMap = new WeakHashMap<>();
-		placeholders.forEach(pl->placeholderMap.put(pl.key(), pl));
-		return placeholderMap;
-	}
-
-	public void broadcast(String  messageKey, Placeholder... placeholders){
-		broadcast(null, messageKey, 0, false, List.of(placeholders));
-	}
-	public void broadcast(String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		broadcast(null, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void broadcast(String messageKey, List<Placeholder> placeholders) {
-		broadcast(null, messageKey, 0, false, placeholders);
-	}
-	public void broadcast(String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
-		broadcast(null, messageKey, 0, senderSpecificPlaceholders, placeholders);
-	}
-	public void broadcast(Permission permission, String messageKey, Placeholder... placeholders){
-		broadcast(permission, messageKey, 0, false, List.of(placeholders));
-	}
-	public void broadcast(Permission permission, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		broadcast(permission, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void broadcast(Permission permission, String messageKey, List<Placeholder> placeholders) {
-		broadcast(permission, messageKey, 0, false, placeholders);
-	}
-	public void broadcast(Permission permission, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
-		broadcast(permission, messageKey, 0, senderSpecificPlaceholders, placeholders);
-	}
-	public void broadcast(String messageKey, int delay, List<Placeholder> placeholders){
-		broadcast(null, messageKey, delay, false, placeholders);
-	}
-	public void broadcast(String messageKey, int delay, Placeholder... placeholders){
-		broadcast(null, messageKey, delay, false, List.of(placeholders));
-	}
-	public void broadcast(String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		broadcast(null, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void broadcast(String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
-		broadcast(null, messageKey, delay, senderSpecificPlaceholders, placeholders);
-	}
-	public void broadcast(Permission permission, String  messageKey, int delay, Placeholder... placeholders){
-		broadcast(permission, messageKey, delay, false, List.of(placeholders));
-	}
-	public void broadcast(Permission permission, String messageKey, int delay, List<Placeholder> placeholders) {
-		broadcast(permission, messageKey, delay, false, placeholders);
-	}
-	public void broadcast(Permission permission, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		broadcast(permission, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
 	public void broadcast(Permission permission, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		if (permission == null) {
 			permission = Permission.EMPTY;
 		}
 
-		for (Player player : this.plugin.getServer().getOnlinePlayers()) {
-			if (commandManager.testPermission(player, permission).allowed()) {
+		for (Player player : getMain().getServer().getOnlinePlayers()) {
+			if (getCommandManager().testPermission(player, permission).allowed()) {
 				this.message(player, messageKey, delay, placeholders);
 			}
 		}
 
-		ConsoleCommandSender consoleSender = this.plugin.getServer().getConsoleSender();
-		if (commandManager.testPermission(consoleSender, permission).allowed()) {
-			this.message(this.plugin.getServer().getConsoleSender(), messageKey, delay, senderSpecificPlaceholders, placeholders);
+		ConsoleCommandSender consoleSender = getMain().getServer().getConsoleSender();
+		if (getCommandManager().testPermission(consoleSender, permission).allowed()) {
+			this.message(consoleSender, messageKey, delay, senderSpecificPlaceholders, placeholders);
 		}
 	}
 
-	public void message(Audience to, String  messageKey, Placeholder... placeholders){
-		message(null, to, messageKey, 0, false, List.of(placeholders));
-	}
-	public void message(Audience to, String  messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		message(null, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void message(Audience to, String messageKey, List<Placeholder> placeholders) {
-		message(null, to, messageKey, 0, false, placeholders);
-	}
-	public void message(Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
-		message(null, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
-	}
-	public void message(Permission permission, Audience to, String messageKey, Placeholder... placeholders){
-		message(permission, to, messageKey, 0, false, List.of(placeholders));
-	}
-	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		message(permission, to, messageKey, 0, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void message(Permission permission, Audience to, String messageKey, List<Placeholder> placeholders) {
-		message(permission, to, messageKey, 0, false, placeholders);
-	}
-	public void message(Permission permission, Audience to, String messageKey, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
-		message(permission, to, messageKey, 0, senderSpecificPlaceholders, placeholders);
-	}
-	public void message(Audience to, String messageKey, int delay, List<Placeholder> placeholders){
-		message(null, to, messageKey, delay, false, placeholders);
-	}
-	public void message(Audience to, String messageKey, int delay, Placeholder... placeholders){
-		message(null, to, messageKey, delay, false, List.of(placeholders));
-	}
-	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		message(null, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
-	public void message(Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders){
-		message(null, to, messageKey, delay, senderSpecificPlaceholders, placeholders);
-	}
-	public void message(Permission permission, Audience to, String  messageKey, int delay, Placeholder... placeholders){
-		message(permission, to, messageKey, delay, false, List.of(placeholders));
-	}
-	public void message(Permission permission, Audience to, String messageKey, int delay, List<Placeholder> placeholders) {
-		message(permission, to, messageKey, delay, false, placeholders);
-	}
-	public void message(Permission permission, Audience to, String  messageKey, int delay, boolean senderSpecificPlaceholders, Placeholder... placeholders){
-		message(permission, to, messageKey, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
 	public void message(Permission permission, Audience to, String messageKey, int delay, boolean senderSpecificPlaceholders, List<Placeholder> placeholders) {
 		if (!this.disabledMessages.contains(messageKey)) {
 			if (permission != null) {
 				if (to instanceof CommandSender sender){
-					if (commandManager.testPermission(sender, permission).denied()){
+					if (getCommandManager().testPermission(sender, permission).denied()){
 						return;
 					}
 				} else if (to instanceof ForwardingAudience forwardingAudience){
 					to = forwardingAudience.filterAudience(audience -> audience instanceof CommandSender sender &&
-							commandManager.testPermission(sender, permission).allowed());
+							getCommandManager().testPermission(sender, permission).allowed());
 				}else {
 					return;
 				}
 			}
-			Message message = this.messagesMap.get(messageKey);
+			IMessage<?, Component> message = this.messagesMap.get(messageKey);
 			if (message == null) {
-				Message msg = this.loadMessage(messageKey);
+				IMessage<?, Component> msg = this.loadMessage(messageKey);
 				if (msg != null) {
-					this.send(to, msg, Message.Type.CHAT, delay, senderSpecificPlaceholders, placeholders);
-					this.send(to, msg, Message.Type.TITLE, delay, senderSpecificPlaceholders, placeholders);
-					this.send(to, msg, Message.Type.SUBTITLE, delay, senderSpecificPlaceholders, placeholders);
-					this.send(to, msg, Message.Type.ACTION_BAR, delay, senderSpecificPlaceholders, placeholders);
+					this.send(to, msg, MessageType.CHAT, delay, senderSpecificPlaceholders, placeholders);
+					this.send(to, msg, TITLE, delay, senderSpecificPlaceholders, placeholders);
+					this.send(to, msg, MessageType.SUBTITLE, delay, senderSpecificPlaceholders, placeholders);
+					this.send(to, msg, MessageType.ACTION_BAR, delay, senderSpecificPlaceholders, placeholders);
 				}
 			} else {
-				this.send(to, message, Message.Type.CHAT, delay, senderSpecificPlaceholders, placeholders);
-				this.send(to, message, Message.Type.TITLE, delay, senderSpecificPlaceholders, placeholders);
-				this.send(to, message, Message.Type.SUBTITLE, delay, senderSpecificPlaceholders, placeholders);
-				this.send(to, message, Message.Type.ACTION_BAR, delay, senderSpecificPlaceholders, placeholders);
+				this.send(to, message, MessageType.CHAT, delay, senderSpecificPlaceholders, placeholders);
+				this.send(to, message, TITLE, delay, senderSpecificPlaceholders, placeholders);
+				this.send(to, message, MessageType.SUBTITLE, delay, senderSpecificPlaceholders, placeholders);
+				this.send(to, message, MessageType.ACTION_BAR, delay, senderSpecificPlaceholders, placeholders);
 			}
 		}
 	}
 
 
-	public @Nullable Message getMessage(String key) {
+	public @Nullable IMessage<?, Component> getMessage(@NotNull String key) {
 		return this.messagesMap.get(key);
 	}
 
-	public Component parse(@NotNull Message message, @NotNull Message.Type type, Placeholder... placeholders) {
+	@Override
+	public @NonNull Component formatCaption(@NonNull Caption captionKey, @NonNull CommandSender recipient, @NonNull String caption, @NonNull List<@NonNull CaptionVariable> variables) {
+		return parse(getMessage(caption), MessageType.CHAT, Placeholder.of(variables));
+	}
+
+	@Override
+	public @org.checkerframework.checker.nullness.qual.Nullable String provide(@NonNull Caption caption, @NonNull CommandSender recipient) {
+		return null;
+	}
+
+	public Component parse(@NotNull IMessage<?, Component> message, @NotNull MessageType type, Placeholder... placeholders) {
 		return parse(message, type, List.of(placeholders));
 	}
 
 
 	@Override
-	public @NonNull Component formatCaption(@NonNull Caption captionKey, @NonNull CommandSender recipient, @NonNull String caption, @NonNull List<@NonNull CaptionVariable> variables) {
-		Message message = messagesMap.get(captionKey.key());
-		if (message == null){
-			return Component.empty();
+	@Nullable
+	public Component parse(@NotNull IMessage<?, Component> message, @Nullable MessageType type, List<Placeholder> placeholders) {
+		IMessagePart<Component> part = message.parts().get(type);
+		if (part == null){
+			return null;
 		}
-		List<Placeholder> placeholders = variables.stream().map(CaptionVariableToPlaceholder::apply).toList();;
-		return parse(message, Message.Type.CHAT, placeholders);
-	}
+		Component component = part.asComponent();
+		if (component == null){
+			return null;
+		}
+		String plain = PlainTextComponentSerializer.plainText().serialize(component);
+		Map<String, Placeholder> placeholderMap = getPlaceholderManager()
+				.combine(
+						getPlaceholderManager().getPlaceholders(),
+						asPlaceholderMap(placeholders),
+						message.placeholders()
+				);
 
-	public Component parse(@NotNull Message message, @NotNull Message.Type type, List<Placeholder> placeholders) {
-		Component messageComponent = Objects.requireNonNull(message.componentValue(type));
-		String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
-		Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders != null ? this.immutablePlaceholders : Collections.emptyMap());
-		if (message.placeholders()!=null && !message.placeholders().isEmpty()){
-			placeholderMap.putAll(message.placeholders()); // Built in placeholders from the message
-		}
-		if (placeholders!=null && !placeholders.isEmpty()){
-			placeholderMap.putAll(asPlaceholderMap(placeholders));
-		}
-
-		AtomicReference<Component> finalMessageComponent = new AtomicReference<>(messageComponent);
+		AtomicReference<Component> finalMessageComponent = new AtomicReference<>(component);
 		Matcher matcher = PLACEHOLDER_PATTERN.matcher(plain);
 		while (matcher.find()){
 			String name = matcher.group().substring(1, matcher.group().length()-1);
@@ -569,11 +360,11 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		for (String string : strings) {
 			Component messageComponent = miniMessage.deserialize(string);
 			String plain = PlainTextComponentSerializer.plainText().serialize(messageComponent);
-			Map<String, Placeholder> placeholderMap = new WeakHashMap<>(this.immutablePlaceholders != null ? this.immutablePlaceholders : Collections.emptyMap());
-
-			if (placeholders != null && !placeholders.isEmpty()) {
-				placeholderMap.putAll(asPlaceholderMap(placeholders));
-			}
+			Map<String, Placeholder> placeholderMap = getPlaceholderManager()
+					.combine(
+							getPlaceholderManager().getPlaceholders(),
+							asPlaceholderMap(placeholders)
+					);
 
 			AtomicReference<Component> finalMessageComponent = new AtomicReference<>(messageComponent);
 			Matcher matcher = PLACEHOLDER_PATTERN.matcher(plain);
@@ -598,68 +389,78 @@ public class Messenger<P extends JavaPlugin> implements CaptionMessenger {
 		return components;
 	}
 
-	protected void sendConsole(final @NotNull CommandSender to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
-		if (message.componentValue(type) != null) {
+	protected void sendConsole(final @NotNull CommandSender to, final @NotNull IMessage<?, Component> message, @NotNull final MessageType type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
+		IMessagePart<Component> component = message.parts().get(type);
+		if (component == null || !message.enabled()){
+			return;
+		}
+		(new BukkitRunnable() {
+			public void run() {
+				List<Placeholder> newPlaceholders = new ArrayList<>(placeholders);
+				if (senderSpecificPlaceholders)
+					newPlaceholders.addAll(getPlaceholderManager().senderPlaceholders("player", to));
+				Component messageComponent = Messenger.this.parse(message, type, newPlaceholders);
+				if (messageComponent == null){
+					return;
+				}
+				if (isConsoleLogger()){
+					ComponentLogger logger = getMain().getComponentLogger();
+					logger.info(messageComponent);
+				} else {
+					to.sendMessage(messageComponent);
+				}
+
+			}
+		}).runTaskLaterAsynchronously(getMain(), delay);
+	}
+	protected void send(final @NotNull Audience to, final @NotNull IMessage<?, Component> message, @NotNull final MessageType type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
+		send(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
+	}
+
+	protected void send(final @NotNull Audience to, final @NotNull IMessage<?, Component> message, @NotNull final MessageType type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
+		IMessagePart<Component> part = message.parts().get(type);
+		if (part == null || !message.enabled()) {
+			return;
+		}
+
+		if (to instanceof ForwardingAudience forwardingAudience) {
+			//noinspection OverrideOnly
+			for (Audience audience : forwardingAudience.audiences()) {
+				send(audience, message, type, delay, senderSpecificPlaceholders, placeholders);
+			}
+			return;
+		} else if (!(to instanceof Player player)) {
+			this.sendConsole((CommandSender) to, message, type, delay, senderSpecificPlaceholders, placeholders);
+		} else {
 			(new BukkitRunnable() {
 				public void run() {
 					List<Placeholder> newPlaceholders = new ArrayList<>(placeholders);
 					if (senderSpecificPlaceholders)
-						newPlaceholders.addAll(createPlaceholders("player", to));
+						newPlaceholders.addAll(getPlaceholderManager().audiencePlaceholders("player", player));
 					Component messageComponent = Messenger.this.parse(message, type, newPlaceholders);
-					if (Messenger.this.useConsoleComponentLogger) {
-						ComponentLogger logger = Messenger.this.plugin.getComponentLogger();
-						logger.info(messageComponent);
-					} else {
-						to.sendMessage(messageComponent);
+					if (messageComponent == null){
+						return;
+					}
+					switch (type) {
+						case CHAT:
+							to.sendMessage(messageComponent);
+							break;
+						case TITLE:
+							to.sendTitlePart(TitlePart.TITLE, messageComponent);
+							break;
+						case SUBTITLE:
+							to.sendTitlePart(TitlePart.SUBTITLE, messageComponent);
+							break;
+						case ACTION_BAR:
+							to.sendActionBar(messageComponent);
 					}
 
 				}
-			}).runTaskLaterAsynchronously(this.plugin, delay);
-		}
-	}
-	protected void send(final @NotNull Audience to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final Placeholder... placeholders) {
-		send(to, message, type, delay, senderSpecificPlaceholders, List.of(placeholders));
-	}
-
-	protected void send(final @NotNull Audience to, final @NotNull Message message, @NotNull final Message.@NotNull Type type, int delay, boolean senderSpecificPlaceholders, final List<Placeholder> placeholders) {
-		if (message.componentValue(type) != null) {
-			if (to instanceof ForwardingAudience forwardingAudience){
-				for (Audience audience : forwardingAudience.audiences()){
-					send(audience, message, type, delay, senderSpecificPlaceholders, placeholders);
-				}
-				return;
-			} else if (!(to instanceof Player player)) {
-				this.sendConsole((CommandSender) to, message, type, delay, senderSpecificPlaceholders, placeholders);
-			} else {
-				(new BukkitRunnable() {
-					public void run() {
-						List<Placeholder> newPlaceholders = new ArrayList<>(placeholders);
-						if (senderSpecificPlaceholders)
-							newPlaceholders.addAll(createPlaceholders("player", player));
-						Component messageComponent = Messenger.this.parse(message, type, newPlaceholders);
-						switch (type) {
-							case CHAT:
-								to.sendMessage(messageComponent);
-								break;
-							case TITLE:
-								to.sendTitlePart(TitlePart.TITLE, messageComponent);
-								break;
-							case SUBTITLE:
-								to.sendTitlePart(TitlePart.SUBTITLE, messageComponent);
-								break;
-							case ACTION_BAR:
-								to.sendActionBar(messageComponent);
-						}
-
-					}
-				}).runTaskLaterAsynchronously(this.plugin, delay);
-			}
+			}).runTaskLaterAsynchronously(getMain(), delay);
 		}
 	}
 
-
-	public ComponentLogger getLogger(){
-		return plugin.getComponentLogger();
+	public ComponentLogger getLogger() {
+		return getMain().getComponentLogger();
 	}
-
 }
