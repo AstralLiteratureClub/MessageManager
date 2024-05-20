@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a message key
  */
-public interface TranslationKey extends Translatable {
+public interface TranslationKey extends Translatable, TranslationKeyProvider {
 	/**
 	 * Creates a new translation based on the key given
 	 * @param key key
@@ -36,5 +36,10 @@ public interface TranslationKey extends Translatable {
 	@Override
 	default @NotNull String translationKey() {
 		return getKey();
+	}
+
+	@Override
+	default @NotNull TranslationKey getTranslationKey() {
+		return this;
 	}
 }

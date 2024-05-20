@@ -6,8 +6,6 @@ import bet.astral.platform.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -22,54 +20,30 @@ public interface ComponentBase {
 	TranslationKey getTranslationKey();
 
 	/**
-	 * Returns the parts for given locale if the locale has been parsed.
-	 * @param locale locale
+	 * Returns the parts this component part supports.
 	 * @return parts, else null
 	 */
 	@Nullable
 	@Immutable
-	Map<@NotNull ComponentType, @NotNull ComponentPart> getParts(Locale locale);
+	Map<@NotNull ComponentType, @NotNull ComponentPart> getParts();
 
 	/**
-	 * Returns all possible locales for this message
-	 * @return loaded locales
-	 */
-	@Immutable
-	@NotNull Collection<@NotNull Locale> getLocales();
-
-	/**
-	 * Returns the placeholders per each locale
-	 * @param locale locale
+	 * Returns built in placeholders for this base component
 	 * @return placeholders
 	 */
 	@Nullable
 	@Immutable
-	Map<String, Placeholder> getPlaceholders(@NotNull Locale locale);
+	Map<String, Placeholder> getPlaceholders();
 
 	/**
-	 * Returns if the given locale is disabled with their message parts
-	 * @param locale locale
+	 * Returns true if this base component is disabled.
 	 * @return true if disabled, else false
 	 */
-	boolean isDisabled(@NotNull Locale locale);
+	boolean isDisabled();
 
 	/**
-	 * Disables/Enables given locale
-	 * @param locale locale to disable/enable
+	 * Disables/Enables this base component
 	 * @param disable true if disable, false if enable
 	 */
-	void setDisabled(@NotNull Locale locale, boolean disable);
-
-	/**
-	 * Adds given locale to the locales possible. If the component part-map is empty, the locale will not be added
-	 * @param locale locale
-	 * @param parts parts
-	 */
-	void addLocale(@NotNull Locale locale, @NotNull Map<@NotNull ComponentType, @NotNull ComponentPart> parts);
-
-	/**
-	 * Removes given locale from the base component.
-	 * @param locale locale
-	 */
-	void removeLocale(@NotNull Locale locale);
+	void setDisabled(boolean disable);
 }

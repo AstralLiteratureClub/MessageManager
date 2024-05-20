@@ -10,6 +10,7 @@ import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
 import bet.astral.messenger.v2.receiver.ForwardingReceiver;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
+import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import bet.astral.platform.Platform;
 import bet.astral.platform.entity.Permissionable;
 import bet.astral.platform.permission.Permission;
@@ -38,6 +39,13 @@ public interface Messenger extends Randomly {
 //		return new MessengerImpl(logger);
 		return null;
 	}
+
+	/**
+	 * Returns the translation key registry.
+	 * @return translation key registry
+	 */
+	@NotNull
+	TranslationKeyRegistry getTranslationKeyRegistry();
 
 	void setPlaceholderHookManager(@NotNull PlaceholderHookManager hookManager);
 	@NotNull PlaceholderHookManager getPlaceholderHookManager();

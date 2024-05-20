@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface CaptionTranslationKey extends TranslationKey, Caption {
 	/**
-	 * Returns a new instance of the  caption translation key.
+	 * Returns a new instance of the caption translation key.
 	 * @param key key
 	 * @return new translation key
 	 */
