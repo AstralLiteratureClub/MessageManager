@@ -13,6 +13,23 @@ placeholders:
   - name: default-example
     value: "<red><b>Astral<reset>"
     type: default
+  - name: long-long
+    value:
+      - "Multi"
+      - "Lined"
+      - "Placeholder"
+  - name: long-long-legacy
+    value:
+      - "&6Multi"
+      - "&7Lined"
+      - "&3Placeholder"
+  - name: random-placeholder
+    type: random
+    value:
+      - "Hello"
+      - "Hi"
+      - "Bye"
+      - "Goodbye"
 
 
 
