@@ -1,6 +1,6 @@
 package bet.astral.messenger.v2.locale.source;
 
-import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
+import bet.astral.messenger.v2.Messenger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -9,8 +9,8 @@ import java.util.Locale;
 public abstract class AbstractFileLanguageSource extends AbstractLanguageSource implements FileLanguageSource{
 	private final File file;
 
-	protected AbstractFileLanguageSource(Locale locale, TranslationKeyRegistry registry, File file) {
-		super(locale, registry);
+	protected AbstractFileLanguageSource(@NotNull Messenger messenger, @NotNull Locale locale, @NotNull File file) {
+		super(messenger, locale);
 		this.file = file;
 	}
 

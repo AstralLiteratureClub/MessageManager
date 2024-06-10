@@ -1,6 +1,7 @@
 package bet.astral.messenger.v2.component;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +41,15 @@ public interface ComponentPart {
 	 */
 	static TitleComponentPart of(@NotNull Component component, @NotNull Duration in, @NotNull Duration stay, @NotNull Duration out){
 		return new TitleComponentPartImpl(component, in, stay, out);
+	}
+
+	/**
+	 * Creates a new component part which parses given string as a minimessage component.
+	 * @param component minimessage component
+	 * @return new component part
+	 */
+	static ComponentPart miniMessage(String component) {
+		return new ComponentPartImpl(MiniMessage.miniMessage().deserialize(component));
 	}
 
 	/**

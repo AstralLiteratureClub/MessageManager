@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    `maven-publish`
 }
 
 version = "2.0.0"
@@ -13,7 +14,6 @@ repositories {
 dependencies {
     // Self
     compileOnly("bet.astral:messenger:$version")
-    compileOnly("bet.astral:platform:1.0.0")
     // Adventure
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.14.0")
@@ -27,4 +27,13 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "messenger-cloud"
+            from(components["java"])
+        }
+    }
 }

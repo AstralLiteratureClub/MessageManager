@@ -1,10 +1,10 @@
 package bet.astral.messenger.v2.receiver;
 
 import bet.astral.messenger.v2.Messenger;
+import bet.astral.messenger.v2.delay.Delay;
+import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.translation.TranslationKey;
-import bet.astral.platform.permission.Permission;
-import bet.astral.platform.scheduler.delay.Delay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

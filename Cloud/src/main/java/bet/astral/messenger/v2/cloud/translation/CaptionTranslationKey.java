@@ -31,11 +31,14 @@ public interface CaptionTranslationKey extends TranslationKey, Caption {
 	 */
 	@NotNull
 	default Caption toTranslatable() {
-		return TranslatableCaption.translatableCaption(this.getKey());
+		return TranslatableCaption.translatableCaption(this.key());
 	}
 
 	@Override
 	default @NonNull String key() {
-		return getKey();
+		return key();
 	}
+
+	@Override
+	int hashCode();
 }

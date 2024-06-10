@@ -20,6 +20,11 @@ class CaptionTranslationImpl implements CaptionTranslationKey{
 		return Objects.equals(translationKey(), that.translationKey());
 	}
 
+	@Override
+	public int hashCode() {
+		return 24*Objects.hash(key);
+	}
+
 
 	@Override
 	public @NotNull String getKey() {

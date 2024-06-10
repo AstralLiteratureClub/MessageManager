@@ -10,15 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Cloud" />
-            <option value="$PROJECT_DIR$/Paper" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/PaperPlaceholderHooks" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/PaperPlaceholderHooks" />
+            <option value="$PROJECT_DIR$/paper" />
           </set>
         </option>
       </GradleProjectSettings>

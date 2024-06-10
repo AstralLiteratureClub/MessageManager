@@ -1,6 +1,5 @@
 package bet.astral.messenger.v2.receiver;
 
-import bet.astral.platform.scheduler.schedulers.IEntityScheduler;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import org.jetbrains.annotations.NotNull;
@@ -24,15 +23,6 @@ public interface ForwardingReceiver extends Receiver, ForwardingAudience {
 	@Override
 	default @NotNull Iterable<? extends Audience> audiences() {
 		return getReceivers();
-	}
-
-	/**
-	 * Throws UnsupportedOperationException as forwarders can't have the entity scheduler accessed as it does not exist
-	 * @return UnsupportedOperationException
-	 */
-	@Override
-	default @NotNull IEntityScheduler getEntityScheduler() {
-		throw new UnsupportedOperationException("Forwarding receiver's entity scheduler is not possible to be used!");
 	}
 
 	@Override

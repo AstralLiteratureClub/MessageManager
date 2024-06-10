@@ -1,14 +1,14 @@
 package bet.astral.messenger.v2.info;
 
 import bet.astral.messenger.v2.Messenger;
+import bet.astral.messenger.v2.annotations.Immutable;
 import bet.astral.messenger.v2.component.ComponentType;
+import bet.astral.messenger.v2.delay.Delay;
+import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.PlaceholderList;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
-import bet.astral.platform.annotations.Immutable;
-import bet.astral.platform.permission.Permission;
-import bet.astral.platform.scheduler.delay.Delay;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +107,7 @@ public interface MessageInfo {
 				return null;
 			}
 		}
-		return messenger.parseComponent(toBuilder().withLocale(locale).withReceiver(receiver).create(), componentType, true);
+		return messenger.parseComponent(toBuilder().withLocale(locale).withReceiver(receiver).create(), componentType, receiver, true);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public interface MessageInfo {
 	 * @return parsed as component
 	 */
 	default @Nullable Component parseAsComponent(@NotNull Messenger messenger, @NotNull Locale locale, @NotNull ComponentType componentType) {
-		return messenger.parseComponent(toBuilder().withLocale(locale).create(), componentType, false);
+		return messenger.parseComponent(toBuilder().withLocale(locale).create(), componentType, messenger.getEmptyReceiver(), false);
 	}
 
 	/**

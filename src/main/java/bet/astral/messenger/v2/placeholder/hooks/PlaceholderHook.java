@@ -1,7 +1,6 @@
 package bet.astral.messenger.v2.placeholder.hooks;
 
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
-import bet.astral.platform.entity.player.IOfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +46,7 @@ public interface PlaceholderHook {
 	 * @return placeholder, else null
 	 */
 	@Nullable
-	PlaceholderValue handle(@NotNull IOfflinePlayer<?, ?> receiver, String key);
+	PlaceholderValue handle(@NotNull Object receiver, String key);
 
 	default void register(@NotNull PlaceholderHookManager hookManager) {
 		hookManager.register(this);

@@ -1,14 +1,12 @@
 package bet.astral.messenger.v2.info;
 
-import bet.astral.messenger.v2.Messenger;
+import bet.astral.messenger.v2.annotations.Immutable;
+import bet.astral.messenger.v2.delay.Delay;
+import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
-import bet.astral.platform.annotations.Immutable;
-import bet.astral.platform.permission.Permission;
-import bet.astral.platform.scheduler.delay.Delay;
 import com.google.common.collect.ImmutableMap;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

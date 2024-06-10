@@ -1,7 +1,7 @@
 package bet.astral.messenger.v2.translation;
 
+import bet.astral.messenger.v2.annotations.Immutable;
 import bet.astral.messenger.v2.annotations.UnsupportedAction;
-import bet.astral.platform.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

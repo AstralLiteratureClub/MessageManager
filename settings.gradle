@@ -1,4 +1,4 @@
 rootProject.name = 'messenger'
-include 'Paper'
 include 'Cloud'
+include 'paper'
 

@@ -1,7 +1,6 @@
 package bet.astral.messenger.v2.component;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;

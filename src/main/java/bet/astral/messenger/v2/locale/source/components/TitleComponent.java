@@ -1,7 +1,7 @@
 package bet.astral.messenger.v2.locale.source.components;
 
-import bet.astral.platform.scheduler.delay.Delay;
-import bet.astral.platform.scheduler.delay.DurationLike;
+import bet.astral.messenger.v2.delay.Delay;
+import bet.astral.messenger.v2.delay.DurationLike;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,14 +21,14 @@ public class TitleComponent extends BasicComponent{
 
 	public static class Duration implements DurationLike {
 		@Getter
-		private final int time;
+		private final long time;
 		private final String timeUnit;
-		public Duration(int time, TimeUnit timeUnit) {
+		public Duration(long time, TimeUnit timeUnit) {
 			this.time = time;
 			this.timeUnit = timeUnit.name();
 		}
 
-		public Duration(int time, String timeUnit) {
+		public Duration(long time, String timeUnit) {
 			this.time = time;
 			this.timeUnit = timeUnit;
 		}
@@ -43,7 +43,7 @@ public class TitleComponent extends BasicComponent{
 		}
 
 		public Delay toDelay(){
-			return Delay.of(time, getTimeUnit());
+			return Delay.of((int) time, getTimeUnit());
 		}
 
 		@Override

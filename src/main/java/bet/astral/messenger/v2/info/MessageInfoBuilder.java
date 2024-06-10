@@ -1,13 +1,13 @@
 package bet.astral.messenger.v2.info;
 
 import bet.astral.messenger.v2.Messenger;
+import bet.astral.messenger.v2.delay.Delay;
+import bet.astral.messenger.v2.permission.Permission;
+import bet.astral.messenger.v2.permission.PredicatePermission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.PlaceholderList;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
-import bet.astral.platform.permission.Permission;
-import bet.astral.platform.permission.PredicatePermission;
-import bet.astral.platform.scheduler.delay.Delay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MessageInfoBuilder {
-	private @NotNull TranslationKey translation;
+	private final @NotNull TranslationKey translation;
 	private @NotNull Permission<Receiver> permission;
 	private @Nullable Locale locale;
 	private boolean tryToUseReceiverLocale;

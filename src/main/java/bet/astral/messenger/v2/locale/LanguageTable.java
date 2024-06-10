@@ -5,8 +5,9 @@ import bet.astral.messenger.v2.component.ComponentBaseBuilder;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
-import bet.astral.platform.annotations.Immutable;
+import bet.astral.messenger.v2.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Map;
@@ -39,11 +40,40 @@ public interface LanguageTable {
 	Locale getLocale();
 
 	/**
+	 * Returns the fallback language which this language table defaults to.
+	 * @return language table
+	 */
+	@NotNull
+	Locale getFallbackLanguage();
+
+	/**
 	 * Returns the language source for base components.
 	 * @return source
 	 */
 	@NotNull
 	LanguageSource getLanguageSource();
+
+	boolean exists(@NotNull TranslationKey translationKey);
+	boolean existsFallback(@NotNull TranslationKey translationKey);
+
+	/**
+	 * Returns given component base using the given translation key.
+	 * Does not fall back to other languages if no message is found.
+	 * @param key key
+	 * @return component base
+	 */
+	@Nullable
+	ComponentBase getComponent(@NotNull TranslationKey key);
+
+	/**
+	 * Returns given component base using the given translation key.
+	 * Falls back to languages below this language table to provide the given translation key.
+	 * If no component base is found returns null
+	 * @param translationKey translation
+	 * @return component base
+	 */
+	@Nullable
+	ComponentBase getComponentFallBack(@NotNull TranslationKey translationKey);
 
 
 	/**

@@ -5,6 +5,7 @@ import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,8 +34,33 @@ public class LanguageTableImpl implements LanguageTable{
 	}
 
 	@Override
+	public @NotNull Locale getFallbackLanguage() {
+		return null;
+	}
+
+	@Override
 	public @NotNull LanguageSource getLanguageSource() {
 		return languageSource;
+	}
+
+	@Override
+	public boolean exists(@NotNull TranslationKey translationKey) {
+		return false;
+	}
+
+	@Override
+	public boolean existsFallback(@NotNull TranslationKey translationKey) {
+		return false;
+	}
+
+	@Override
+	public @Nullable ComponentBase getComponent(@NotNull TranslationKey key) {
+		return null;
+	}
+
+	@Override
+	public @Nullable ComponentBase getComponentFallBack(@NotNull TranslationKey translationKey) {
+		return null;
 	}
 
 	@Override

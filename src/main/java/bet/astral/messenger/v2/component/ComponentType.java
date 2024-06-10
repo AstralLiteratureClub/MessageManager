@@ -1,7 +1,9 @@
 package bet.astral.messenger.v2.component;
 
+import bet.astral.messenger.v2.annotations.Immutable;
+import bet.astral.messenger.v2.locale.source.components.TitleComponent;
 import bet.astral.messenger.v2.receiver.Receiver;
-import bet.astral.platform.annotations.Immutable;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,20 @@ import java.util.List;
  */
 public interface ComponentType {
 	/**
+	 * The default component type registrar which is used by default in every messenger.
+	 */
+	ComponentTypeRegistry GLOBAL_COMPONENT_TYPE_REGISTRY = new ComponentTypeRegistry() {
+		{
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(CHAT);
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(TITLE);
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(SUBTITLE);
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(ACTION_BAR);
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(PLAYER_LIST_HEADER);
+			GLOBAL_COMPONENT_TYPE_REGISTRY.register(PLAYER_LIST_FOOTER);
+		}
+	};
+
+	/**
 	 * Creates a new component type which can be registered to any command loader
 	 * @param name name
 	 * @param componentForwarder forwarder to forward messages
@@ -21,17 +37,28 @@ public interface ComponentType {
 	 * @return new component type
 	 */
 	@NotNull
-	static ComponentType create(@NotNull String name, @NotNull ComponentForwarder componentForwarder, @NotNull String... aliases){
-		return new ComponentTypeImpl(name, componentForwarder, List.of(aliases));
+	static ComponentType create(@NotNull String name, @NotNull ComponentTypeLoader loader, @NotNull ComponentForwarder componentForwarder, @NotNull String... aliases){
+		return new ComponentTypeImpl(name, componentForwarder, loader, List.of(aliases));
 	}
+
 
 	/**
 	 * Used for sending the bigger title to players
 	 */
 	@NotNull
-	ComponentType TITLE = create("title", (receiver, component)->{
-		receiver.sendTitlePart(TitlePart.TITLE, component.getTextComponent());
-		if (component instanceof TitleComponentPart titleComponentPart) {
+	ComponentType TITLE = create("title", (basicComponent)->{
+		if (basicComponent instanceof TitleComponent) {
+			return ComponentPart.of(
+					MiniMessage.miniMessage().deserialize(
+							basicComponent.getComponent()),
+					((TitleComponent) basicComponent).getFadeIn().asDuration(),
+					((TitleComponent) basicComponent).getStay().asDuration(),
+					((TitleComponent) basicComponent).getStay().asDuration());
+		}
+		return ComponentPart.miniMessage(basicComponent.getComponent());
+	}, (receiver, component)->{
+		receiver.sendTitlePart(TitlePart.TITLE, component.parsedComponent());
+		if (component.parsedComponent() instanceof TitleComponentPart titleComponentPart) {
 			receiver.sendTitlePart(TitlePart.TIMES, Title.Times.times(titleComponentPart.getFadeIn(), titleComponentPart.getStay(), titleComponentPart.getFadeOut()));
 		}
 	});
@@ -39,9 +66,19 @@ public interface ComponentType {
 	 * Used for sending the smaller title to players
 	 */
 	@NotNull
-	ComponentType SUBTITLE = create("subtitle", (receiver, component)->{
-		receiver.sendTitlePart(TitlePart.SUBTITLE, component.getTextComponent());
-		if (component instanceof TitleComponentPart titleComponentPart) {
+	ComponentType SUBTITLE = create("subtitle", (basicComponent)->{
+		if (basicComponent instanceof TitleComponent) {
+			return ComponentPart.of(
+					MiniMessage.miniMessage().deserialize(
+							basicComponent.getComponent()),
+					((TitleComponent) basicComponent).getFadeIn().asDuration(),
+					((TitleComponent) basicComponent).getStay().asDuration(),
+					((TitleComponent) basicComponent).getStay().asDuration());
+		}
+		return ComponentPart.miniMessage(basicComponent.getComponent());
+	}, (receiver, component)->{
+		receiver.sendTitlePart(TitlePart.SUBTITLE, component.parsedComponent());
+		if (component.componentPart() instanceof TitleComponentPart titleComponentPart) {
 			receiver.sendTitlePart(TitlePart.TIMES, Title.Times.times(titleComponentPart.getFadeIn(), titleComponentPart.getStay(), titleComponentPart.getFadeOut()));
 		}
 	}, "sub-title");
@@ -49,22 +86,29 @@ public interface ComponentType {
 	 * Used for sending a message above action-bar
 	 */
 	@NotNull
-	ComponentType ACTION_BAR = create("action-bar", (receiver, component)-> receiver.sendActionBar(component.getTextComponent()), "actionbar");
+	ComponentType ACTION_BAR = create("action-bar", (basicComponent)->ComponentPart
+			.miniMessage(basicComponent.getComponent()), (receiver, component)-> receiver.sendActionBar(component.parsedComponent()), "actionbar");
 	/**
 	 * Used for sending a message to the chat box
 	 */
 	@NotNull
-	ComponentType CHAT = create("chat", (receiver, component)-> receiver.sendMessage(component.getTextComponent()));
+	ComponentType CHAT = create("chat", (basicComponent)->ComponentPart
+			.miniMessage(basicComponent.getComponent()),
+			(receiver, component)-> receiver.sendMessage(component.parsedComponent()));
 	/**
 	 * Used for changing the tab list header
 	 */
 	@NotNull
-	ComponentType PLAYER_LIST_HEADER = create("list-header", (receiver, componentPart) -> receiver.sendPlayerListHeader(componentPart.getTextComponent()), "player-list-header", "playerlistheader");
+	ComponentType PLAYER_LIST_HEADER = create("list-header", (basicComponent)->ComponentPart
+			.miniMessage(basicComponent.getComponent()),
+			(receiver, componentPart) -> receiver.sendPlayerListHeader(componentPart.parsedComponent()), "player-list-header", "playerlistheader");
 	/**
 	 * Used for changing the tab list footer
 	 */
 	@NotNull
-	ComponentType PLAYER_LIST_FOOTER = create("list-footer", (receiver, componentPart) -> receiver.sendPlayerListFooter(componentPart.getTextComponent()), "player-list-footer", "playerlistfooter");
+	ComponentType PLAYER_LIST_FOOTER = create("list-footer", (basicComponent)->ComponentPart
+			.miniMessage(basicComponent.getComponent()),
+			(receiver, componentPart) -> receiver.sendPlayerListFooter(componentPart.parsedComponent()), "player-list-footer", "playerlistfooter");
 
 	/**
 	 * Returns the name of this component type
@@ -81,7 +125,19 @@ public interface ComponentType {
 	@Immutable
 	Collection<String> getAliases();
 
-	void forward(@NotNull Receiver receiver, @NotNull ComponentPart componentPart);
+	/**
+	 * Forwards given component part to the receiver.
+	 * @param receiver receiver to receive component part
+	 * @param componentPart component part
+	 */
+	void forward(@NotNull Receiver receiver, @NotNull ParsedComponentPart componentPart);
+
+	/**
+	 * Returns the component type loader
+	 * @return component type loader
+	 */
+	@NotNull
+	ComponentTypeLoader getLoader();
 
 	/**
 	 * Forwards all components to the receiver
@@ -93,6 +149,6 @@ public interface ComponentType {
 		 * @param receiver who receives the component part
 		 * @param componentPart component part
 		 */
-		void send(@NotNull Receiver receiver, @NotNull ComponentPart componentPart);
+		void send(@NotNull Receiver receiver, @NotNull ParsedComponentPart componentPart);
 	}
 }

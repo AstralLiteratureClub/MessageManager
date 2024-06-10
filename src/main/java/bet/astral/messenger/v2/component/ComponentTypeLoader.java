@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Loads given cached basic component as a component part.
  */
+@FunctionalInterface
 public interface ComponentTypeLoader {
 	/**
 	 * Converts cached component to component part

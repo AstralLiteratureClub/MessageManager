@@ -1,7 +1,9 @@
 package bet.astral.messenger.v2.locale.source;
 
+import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.component.ComponentBase;
 import bet.astral.messenger.v2.locale.LanguageTable;
+import bet.astral.messenger.v2.placeholder.loader.PlaceholderSource;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,12 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Loads and parses new base components for {@link LanguageTable}.
  */
-public interface LanguageSource {
+public interface LanguageSource extends PlaceholderSource {
+	/**
+	 * Returns the messenger which this language source belongs to.
+	 * @return messenger
+	 */
+	@NotNull Messenger getMessenger();
 	/**
 	 * Returns the translation key registry
 	 * @return translation key registry
@@ -33,8 +40,8 @@ public interface LanguageSource {
 	 * @param translationKey translation key
 	 * @return component base
 	 */
-	@Nullable
-	CompletableFuture<@Nullable ComponentBase> load(@NotNull TranslationKey translationKey);
+	@NotNull
+	CompletableFuture<@Nullable ComponentBase> loadComponent(@NotNull TranslationKey translationKey);
 
 	/**
 	 * Loads all given translation keys.
@@ -43,8 +50,8 @@ public interface LanguageSource {
 	 * @param translationKeys translation keys
 	 * @return components
 	 */
-	@Nullable
-	CompletableFuture<@NotNull Map<@NotNull TranslationKey, @Nullable ComponentBase>> loadAll(@NotNull TranslationKey... translationKeys);
+	@NotNull
+	CompletableFuture<@NotNull Map<@NotNull TranslationKey, @Nullable ComponentBase>> loadAllComponents(@NotNull TranslationKey... translationKeys);
 
 	/**
 	 * Loads all given translation keys.
@@ -53,6 +60,6 @@ public interface LanguageSource {
 	 * @param translationKeys translation keys
 	 * @return components
 	 */
-	@Nullable
-	CompletableFuture<@NotNull Map<@NotNull TranslationKey, @Nullable ComponentBase>> loadAll(@NotNull Collection<? extends TranslationKey> translationKeys);
+	@NotNull
+	CompletableFuture<@NotNull Map<@NotNull TranslationKey, @Nullable ComponentBase>> loadAllComponents(@NotNull Collection<? extends TranslationKey> translationKeys);
 }

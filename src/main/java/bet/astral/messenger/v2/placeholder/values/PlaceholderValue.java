@@ -93,9 +93,16 @@ public interface PlaceholderValue extends ComponentLike, Cloneable {
 	 */
 	@NotNull
 	default String getValueLegacy() {
+		return LegacyComponentSerializer.legacyAmpersand().serialize(getValue());
+	}
+	/**
+	 * Returns the component value as legacy chat formatting
+	 * @return value as legacy chat formatting
+	 */
+	@NotNull
+	default String getValueLegacySection() {
 		return LegacyComponentSerializer.legacySection().serialize(getValue());
 	}
-
 	/**
 	 * Returns the component value as plain text without formatting
 	 * @return plain text value

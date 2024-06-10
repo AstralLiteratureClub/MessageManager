@@ -1,7 +1,7 @@
 package bet.astral.messenger.v2.receiver;
 
-import bet.astral.platform.entity.Permissionable;
-import bet.astral.platform.scheduler.schedulers.IEntityScheduler;
+import bet.astral.messenger.v2.permission.Permissionable;
+import bet.astral.messenger.v2.task.IScheduler;
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +20,21 @@ public interface Receiver extends Audience, Permissionable {
 	static ForwardingReceiver of(@NotNull Collection<Receiver> receivers){
 		return new ForwardingReceiverImpl(receivers);
 	}
+
+	/**
+	 * Returns an empty receiver which doesn't forward messages or anything just acts as an empty receiver.
+	 * @return empty receiver
+	 */
+	static Receiver empty(){
+		return EmptyReceiverImpl.emptyReceiver;
+	}
+
 	/**
 	 * Gets the entity scheduler for the given receiver
 	 * @return scheduler
 	 */
 	@NotNull
-	IEntityScheduler getEntityScheduler();
+	IScheduler getScheduler();
 	/**
 	 * Returns the locale of the receiver
 	 * @return returns the locale of the receiver
