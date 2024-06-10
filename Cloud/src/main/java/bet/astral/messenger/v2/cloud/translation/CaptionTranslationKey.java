@@ -36,7 +36,7 @@ public interface CaptionTranslationKey extends TranslationKey, Caption {
 
 	@Override
 	default @NonNull String key() {
-		return key();
+		return getKey();
 	}
 
 	@Override
