@@ -232,42 +232,42 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, translation, placeholderList, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, delay, translation, placeholderList, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, translation, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, delay, translation, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), permission, translation, placeholderList);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), permission, delay, translation, placeholderList);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation) {
 		this.message(broadcast(), permission, translation);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
 		this.message(broadcast(), permission, delay, translation);
 	}
 
@@ -302,7 +302,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -315,7 +315,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -328,7 +328,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -339,7 +339,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -351,7 +351,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -362,7 +362,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -374,7 +374,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -384,7 +384,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
@@ -460,7 +460,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -469,7 +469,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -478,7 +478,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -487,7 +487,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -496,7 +496,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -505,7 +505,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -514,7 +514,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @NotNull TranslationKey translation) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -523,7 +523,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;

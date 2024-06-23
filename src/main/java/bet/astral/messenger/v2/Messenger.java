@@ -220,7 +220,7 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @param permission permission
 	 * @return combined receiver
 	 */
-	default Receiver broadcast(@NotNull Permission<Permissionable> permission) {
+	default Receiver broadcast(@NotNull Permission permission) {
 		Collection<Receiver> receivers = new LinkedList<>();
 		if (console().hasPermission(permission)){
 			receivers.add(console());

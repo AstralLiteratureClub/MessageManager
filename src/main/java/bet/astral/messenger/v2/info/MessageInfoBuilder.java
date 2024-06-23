@@ -3,6 +3,7 @@ package bet.astral.messenger.v2.info;
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.delay.Delay;
 import bet.astral.messenger.v2.permission.Permission;
+import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.permission.PredicatePermission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.PlaceholderList;
@@ -17,7 +18,7 @@ import java.util.function.Predicate;
 
 public class MessageInfoBuilder {
 	private final @NotNull TranslationKey translation;
-	private @NotNull Permission<Receiver> permission;
+	private @NotNull Permission permission;
 	private @Nullable Locale locale;
 	private boolean tryToUseReceiverLocale;
 	private @NotNull Delay delay;
@@ -42,7 +43,7 @@ public class MessageInfoBuilder {
 		this.permission = Permission.of(permission);
 		return this;
 	}
-	public MessageInfoBuilder withPermission(@Nullable Permission<Receiver> permission) {
+	public MessageInfoBuilder withPermission(@Nullable Permission permission) {
 		if (permission == null){
 			this.permission = Permission.empty();
 			return this;
@@ -50,7 +51,7 @@ public class MessageInfoBuilder {
 		this.permission = permission;
 		return this;
 	}
-	public MessageInfoBuilder withPermission(@Nullable Predicate<Receiver> predicate){
+	public MessageInfoBuilder withPermission(@Nullable Predicate<Permissionable> predicate){
 		if (predicate == null){
 			this.permission = Permission.empty();
 			return this;

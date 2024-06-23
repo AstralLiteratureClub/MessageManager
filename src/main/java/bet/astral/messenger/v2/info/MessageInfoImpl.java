@@ -26,11 +26,11 @@ final class MessageInfoImpl implements MessageInfo {
 	@NotNull
 	private final Collection<Object> receivers;
 	@NotNull
-	private final Permission<Receiver> permission;
+	private final Permission permission;
 	@NotNull
 	private final Map<String, Placeholder> placeholders;
 
-	public MessageInfoImpl(@NotNull TranslationKey translation, @Nullable Locale locale, @NotNull Delay delay, boolean tryToUseReceiverLocale, @NotNull Collection<Object> receivers, @NotNull Permission<Receiver> permission, @NotNull Map<String, Placeholder> placeholders) {
+	public MessageInfoImpl(@NotNull TranslationKey translation, @Nullable Locale locale, @NotNull Delay delay, boolean tryToUseReceiverLocale, @NotNull Collection<Object> receivers, @NotNull Permission permission, @NotNull Map<String, Placeholder> placeholders) {
 		this.translation = translation;
 		this.locale = locale;
 		this.delay = delay;
@@ -51,7 +51,7 @@ final class MessageInfoImpl implements MessageInfo {
 	}
 
 	@Override
-	public @NotNull Permission<Receiver> getPermission() {
+	public @NotNull Permission getPermission() {
 		return permission;
 	}
 

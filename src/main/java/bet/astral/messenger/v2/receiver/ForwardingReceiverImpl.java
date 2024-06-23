@@ -31,7 +31,7 @@ public class ForwardingReceiverImpl implements ForwardingReceiver{
 	}
 
 	@Override
-	public boolean hasPermission(@NotNull Permission<?> permission) {
+	public boolean hasPermission(@NotNull Permission permission) {
 		return false;
 	}
 

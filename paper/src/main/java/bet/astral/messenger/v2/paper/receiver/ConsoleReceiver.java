@@ -22,9 +22,8 @@ public class ConsoleReceiver implements Receiver {
 	}
 
 	@Override
-	public boolean hasPermission(@NotNull Permission<?> permission) {
-		//noinspection unchecked,rawtypes
-		return ((Permission) permission).test(this);
+	public boolean hasPermission(@NotNull Permission permission) {
+		return permission.test(this);
 	}
 
 	@Override

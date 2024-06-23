@@ -41,7 +41,7 @@ public interface MessageInfo {
 	 * @return permission
 	 */
 	@NotNull
-	Permission<Receiver> getPermission();
+	Permission getPermission();
 
 	/**
 	 * Returns the locale this message is being sent using

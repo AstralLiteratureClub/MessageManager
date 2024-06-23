@@ -30,7 +30,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders collection
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
 		message(permission, Delay.NONE, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -42,7 +42,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
 		getMessenger().message(this, permission, delay, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -51,7 +51,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		message(permission, Delay.NONE, translation, Collections.emptyList(), placeholders);
 	}
 	/**
@@ -62,7 +62,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Placeholder... placeholders) {
 		message(permission, delay, translation, Collections.emptyList(), placeholders);
 	}
 	/**
@@ -71,7 +71,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
 		message(permission, Delay.NONE, translation, placeholdersCollection);
 	}
 	/**
@@ -82,7 +82,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
 		message(permission, delay, translation, placeholdersCollection, new Placeholder[0]);
 	}
 	/**
@@ -90,7 +90,7 @@ public interface Forwarder extends Receiver{
 	 * @param permission permission to receive
 	 * @param translation translation key
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @NotNull TranslationKey translation) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation) {
 		message(permission, Delay.NONE, translation, Collections.emptyList(), new Placeholder[0]);
 
 	}
@@ -101,7 +101,7 @@ public interface Forwarder extends Receiver{
 	 * @param delay delay before sending the given message
 	 * @param translation translation key
 	 */
-	default void message(@Nullable Permission<Receiver> permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation) {
 		message(permission, delay, translation, Collections.emptyList(), new Placeholder[0]);
 	}
 

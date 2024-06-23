@@ -10,7 +10,7 @@ import java.util.Locale;
 class EmptyReceiverImpl implements Receiver {
 	public static EmptyReceiverImpl emptyReceiver = new EmptyReceiverImpl();
 	@Override
-	public boolean hasPermission(@NotNull Permission<?> permission) {
+	public boolean hasPermission(@NotNull Permission permission) {
 		return false;
 	}
 

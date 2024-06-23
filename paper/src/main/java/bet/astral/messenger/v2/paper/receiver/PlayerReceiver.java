@@ -2,6 +2,7 @@ package bet.astral.messenger.v2.paper.receiver;
 
 import bet.astral.messenger.v2.paper.scheduler.ASyncScheduler;
 import bet.astral.messenger.v2.permission.Permission;
+import bet.astral.messenger.v2.receiver.Forwarder;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import org.bukkit.Bukkit;
@@ -28,9 +29,8 @@ public class PlayerReceiver implements Receiver {
 	}
 
 	@Override
-	public boolean hasPermission(@NotNull Permission<?> permission) {
-		//noinspection unchecked,rawtypes
-		return ((Permission) permission).test(this);
+	public boolean hasPermission(@NotNull Permission permission) {
+		return permission.test(this);
 	}
 
 	@Override
