@@ -8,18 +8,16 @@ import java.util.Collection;
 /**
  * Similar to {@link OrPermission} but allows multiple permissions to be given as parameters.
  * Returns true if any of the given permissions return true
- * @param <C> Permissionable
  */
-public interface AnyPermission<C extends Permissionable> extends Permission<C> {
+public interface AnyPermission extends Permission {
 	/**
-	 * Creates a new instance of {@link AnyPermission<C>}
+	 * Creates a new instance of {@link AnyPermission}
 	 * @param permissions permissions
 	 * @return new linked permission
-	 * @param <C> Permissionable
 	 */
 	@NotNull
-	static <C extends Permissionable> AnyPermission<C> of(@NotNull Permission<C>... permissions){
-		return new AnyPermissionImpl<>(Arrays.stream(permissions).toList());
+	static AnyPermission of(@NotNull Permission... permissions){
+		return new AnyPermissionImpl(Arrays.stream(permissions).toList());
 	}
 
 	/**
@@ -27,5 +25,5 @@ public interface AnyPermission<C extends Permissionable> extends Permission<C> {
 	 * @return permissions
 	 */
 	@NotNull
-	Collection<Permission<C>> permissions();
+	Collection<Permission> permissions();
 }

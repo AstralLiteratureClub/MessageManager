@@ -4,19 +4,17 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Requires both permissions to be true to return true
- * @param <C> permissionable
  */
-public interface AndPermission<C extends Permissionable> extends Permission<C>{
+public interface AndPermission extends Permission{
 	/**
-	 * Creates a new instance of {@link AndPermission<C>}
+	 * Creates a new instance of {@link AndPermission}
 	 * @param one first permission
 	 * @param two second permission
 	 * @return combined permission
-	 * @param <C> Permissionable
 	 */
 	@NotNull
-	static <C extends Permissionable> AndPermission<C> of(@NotNull Permission<C> one, @NotNull Permission<C> two){
-		return new AndPermissionImpl<>(one, two);
+	static AndPermission of(@NotNull Permission one, @NotNull Permission two){
+		return new AndPermissionImpl(one, two);
 	}
 
 	/**
@@ -24,12 +22,12 @@ public interface AndPermission<C extends Permissionable> extends Permission<C>{
 	 * @return permission
 	 */
 	@NotNull
-	Permission<C> getFirst();
+	Permission getFirst();
 
 	/**
 	 * The second permission
 	 * @return permission
 	 */
 	@NotNull
-	Permission<C> getSecond();
+	Permission getSecond();
 }

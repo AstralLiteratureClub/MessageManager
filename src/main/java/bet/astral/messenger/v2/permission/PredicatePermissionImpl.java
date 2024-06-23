@@ -4,23 +4,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public record PredicatePermissionImpl<C extends Permissionable>(Predicate<C> predicate) implements PredicatePermission<C> {
-	public PredicatePermissionImpl(@NotNull Predicate<C> predicate) {
+public record PredicatePermissionImpl(Predicate<Permissionable> predicate) implements PredicatePermission {
+	public PredicatePermissionImpl(@NotNull Predicate<Permissionable> predicate) {
 		this.predicate = predicate;
 	}
 
 	@Override
-	public boolean test(@NotNull C receiver) {
+	public boolean test(@NotNull Permissionable receiver) {
 		return getPredicate().test(receiver);
 	}
 
 	@Override
-	public @NotNull Predicate<C> predicate() {
+	public @NotNull Predicate<Permissionable> predicate() {
 		return predicate;
 	}
 
 	@Override
-	public @NotNull Predicate<C> getPredicate() {
+	public @NotNull Predicate<Permissionable> getPredicate() {
 		return predicate();
 	}
 }

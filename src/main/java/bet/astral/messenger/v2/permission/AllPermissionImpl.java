@@ -5,22 +5,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @param <C>
- */
-final class AllPermissionImpl<C extends Permissionable> implements AllPermission<C> {
-	private final List<Permission<C>> permissions;
+final class AllPermissionImpl implements AllPermission {
+	private final List<Permission> permissions;
 
-	AllPermissionImpl(List<Permission<C>> permissions) {
+	AllPermissionImpl(List<Permission> permissions) {
 		this.permissions = permissions;
 	}
-	public AllPermissionImpl(Permission<C>[] permissions) {
+	public AllPermissionImpl(Permission[] permissions) {
 		this.permissions = List.of(permissions);
 	}
 
 	@Override
-	public boolean test(@NotNull C receiver) {
-		for (Permission<C> permission : permissions) {
+	public boolean test(@NotNull Permissionable receiver) {
+		for (Permission permission : permissions) {
 			if (!permission.test(receiver)) {
 				return false;
 			}
@@ -29,7 +26,7 @@ final class AllPermissionImpl<C extends Permissionable> implements AllPermission
 	}
 
 	@Override
-	public @NotNull List<Permission<C>> permissions() {
+	public @NotNull List<Permission> permissions() {
 		return permissions;
 	}
 
@@ -37,7 +34,7 @@ final class AllPermissionImpl<C extends Permissionable> implements AllPermission
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj == null || obj.getClass() != this.getClass()) return false;
-		var that = (AllPermissionImpl<?>) obj;
+		var that = (AllPermissionImpl) obj;
 		return Objects.equals(this.permissions, that.permissions);
 	}
 
@@ -45,11 +42,4 @@ final class AllPermissionImpl<C extends Permissionable> implements AllPermission
 	public int hashCode() {
 		return Objects.hash(permissions);
 	}
-
-	@Override
-	public String toString() {
-		return "AllPermissionImpl[" +
-				"permissions=" + permissions + ']';
-	}
-
 }

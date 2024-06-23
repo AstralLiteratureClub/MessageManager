@@ -4,36 +4,37 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public interface Permission<C extends Permissionable> {
-	Permission<Permissionable> empty = new EmptyPermissionImpl<>();
-	static <C extends Permissionable> Permission<C> empty(){
-		return new EmptyPermissionImpl<>();
+
+public interface Permission {
+	Permission empty = new EmptyPermissionImpl();
+	static  Permission empty(){
+		return new EmptyPermissionImpl();
 	}
 	@NotNull
-	static <C extends Permissionable> Permission<C> of(@NotNull String permission){
-		return new PermissionImpl<>(permission);
+	static  Permission of(@NotNull String permission){
+		return new PermissionImpl(permission);
 	}
-	boolean test(@NotNull C permissionable);
+	boolean test(@NotNull Permissionable permissionable);
 
 	@NotNull
-	default Permission<C> or(@NotNull Permission<C> permission){
-		return new OrPermissionImpl<>(this, permission);
+	default Permission or(@NotNull Permission permission){
+		return new OrPermissionImpl(this, permission);
 	}
 	@NotNull
-	default Permission<C> or(@NotNull Predicate<C> predicate){
-		return new OrPermissionImpl<>(this, PredicatePermission.of(predicate));
+	default Permission or(@NotNull Predicate<Permissionable> predicate){
+		return new OrPermissionImpl(this, PredicatePermission.of(predicate));
 	}
 	@NotNull
-	default Permission<C> and(@NotNull Permission<C> permission) {
-		return new AndPermissionImpl<>(this, permission);
+	default Permission and(@NotNull Permission permission) {
+		return new AndPermissionImpl(this, permission);
 	}
 	@NotNull
-	default Permission<C> and(@NotNull Predicate<C> predicate) {
-		return new AndPermissionImpl<>(this, PredicatePermission.of(predicate));
+	default Permission and(@NotNull Predicate<Permissionable> predicate) {
+		return new AndPermissionImpl(this, PredicatePermission.of(predicate));
 	}
 
 	@NotNull
-	default Permission<C> inverted(){
+	default Permission inverted(){
 		return InvertedPermission.of(this);
 	}
 }

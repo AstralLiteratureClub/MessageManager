@@ -4,16 +4,15 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An empty permission.
- * @param <C>
  */
-final class EmptyPermissionImpl<C extends Permissionable> implements Permission<C> {
+final class EmptyPermissionImpl implements Permission {
 	/**
 	 * Returns true
 	 * @param permissionable permissionable
 	 * @return true
 	 */
 	@Override
-	public boolean test(@NotNull C permissionable) {
+	public boolean test(@NotNull Permissionable permissionable) {
 		return true;
 	}
 }

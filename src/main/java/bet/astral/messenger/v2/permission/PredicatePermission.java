@@ -6,18 +6,16 @@ import java.util.function.Predicate;
 
 /**
  * Predicate permission checks the given predicate, and if the predicate returns true then the permission returns true
- * @param <C> Permissionable
  */
-public interface PredicatePermission<C extends Permissionable> extends Permission<C>{
+public interface PredicatePermission extends Permission{
 	/**
 	 * Creates a new instance of predicate permission
 	 * @param predicate predicate
 	 * @return predicate permission
-	 * @param <C> Permissionable
 	 */
 	@NotNull
-	static <C extends Permissionable> Permission<C> of(@NotNull Predicate<C> predicate){
-		return new PredicatePermissionImpl<>(predicate);
+	static Permission of(@NotNull Predicate<Permissionable> predicate){
+		return new PredicatePermissionImpl(predicate);
 	}
 
 	/**
@@ -25,5 +23,5 @@ public interface PredicatePermission<C extends Permissionable> extends Permissio
 	 * @return predicate
 	 */
 	@NotNull
-	Predicate<C> getPredicate();
+	Predicate<Permissionable> getPredicate();
 }

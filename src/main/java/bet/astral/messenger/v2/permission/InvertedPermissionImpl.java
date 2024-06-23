@@ -4,20 +4,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-final class InvertedPermissionImpl<C extends Permissionable> implements InvertedPermission<C> {
-	private final @NotNull Permission<C> permission;
+final class InvertedPermissionImpl implements InvertedPermission {
+	private final @NotNull Permission permission;
 
-	InvertedPermissionImpl(@NotNull Permission<C> permission) {
+	InvertedPermissionImpl(@NotNull Permission permission) {
 		this.permission = permission;
 	}
 
 	@Override
-	public boolean test(@NotNull C receiver) {
+	public boolean test(@NotNull Permissionable receiver) {
 		return !permission.test(receiver);
 	}
 
 	@Override
-	public @NotNull Permission<C> permission() {
+	public @NotNull Permission permission() {
 		return permission;
 	}
 
@@ -25,18 +25,12 @@ final class InvertedPermissionImpl<C extends Permissionable> implements Inverted
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj == null || obj.getClass() != this.getClass()) return false;
-		var that = (InvertedPermissionImpl<?>) obj;
+		var that = (InvertedPermissionImpl) obj;
 		return Objects.equals(this.permission, that.permission);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(permission);
-	}
-
-	@Override
-	public String toString() {
-		return "InvertedPermissionImpl[" +
-				"permission=" + permission + ']';
 	}
 }

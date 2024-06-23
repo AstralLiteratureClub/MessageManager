@@ -2,29 +2,29 @@ package bet.astral.messenger.v2.permission;
 
 import org.jetbrains.annotations.NotNull;
 
-final class OrPermissionImpl<C extends Permissionable> implements OrPermission<C> {
+final class OrPermissionImpl implements OrPermission {
 	@NotNull
-	private final Permission<C> one;
+	private final Permission one;
 	@NotNull
-	private final Permission<C> two;
+	private final Permission two;
 
-	public OrPermissionImpl(@NotNull Permission<C> one, @NotNull Permission<C> two) {
+	public OrPermissionImpl(@NotNull Permission one, @NotNull Permission two) {
 		this.one = one;
 		this.two = two;
 	}
 
 	@Override
-	public @NotNull Permission<C> getFirst() {
+	public @NotNull Permission getFirst() {
 		return one;
 	}
 
 	@Override
-	public @NotNull Permission<C> getSecond() {
+	public @NotNull Permission getSecond() {
 		return two;
 	}
 
 	@Override
-	public boolean test(@NotNull C permissionable) {
+	public boolean test(@NotNull Permissionable permissionable) {
 		return one.test(permissionable) || two.test(permissionable);
 	}
 }

@@ -6,19 +6,16 @@ import java.util.Collection;
 
 /**
  * Requires all permissions in the collection to be true
- * @param <C> permissionable
  */
-public interface AllPermission<C extends Permissionable> extends Permission<C>{
+public interface AllPermission extends Permission{
 	/**
-	 * Creates a new instance of {@link AllPermission<C>}
+	 * Creates a new instance of {@link AllPermission}
 	 * @param permissions permissions to link
 	 * @return new linked permission
-	 * @param <C> Permissionable
 	 */
-	@SafeVarargs
 	@NotNull
-	static <C extends Permissionable> Permission<C> of(@NotNull Permission<C>... permissions){
-		return new AllPermissionImpl<>(permissions);
+	static Permission of(Permission... permissions){
+		return new AllPermissionImpl(permissions);
 	}
 
 	/**
@@ -26,5 +23,5 @@ public interface AllPermission<C extends Permissionable> extends Permission<C>{
 	 * @return permissions
 	 */
 	@NotNull
-	Collection<@NotNull Permission<C>> permissions();
+	Collection<@NotNull Permission> permissions();
 }

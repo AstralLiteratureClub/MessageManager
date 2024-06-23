@@ -4,17 +4,16 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Inverts any permission given as its permission.
- * @param <C> Permissionable
  */
-public interface InvertedPermission<C extends Permissionable> extends Permission<C>{
+public interface InvertedPermission extends Permission{
 	/**
 	 * Returns new permission inverter
 	 * @param permission permission to invert
 	 * @return new inverted permission
 	 */
 	@NotNull
-	static <C extends Permissionable> InvertedPermission<C> of(@NotNull Permission<C> permission){
-		return new InvertedPermissionImpl<>(permission);
+	static InvertedPermission of(@NotNull Permission permission){
+		return new InvertedPermissionImpl(permission);
 	}
 
 	/**
@@ -22,5 +21,5 @@ public interface InvertedPermission<C extends Permissionable> extends Permission
 	 * @return permission
 	 */
 	@NotNull
-	Permission<C> permission();
+	Permission permission();
 }
