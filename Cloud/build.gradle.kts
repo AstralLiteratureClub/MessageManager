@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     // Self
-    compileOnly("bet.astral:messenger:$version")
+    compileOnly(project(":"))
     // Adventure
     compileOnly("net.kyori:adventure-api:4.14.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.14.0")
