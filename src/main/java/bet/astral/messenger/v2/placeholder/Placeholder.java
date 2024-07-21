@@ -108,7 +108,6 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 		return new PlaceholderImpl(key, Component.text(string));
 	}
 
-
 	/**
 	 * Creates a new random placeholder using the components given
 	 *
@@ -117,7 +116,7 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	 * @return new random placeholder
 	 */
 	@Contract("_, _ -> new")
-	static @NotNull Placeholder random(@NotNull String key, @NotNull Collection<Object> values) {
+	static @NotNull Placeholder random(@NotNull String key, @NotNull Collection<ComponentLike> values) {
 		return new RandomPlaceholderImpl(key, values);
 	}
 
@@ -130,7 +129,7 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	 */
 	@Contract("_, _ -> new")
 	static @NotNull Placeholder random(@NotNull String key, @NotNull ComponentLike... values) {
-		Collection<Object> componentLikes = new LinkedList<>(Arrays.asList(values));
+		Collection<ComponentLike> componentLikes = new LinkedList<>(Arrays.asList(values));
 		return new RandomPlaceholderImpl(key, componentLikes);
 	}
 
