@@ -9,5 +9,5 @@ public class Locales {
 	public static Locale[] getAvailableLocales(){
 		return Locale.getAvailableLocales();
 	}
-	public static Locale FINNISH = new Locale("fi", "FI");
+	public final static Locale FINNISH = new Locale("fi", "FI");
 }
