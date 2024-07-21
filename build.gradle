@@ -32,12 +32,6 @@ dependencies {
     compileOnly "net.kyori:adventure-text-serializer-plain:4.14.0"
     compileOnly "net.kyori:adventure-text-serializer-gson:4.14.0"
     compileOnly 'net.kyori:adventure-text-logger-slf4j:4.14.0'
-    // component logger (PAPER)
-
-
-    compileOnly 'org.spongepowered:configurate-core:4.0.0'
-    compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
-    compileOnly 'org.spongepowered:configurate-gson:4.0.0'
 }
 
 
