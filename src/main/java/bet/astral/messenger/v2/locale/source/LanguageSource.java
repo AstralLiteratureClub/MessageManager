@@ -3,7 +3,6 @@ package bet.astral.messenger.v2.locale.source;
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.component.ComponentBase;
 import bet.astral.messenger.v2.locale.LanguageTable;
-import bet.astral.messenger.v2.placeholder.loader.PlaceholderSource;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -14,10 +13,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+
 /**
  * Loads and parses new base components for {@link LanguageTable}.
  */
-public interface LanguageSource extends PlaceholderSource {
+public interface LanguageSource {
 	/**
 	 * Returns the messenger which this language source belongs to.
 	 * @return messenger
