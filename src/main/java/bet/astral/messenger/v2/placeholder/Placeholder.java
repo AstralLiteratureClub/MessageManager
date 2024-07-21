@@ -42,6 +42,32 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	static Placeholder of(@NotNull String key, @NotNull PlaceholderValue placeholderValue) {
 		return new PlaceholderImpl(key, placeholderValue);
 	}
+	/**
+	 * Creates a new placeholder using the given number.
+	 *
+	 * @param key              key
+	 * @param number number
+	 * @return new placeholder
+	 */
+	@Contract("_, _ -> new")
+	@NotNull
+	static Placeholder of(@NotNull String key, @NotNull Number number) {
+		return new PlaceholderImpl(key, Component.text(number.toString()));
+	}
+
+	/**
+	 * Creates a new placeholder using the given number.
+	 *
+	 * @param key              key
+	 * @param string string
+	 * @return new placeholder
+	 */
+	@Contract("_, _ -> new")
+	@NotNull
+	static Placeholder of(@NotNull String key, @NotNull String string) {
+		return new PlaceholderImpl(key, Component.text(string));
+	}
+
 
 	/**
 	 * Creates a placeholder where prefix can be null and does not append PREFIX_ in front of the key
