@@ -44,7 +44,13 @@ public interface LanguageTable {
 	 * @return language table
 	 */
 	@NotNull
-	Locale getFallbackLanguage();
+	Locale getFallbackLocale();
+
+	/**
+	 * Sets the fallback locale for this language table.
+	 * @param locale fallback language
+	 */
+	void setFallbackLocale(@NotNull Locale locale);
 
 	/**
 	 * Returns the language source for base components.
@@ -53,7 +59,18 @@ public interface LanguageTable {
 	@NotNull
 	LanguageSource getLanguageSource();
 
+	/**
+	 * Checks if there is a loaded component for the given translation key
+	 * @param translationKey translation
+	 * @return true if yes, false if no
+	 */
 	boolean exists(@NotNull TranslationKey translationKey);
+
+	/**
+	 * Checks if there is a fallback to the given translation key.
+	 * @param translationKey translation
+	 * @return true if yes, false if no
+	 */
 	boolean existsFallback(@NotNull TranslationKey translationKey);
 
 	/**

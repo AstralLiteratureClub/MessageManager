@@ -15,6 +15,7 @@ public class LanguageTableImpl implements LanguageTable{
 	private final TranslationKeyRegistry registry;
 	private final LanguageSource languageSource;
 	private final Locale locale;
+	private Locale fallback = Locale.US;
 	private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<>();
 
 	public LanguageTableImpl(TranslationKeyRegistry registry, LanguageSource languageSource, Locale locale) {
@@ -34,8 +35,13 @@ public class LanguageTableImpl implements LanguageTable{
 	}
 
 	@Override
-	public @NotNull Locale getFallbackLanguage() {
-		return null;
+	public @NotNull Locale getFallbackLocale() {
+		return fallback;
+	}
+
+	@Override
+	public void setFallbackLocale(@NotNull Locale locale) {
+		this.fallback = locale;
 	}
 
 	@Override
