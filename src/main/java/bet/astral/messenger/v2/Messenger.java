@@ -196,8 +196,25 @@ public interface Messenger extends Randomly, MessageSender {
 		if (base == null || base.isDisabled()){
 			return null;
 		}
+		if (getPrefix() != null){
+			component = getPrefix().append(component);
+		}
 		return new ParsedComponentPart(Objects.requireNonNull(base.getParts()).get(componentType), component);
 	}
+
+
+	/**
+	 * Sets the default message prefix for the messenger
+	 * @param prefix prefix
+	 */
+	void setPrefix(@Nullable Component prefix);
+
+	/**
+	 * Returns the default message prefix for the messenger
+	 * @return prefix, nullable
+	 */
+	@Nullable
+	Component getPrefix();
 
 	void send(@NotNull MessageInfo... messageInformation) throws ClassCastException;
 	void send(@NotNull MessageInfoBuilder... messageInformation) throws ClassCastException;

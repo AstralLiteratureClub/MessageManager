@@ -34,6 +34,7 @@ public abstract class AbstractMessenger implements Messenger {
 	private final TranslationKeyRegistry translationKeyRegistry;
 	private PlaceholderHookManager placeholderHookManager = PlaceholderHookManager.getGlobal();
 	private GlobalPlaceholderManager placeholderLoader = null;
+	private Component prefix;
 	private final Random random;
 	private final Logger logger;
 	@Setter
@@ -604,5 +605,16 @@ public abstract class AbstractMessenger implements Messenger {
 	@Override
 	public Random getRandom() {
 		return random;
+	}
+
+	@Nullable
+	@Override
+	public Component getPrefix() {
+		return prefix;
+	}
+
+	@Override
+	public void setPrefix(Component prefix) {
+		this.prefix = prefix;
 	}
 }
