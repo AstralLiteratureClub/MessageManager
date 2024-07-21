@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 @Getter
+@Deprecated(forRemoval = true)
 public class TitleComponent extends BasicComponent{
 	private final Duration fadeIn;
 	private final Duration stay;
