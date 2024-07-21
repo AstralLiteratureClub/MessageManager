@@ -17,19 +17,9 @@ class RandomPlaceholderImpl extends AbstractPlaceholder implements Randomly, Ran
 	private static final Random random = new Random(System.nanoTime()*1321*System.currentTimeMillis());
 	private final List<ComponentLike> values = new LinkedList<>();
 
-	public RandomPlaceholderImpl(@NotNull String key, @NotNull Collection<Object> values) {
+	public RandomPlaceholderImpl(@NotNull String key, @NotNull Collection<ComponentLike> values) {
 		super(key);
-		for (Object object : values){
-			if (object instanceof PlaceholderValue value){
-				this.values.add(value);
-			} else if (object instanceof String value){
-				this.values.add(Component.text(value));
-			} else if (object instanceof Component value){
-				this.values.add(value);
-			} else if (object instanceof ComponentLike value){
-				this.values.add(value);
-			}
-		}
+		this.values.addAll(values);
 	}
 	protected RandomPlaceholderImpl(@NotNull String key, @NotNull Placeholder placeholder){
 		super(key);
