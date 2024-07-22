@@ -196,9 +196,6 @@ public interface Messenger extends Randomly, MessageSender {
 		if (base == null || base.isDisabled()){
 			return null;
 		}
-		if (getPrefix() != null){
-			component = getPrefix().append(component);
-		}
 		return new ParsedComponentPart(Objects.requireNonNull(base.getParts()).get(componentType), component);
 	}
 
