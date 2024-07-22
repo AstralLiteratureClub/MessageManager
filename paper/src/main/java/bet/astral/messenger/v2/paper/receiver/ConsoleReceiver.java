@@ -4,6 +4,9 @@ import bet.astral.messenger.v2.paper.scheduler.ASyncScheduler;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,5 +32,10 @@ public class ConsoleReceiver implements Receiver {
 	@Override
 	public boolean hasPermission(@NotNull String s) {
 		return Bukkit.getConsoleSender().hasPermission(s);
+	}
+
+	@SuppressWarnings("UnstableApiUsage")
+	public void sendMessage(final @NotNull Identity source, final @NotNull Component message, final @NotNull MessageType type) {
+		CONSOLE_RECEIVER.sendMessage(source, message, type);
 	}
 }
