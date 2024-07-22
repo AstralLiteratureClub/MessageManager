@@ -47,10 +47,17 @@ public interface LanguageTable {
 	Locale getFallbackLocale();
 
 	/**
+	 * Returns the fallback language table
+	 * @return fallback table
+	 */
+	@NotNull
+	LanguageTable getFallbackTable();
+
+	/**
 	 * Sets the fallback locale for this language table.
 	 * @param locale fallback language
 	 */
-	void setFallbackLocale(@NotNull Locale locale);
+	void setFallbackLocale(@NotNull LanguageTable locale);
 
 	/**
 	 * Returns the language source for base components.

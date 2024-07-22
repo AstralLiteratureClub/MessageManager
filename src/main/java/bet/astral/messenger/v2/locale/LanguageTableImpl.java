@@ -15,8 +15,8 @@ public class LanguageTableImpl implements LanguageTable{
 	private final TranslationKeyRegistry registry;
 	private final LanguageSource languageSource;
 	private final Locale locale;
-	private Locale fallback = Locale.US;
-	private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<>();
+	private LanguageTable fallback;
+private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<>();
 
 	public LanguageTableImpl(TranslationKeyRegistry registry, LanguageSource languageSource, Locale locale) {
 		this.registry = registry;
@@ -36,12 +36,18 @@ public class LanguageTableImpl implements LanguageTable{
 
 	@Override
 	public @NotNull Locale getFallbackLocale() {
+		return fallback.getLocale();
+	}
+
+	@Override
+	@NotNull
+	public LanguageTable getFallbackTable(){
 		return fallback;
 	}
 
 	@Override
-	public void setFallbackLocale(@NotNull Locale locale) {
-		this.fallback = locale;
+	public void setFallbackLocale(@NotNull LanguageTable table) {
+		this.fallback = table;
 	}
 
 	@Override
@@ -51,22 +57,32 @@ public class LanguageTableImpl implements LanguageTable{
 
 	@Override
 	public boolean exists(@NotNull TranslationKey translationKey) {
-		return false;
+		return componentBaseMap.get(translationKey) != null;
 	}
 
 	@Override
 	public boolean existsFallback(@NotNull TranslationKey translationKey) {
-		return false;
+		if (exists(translationKey)) {
+			return true;
+		}
+		LanguageTable table = getFallbackTable();
+		return table.existsFallback(translationKey);
 	}
 
 	@Override
 	public @Nullable ComponentBase getComponent(@NotNull TranslationKey key) {
-		return null;
+		return componentBaseMap.get(key);
 	}
 
 	@Override
 	public @Nullable ComponentBase getComponentFallBack(@NotNull TranslationKey translationKey) {
-		return null;
+		if (exists(translationKey)) {
+			return getComponent(translationKey);
+		}
+		if (!existsFallback(translationKey)){
+			return null;
+		}
+		return getFallbackTable().getComponentFallBack(translationKey);
 	}
 
 	@Override
