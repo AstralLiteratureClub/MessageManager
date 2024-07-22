@@ -65,7 +65,7 @@ public class MessageInfoBuilder {
 		return this;
 	}
 
-	public MessageInfoBuilder useReceiverDelay(boolean tryToUseReceiverLocale){
+	public MessageInfoBuilder useReceiverLocale(boolean tryToUseReceiverLocale){
 		this.tryToUseReceiverLocale = tryToUseReceiverLocale;
 		return this;
 	}
