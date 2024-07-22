@@ -1,6 +1,7 @@
 package bet.astral.messenger.v2;
 
 import bet.astral.messenger.v2.component.ComponentBase;
+import bet.astral.messenger.v2.component.ComponentPart;
 import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.component.ComponentTypeRegistry;
 import bet.astral.messenger.v2.component.ParsedComponentPart;
@@ -16,6 +17,7 @@ import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.GlobalPlaceholderManager;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
 import bet.astral.messenger.v2.receiver.Receiver;
+import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import lombok.Getter;
@@ -60,24 +62,72 @@ public abstract class AbstractMessenger implements Messenger {
 		languages.put(getLocale(), LanguageTable.of(defaultLocale));
 	}
 
-	@Override
-	public @Nullable Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType) {
-		return Messenger.super.parseComponent(messageInfo, componentType);
+	public boolean isASync() {
+		return sendASync;
+	}
+
+	public AbstractMessenger setASync(boolean sendASync) {
+		this.sendASync = sendASync;
+		return this;
+	}
+
+	@NotNull
+	public IScheduler getAsync(){
+		//noinspection DataFlowIssue
+		return DefaultScheduler.ASYNC_SCHEDULER;
 	}
 
 	@Override
 	public @Nullable Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver, boolean useReceiverLocale) {
-		return null;
+		Locale locale = useReceiverLocale ? receiver.getLocale() : messageInfo.getLocale();
+		if (locale==null){
+			locale = this.locale;
+		}
+		LanguageTable table = getLanguageTable(locale);
+		if (table==null){
+			locale = this.locale;
+			table = getLanguageTable(locale);
+			if (table==null){
+				return null;
+			}
+		}
+		ComponentBase base = getBaseComponent(messageInfo.getTranslationKey(), locale, true);
+		if (base == null || base.isDisabled()){
+			return null;
+		}
+		if (base.getParts()==null){
+			return null;
+		}
+		ComponentPart part = base.getParts().get(componentType);
+		if (part==null){
+			return null;
+		}
+		Component component = part.getTextComponent();
+		Map<String, Placeholder> placeholderMap = new HashMap<>(messageInfo.getPlaceholders());
+		if (base.getPlaceholders()!=null) {
+			placeholderMap.putAll(base.getPlaceholders());
+		}
+		for (Map.Entry<String, Placeholder> entry : placeholderMap.entrySet()){
+			component = component.replaceText(b->b.match("%(?i)"+entry.getKey()+"%").replacement(entry.getValue().getValue()));
+		}
+
+		if (getPrefix() != null){
+			component = getPrefix().append(component);
+		}
+		return component;
 	}
 
-	@Override
-	public @Nullable Component parseComponent(@NotNull TranslationKey translationKey, @NotNull Locale locale, @NotNull ComponentType componentType, @NotNull Placeholder... placeholders) {
-		return Messenger.super.parseComponent(translationKey, locale, componentType, placeholders);
+	private Map<String, Placeholder> toMap(@NotNull Collection<Placeholder> placeholders){
+		Map<String, Placeholder> placeholderMap = new HashMap<>();
+		for (Placeholder placeholder : placeholders){
+			placeholderMap.put(placeholder.getKey(), placeholder);
+		}
+		return placeholderMap;
 	}
 
 	@Override
 	public @Nullable ComponentBase getBaseComponent(@NotNull TranslationKey key, @NotNull Locale locale) {
-		return getBaseComponent(key, locale, false);
+		return getBaseComponent(key, locale, true);
 	}
 
 	@Override
@@ -91,7 +141,7 @@ public abstract class AbstractMessenger implements Messenger {
 
 	@Override
 	public @NotNull MessageInfoBuilder createMessage(@NotNull TranslationKey translation) {
-		return new MessageInfoBuilder(translation).withLocale(this.getLocale()).useReceiverDelay(tryToUseReceiverLocale());
+		return new MessageInfoBuilder(translation).withLocale(this.getLocale()).useReceiverLocale(tryToUseReceiverLocale());
 	}
 
 	@Override
@@ -122,11 +172,26 @@ public abstract class AbstractMessenger implements Messenger {
 						if (receiver == null){
 							continue;
 						}
-						ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
-						if (part == null){
-							continue;
+						Delay delay = messageInfo.getDelay();
+						if (isASync()){
+							getAsync()
+									.runLater(t->{
+										ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+										if (part == null){
+											return;
+										}
+										componentType.forward(receiver, part);
+									}, delay);
+						} else {
+							receiver.getScheduler()
+									.runLater(t->{
+										ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+										if (part == null){
+											return;
+										}
+										componentType.forward(receiver, part);
+									}, delay);
 						}
-						componentType.forward(receiver, part);
 					}
 				}
 			}
@@ -309,7 +374,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(Delay.NONE)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.addPlaceholders(placeholders)
 				.send(this);
@@ -322,7 +387,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.addPlaceholders(placeholders)
 				.send(this);
@@ -334,7 +399,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholders)
 				.send(this);
 	}
@@ -346,7 +411,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholders)
 				.send(this);
 	}
@@ -357,7 +422,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.send(this);
 	}
@@ -369,7 +434,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.send(this);
 	}
@@ -380,7 +445,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.send(this);
 	}
 
@@ -391,7 +456,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.send(this);
 	}
 
@@ -400,7 +465,7 @@ public abstract class AbstractMessenger implements Messenger {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.addPlaceholders(placeholders)
 				.send(this);
@@ -412,7 +477,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.addPlaceholders(placeholders)
 				.send(this);
@@ -423,7 +488,7 @@ public abstract class AbstractMessenger implements Messenger {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholders)
 				.send(this);
 	}
@@ -434,7 +499,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholders)
 				.send(this);
 	}
@@ -444,7 +509,7 @@ public abstract class AbstractMessenger implements Messenger {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.send(this);
 	}
@@ -455,7 +520,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
-				.useReceiverDelay(tryToUseReceiverLocale())
+				.useReceiverLocale(tryToUseReceiverLocale())
 				.addPlaceholders(placeholderList)
 				.send(this);
 	}
