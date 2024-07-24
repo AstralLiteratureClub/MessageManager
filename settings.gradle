@@ -1,2 +1,4 @@
-rootProject.name = 'Messenger'
+rootProject.name = 'messenger'
+include 'Cloud'
+include 'paper'
 

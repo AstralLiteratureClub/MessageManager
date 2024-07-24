@@ -1,4 +1,3 @@
-//file:noinspection VulnerableLibrariesLocal
 plugins {
     id 'java'
     id 'maven-publish'
@@ -8,53 +7,31 @@ plugins {
 }
 
 group 'bet.astral'
-version '1.6.0'
-description = 'Messenger'
+version '2.0.0'
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "https://repo.papermc.io/repository/maven-public/" }
-    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven { url "https://libraries.minecraft.net" }
 }
 
 dependencies {
+
     implementation 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation "org.apiguardian:apiguardian-api:1.1.2"
 
     // Guava
-    implementation("com.google.guava:guava:32.1.3-jre")
-
-
-    // Cloud
-    var cloudVersion = "2.0.0-beta.5";
-    implementation 'org.incendo:cloud-core:'+cloudVersion
-    implementation 'org.incendo:cloud-paper:'+cloudVersion
-    implementation 'org.incendo:cloud-brigadier:'+cloudVersion
-    implementation 'com.mojang:brigadier:1.0.18'
-    implementation 'org.incendo:cloud-minecraft-extras:'+cloudVersion
-    var cloudTranslations = "1.0.0-SNAPSHOT"
-    // Cloud - Translations
-    implementation 'org.incendo:cloud-translations-core:'+cloudTranslations
-    implementation 'org.incendo:cloud-translations-bukkit:'+cloudTranslations
-
+    compileOnly("com.google.guava:guava:32.1.3-jre")
+    // Gson
+    compileOnly 'com.google.code.gson:gson:2.10.1'
 
     // message component api
-    implementation "net.kyori:adventure-api:4.14.0"
-    implementation "net.kyori:adventure-text-minimessage:4.14.0"
-    implementation "net.kyori:adventure-text-serializer-legacy:4.14.0"
-    // component logger (PAPER)
-    implementation 'net.kyori:adventure-text-logger-slf4j:4.14.0'
-
-    // Databases
-    implementation "org.xerial:sqlite-jdbc:3.44.1.0" // Sql
-    implementation 'com.h2database:h2:2.2.222' // h2
-    implementation 'com.mysql:mysql-connector-j:8.1.0' // mysql
-    implementation 'org.postgresql:postgresql:42.6.0' // postgresql
-
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly "net.kyori:adventure-api:4.14.0"
+    compileOnly "net.kyori:adventure-text-minimessage:4.14.0"
+    compileOnly "net.kyori:adventure-text-serializer-legacy:4.14.0"
+    compileOnly "net.kyori:adventure-text-serializer-plain:4.14.0"
+    compileOnly "net.kyori:adventure-text-serializer-gson:4.14.0"
+    compileOnly 'net.kyori:adventure-text-logger-slf4j:4.14.0'
 }
 
 
