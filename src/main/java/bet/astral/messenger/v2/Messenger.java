@@ -29,7 +29,6 @@ import java.util.function.Function;
 public interface Messenger extends Randomly, MessageSender {
 	@NotNull
 	static IScheduler getScheduler() {
-		//noinspection DataFlowIssue
 		return DefaultScheduler.ASYNC_SCHEDULER;
 	}
 	/**
@@ -205,6 +204,11 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @param prefix prefix
 	 */
 	void setPrefix(@Nullable Component prefix);
+
+	Messenger disablePrefixForNextParse();
+	Messenger enablePrefixForNextParse();
+	Messenger enablePrefix();
+	Messenger disablePrefix();
 
 	/**
 	 * Returns the default message prefix for the messenger

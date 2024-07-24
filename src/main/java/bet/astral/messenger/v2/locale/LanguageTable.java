@@ -43,14 +43,14 @@ public interface LanguageTable {
 	 * Returns the fallback language which this language table defaults to.
 	 * @return language table
 	 */
-	@NotNull
+	@Nullable
 	Locale getFallbackLocale();
 
 	/**
 	 * Returns the fallback language table
 	 * @return fallback table
 	 */
-	@NotNull
+	@Nullable
 	LanguageTable getFallbackTable();
 
 	/**

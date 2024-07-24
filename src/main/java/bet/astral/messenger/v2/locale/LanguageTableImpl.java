@@ -40,7 +40,7 @@ private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<
 	}
 
 	@Override
-	@NotNull
+	@Nullable
 	public LanguageTable getFallbackTable(){
 		return fallback;
 	}
@@ -66,6 +66,9 @@ private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<
 			return true;
 		}
 		LanguageTable table = getFallbackTable();
+		if (table==null){
+			return false;
+		}
 		return table.existsFallback(translationKey);
 	}
 
@@ -80,6 +83,9 @@ private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<
 			return getComponent(translationKey);
 		}
 		if (!existsFallback(translationKey)){
+			return null;
+		}
+		if (getFallbackTable()==null){
 			return null;
 		}
 		return getFallbackTable().getComponentFallBack(translationKey);

@@ -16,21 +16,6 @@ import java.util.List;
  */
 public interface ComponentType {
 	/**
-	 * The default component type registrar which is used by default in every messenger.
-	 */
-	ComponentTypeRegistry GLOBAL_COMPONENT_TYPE_REGISTRY = new ComponentTypeRegistry() {
-		@Override
-		protected void init() {
-			register(CHAT);
-			register(TITLE);
-			register(SUBTITLE);
-			register(ACTION_BAR);
-			register(PLAYER_LIST_HEADER);
-			register(PLAYER_LIST_FOOTER);
-		}
-	};
-
-	/**
 	 * Creates a new component type which can be registered to any command loader
 	 * @param name name
 	 * @param componentForwarder forwarder to forward messages
@@ -110,6 +95,22 @@ public interface ComponentType {
 	ComponentType PLAYER_LIST_FOOTER = create("list-footer", (basicComponent)->ComponentPart
 			.miniMessage(basicComponent.getComponent()),
 			(receiver, componentPart) -> receiver.sendPlayerListFooter(componentPart.parsedComponent()), "player-list-footer", "playerlistfooter");
+
+	/**
+	 * The default component type registrar which is used by default in every messenger.
+	 */
+	ComponentTypeRegistry GLOBAL_COMPONENT_TYPE_REGISTRY = new ComponentTypeRegistry() {
+		@Override
+		protected void init() {
+			register(CHAT);
+			register(TITLE);
+			register(SUBTITLE);
+			register(ACTION_BAR);
+			register(PLAYER_LIST_HEADER);
+			register(PLAYER_LIST_FOOTER);
+		}
+	};
+
 
 	/**
 	 * Returns the name of this component type

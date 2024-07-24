@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.slf4j.Logger;
 
-import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -19,19 +18,13 @@ import java.util.Random;
 public class PaperMessenger extends AbstractMessenger {
 	public static Plugin PLUGIN = null;
 	private static PlayerManager playerManager;
+
 	public static void init(Plugin plugin){
 		if (PLUGIN != null && PLUGIN.isEnabled()){
 			return;
 		}
-		Class<DefaultScheduler> defaultSchedulerClass = DefaultScheduler.class;
-		try {
-			Field field = defaultSchedulerClass.getDeclaredField("ASYNC_SCHEDULER");
-			field.setAccessible(true);
-			field.set(null, ASyncScheduler.SCHEDULER);
-			field.setAccessible(false);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+
+		DefaultScheduler.ASYNC_SCHEDULER = ASyncScheduler.SCHEDULER;
 		PLUGIN = plugin;
 		playerManager = new PlayerManager();
 		plugin.getServer().getPluginManager().registerEvents(playerManager, plugin);
@@ -45,6 +38,8 @@ public class PaperMessenger extends AbstractMessenger {
 				if (sender instanceof ConsoleCommandSender consoleCommandSender) {
 					return console();
 				}
+			} else if (o instanceof Receiver receiver){
+				return receiver;
 			}
 			return null;
 		});

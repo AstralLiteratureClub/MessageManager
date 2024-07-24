@@ -8,10 +8,7 @@ import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.locale.source.AbstractFileLanguageSource;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.translation.TranslationKey;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -31,7 +28,7 @@ import java.util.stream.Collectors;
 public class GsonLanguageSource extends AbstractFileLanguageSource {
 	private final List<ComponentType> types;
 	private final ComponentSerializer<Component, Component, String> componentSerializer;
-	private final Gson gson = new Gson();
+	private final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	private final JsonObject source;
 	public GsonLanguageSource(@NotNull Messenger messenger, @NotNull Locale locale, @NotNull File file, @NotNull ComponentSerializer<Component, Component, String> componentSerializer) {
 		super(messenger, locale, file);
@@ -93,14 +90,14 @@ public class GsonLanguageSource extends AbstractFileLanguageSource {
 						JsonArray array = value.getAsJsonArray();
 						for (JsonElement jsonElement : array){
 							if (component == null){
-								component = componentSerializer.deserialize(gson.toJson(jsonElement));
+								component = componentSerializer.deserialize(jsonElement.getAsString());
 							} else {
-								component = component.appendNewline().append(componentSerializer.deserialize(gson.toJson(jsonElement)));
+								component = component.appendNewline().append(componentSerializer.deserialize(jsonElement.getAsString()));
 							}
 						}
 						valueComp = component;
 					} else {
-						valueComp = componentSerializer.deserialize(gson.toJson(value));
+						valueComp = componentSerializer.deserialize(value.getAsString());
 					}
 					if (type==ComponentType.SUBTITLE||type==ComponentType.TITLE){
 						Duration in = object.get("in") != null ? Ticks.duration(object.get("in").getAsInt()) : Ticks.duration(10);
@@ -112,7 +109,7 @@ public class GsonLanguageSource extends AbstractFileLanguageSource {
 					}
 					builder.setComponentPart(type, part);
 				} else {
-					builder.setComponentPart(type, ComponentPart.of(componentSerializer.deserialize(gson.toJson(elem))));
+					builder.setComponentPart(type, ComponentPart.of(componentSerializer.deserialize(elem.getAsString())));
 				}
 			}
 			if (root.get("placeholders") != null && root.get("placeholders").isJsonArray()){
@@ -139,10 +136,10 @@ public class GsonLanguageSource extends AbstractFileLanguageSource {
 							}
 							if (value.isJsonArray()){
 								for (JsonElement valueElem : value.getAsJsonArray()){
-									valuePlural.add(componentSerializer.deserialize(gson.toJson(valueElem)));
+									valuePlural.add(componentSerializer.deserialize(valueElem.getAsString()));
 								}
 							} else {
-								valuePlural.add(componentSerializer.deserialize(gson.toJson(value)));
+								valuePlural.add(componentSerializer.deserialize(value.getAsString()));
 							}
 						} else if (parser.equalsIgnoreCase("minimessage")){
 							JsonElement value = object.get("value");
@@ -151,10 +148,10 @@ public class GsonLanguageSource extends AbstractFileLanguageSource {
 							}
 							if (value.isJsonArray()){
 								for (JsonElement valueElem : value.getAsJsonArray()){
-									valuePlural.add(MiniMessage.miniMessage().deserialize(gson.toJson(valueElem)));
+									valuePlural.add(MiniMessage.miniMessage().deserialize(valueElem.getAsString()));
 								}
 							} else {
-								valuePlural.add(MiniMessage.miniMessage().deserialize(gson.toJson(value)));
+								valuePlural.add(MiniMessage.miniMessage().deserialize(value.getAsString()));
 							}
 						}
 						if (valuePlural.isEmpty()){
@@ -177,7 +174,7 @@ public class GsonLanguageSource extends AbstractFileLanguageSource {
 				}
 			}
 		} else {
-			builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(componentSerializer.deserialize(gson.toJson(element))));
+			builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(componentSerializer.deserialize(element.getAsString())));
 		}
 		return builder.build();
 	}

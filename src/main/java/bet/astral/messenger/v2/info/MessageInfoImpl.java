@@ -4,7 +4,6 @@ import bet.astral.messenger.v2.annotations.Immutable;
 import bet.astral.messenger.v2.delay.Delay;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
@@ -74,5 +73,4 @@ final class MessageInfoImpl implements MessageInfo {
 	public @NotNull Collection<Object> getReceivers() {
 		return receivers;
 	}
-
 }
