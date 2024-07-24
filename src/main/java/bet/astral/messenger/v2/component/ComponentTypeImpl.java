@@ -34,8 +34,6 @@ class ComponentTypeImpl implements ComponentType {
 
 	@Override
 	public void forward(@NotNull Receiver receiver, @NotNull ParsedComponentPart componentPart) {
-		System.out.println("Trying to forward message to "+ receiver.getClass());
-		System.out.println("Component Type: "+name);
 		forwarder.send(receiver, componentPart);
 	}
 	@Override

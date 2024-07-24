@@ -114,8 +114,6 @@ public abstract class AbstractMessenger implements Messenger {
 			component = component.replaceText(b->b.match("%(?i)"+entry.getKey()+"%").replacement(entry.getValue().getValue()));
 		}
 
-		getLogger().info("Disabled for this parse: "+ prefixDisabledForNextParse);
-		getLogger().info("Disabled overall: "+ prefixDisabled);
 		if (!prefixDisabledForNextParse) {
 			if (getPrefix() != null && !prefixDisabled) {
 				component = getPrefix().append(component);
@@ -173,13 +171,11 @@ public abstract class AbstractMessenger implements Messenger {
 
 	@Override
 	public void send(@NotNull MultiMessageInfo... multiMessageInformation) throws ClassCastException {
-		System.out.println("Trying to send messages... 222222222");
 		for (MultiMessageInfo info : multiMessageInformation){
 			for (MessageInfo messageInfo : info.getMessages()){
 				if (messageInfo.getReceivers().isEmpty()){
 					continue;
 				}
-				System.out.println(messageInfo.getTranslationKey().translationKey());
 				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()){
 					for (Object receiverObj : messageInfo.getReceivers()) {
 						Receiver receiver = convertReceiver(receiverObj);
@@ -193,10 +189,8 @@ public abstract class AbstractMessenger implements Messenger {
 									.runLater(t->{
 										ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
 										if (part == null){
-											System.out.println("Ignoring | "+ componentType.getName());
 											return;
 										}
-										System.out.println("Current component type: "+ componentType.getName());
 										componentType.forward(receiver, part);
 									}, delay);
 						} else {
