@@ -15,7 +15,10 @@ public class ComponentTypeRegistry {
 	 * Creates a new component type registrar.
 	 */
 	public ComponentTypeRegistry() {
+		init();
 	}
+
+	protected void init(){}
 
 	/**
 	 * Registers given the component type to the component type registrar.

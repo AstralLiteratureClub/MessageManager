@@ -19,13 +19,14 @@ public interface ComponentType {
 	 * The default component type registrar which is used by default in every messenger.
 	 */
 	ComponentTypeRegistry GLOBAL_COMPONENT_TYPE_REGISTRY = new ComponentTypeRegistry() {
-		{
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(CHAT);
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(TITLE);
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(SUBTITLE);
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(ACTION_BAR);
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(PLAYER_LIST_HEADER);
-			GLOBAL_COMPONENT_TYPE_REGISTRY.register(PLAYER_LIST_FOOTER);
+		@Override
+		protected void init() {
+			register(CHAT);
+			register(TITLE);
+			register(SUBTITLE);
+			register(ACTION_BAR);
+			register(PLAYER_LIST_HEADER);
+			register(PLAYER_LIST_FOOTER);
 		}
 	};
 
