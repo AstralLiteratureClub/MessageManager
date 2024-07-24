@@ -34,7 +34,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 		Component component = parseComponent(
 				createMessage(CaptionTranslationKey.of(captionKey))
 						.withReceiver(receiver)
-						.useReceiverDelay(tryToUseReceiverLocale())
+						.useReceiverLocale(tryToUseReceiverLocale())
 						.withLocale(getLocale())
 						.addPlaceholders(VariablePlaceholderCollections.toList(variables))
 						.create(),
@@ -58,7 +58,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 		Component component = parseComponent(
 				createMessage(CaptionTranslationKey.of(captionKey))
 						.withReceiver(receiver)
-						.useReceiverDelay(tryToUseReceiverLocale())
+						.useReceiverLocale(tryToUseReceiverLocale())
 						.withLocale(getLocale())
 						.addPlaceholders(VariablePlaceholderCollections.toList(variables))
 						.create(),

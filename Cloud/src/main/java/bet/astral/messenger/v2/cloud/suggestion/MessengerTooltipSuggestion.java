@@ -38,7 +38,7 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 		MessageInfo info = messenger
 				.createMessage(translationKey)
 				.withLocale(locale)
-				.useReceiverDelay(false)
+				.useReceiverLocale(false)
 				.addPlaceholders(placeholders)
 				.create();
 		return of(suggestion, messenger, info);
