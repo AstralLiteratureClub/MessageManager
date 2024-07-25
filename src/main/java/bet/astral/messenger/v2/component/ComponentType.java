@@ -9,6 +9,7 @@ import net.kyori.adventure.title.TitlePart;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -140,6 +141,16 @@ public interface ComponentType {
 	 */
 	@NotNull
 	ComponentTypeLoader getLoader();
+
+	/**
+	 * Returns name and aliases combined in a list
+	 * @return name and aliases
+	 */
+	default List<String> getNameAndAliases(){
+		List<String> copy = new LinkedList<>(getAliases());
+		copy.add(getName());
+		return copy;
+	}
 
 	/**
 	 * Forwards all components to the receiver
