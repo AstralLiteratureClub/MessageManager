@@ -85,6 +85,6 @@ public class PaperTask implements ITask, IDelayedTask {
 
 	@Override
 	public @NotNull Delay getDelay() {
-		return delay;
+		return delay != null ? delay : Delay.NONE;
 	}
 }
