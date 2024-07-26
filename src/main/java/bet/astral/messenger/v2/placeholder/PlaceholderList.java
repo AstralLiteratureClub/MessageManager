@@ -44,6 +44,18 @@ public class PlaceholderList extends LinkedList<Placeholder> {
 	public void add(int index, String name,  PlaceholderValue placeholderValue){
 		add(index, placeholderValue.toPlaceholder(name));
 	}
+	public boolean add(String name, Number number) {
+		return add(Placeholder.of(name, number));
+	}
+	public void add(int index, String name, Number number) {
+		add(index, Placeholder.of(name, number));
+	}
+	public boolean add(String name, String s) {
+		return add(Placeholder.of(name, s));
+	}
+	public void add(int index, String name, String s) {
+		add(index, Placeholder.of(name, s));
+	}
 	public void add(String[] names, ComponentLike info) {
 		for (String name : names){
 			add(Placeholder.of(name, info));
@@ -62,6 +74,26 @@ public class PlaceholderList extends LinkedList<Placeholder> {
 	public void add(int index, String[] names,  PlaceholderValue placeholderValue){
 		for (String name : names) {
 			add(index, placeholderValue.toPlaceholder(name));
+		}
+	}
+	public void add(String[] names, Number number) {
+		for (String name : names) {
+			add(Placeholder.of(name, number));
+		}
+	}
+	public void add(int index, String[] names,  Number number){
+		for (String name : names) {
+			add(index, Placeholder.of(name, number));
+		}
+	}
+	public void add(String[] names, String s) {
+		for (String name : names) {
+			add(Placeholder.of(name, s));
+		}
+	}
+	public void add(int index, String[] names, String s){
+		for (String name : names) {
+			add(index, Placeholder.of(name, s));
 		}
 	}
 
