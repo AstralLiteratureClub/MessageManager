@@ -37,7 +37,16 @@ public class Translation implements TranslationKey {
 		return this;
 	}
 	public Translation add(ComponentType componentType, Component component, Title.Times times){
-		messages.add(componentType, component, times);
+		messages.add(componentType, times, component);
+		return this;
+	}
+
+	public Translation add(ComponentType componentType, Component... components){
+		messages.add(componentType, components);
+		return this;
+	}
+	public Translation add(ComponentType componentType, Title.Times times, Component... components){
+		messages.add(componentType, times, components);
 		return this;
 	}
 
@@ -56,8 +65,34 @@ public class Translation implements TranslationKey {
 			componentPart.put(componentType, ComponentPart.of(component));
 			return this;
 		}
-		public Message add(ComponentType componentType, Component component, Title.Times times){
+		public Message add(ComponentType componentType, Title.Times times, Component component){
+			if (times == null){
+				componentPart.put(componentType, ComponentPart.of(component));
+				return this;
+			}
 			componentPart.put(componentType, ComponentPart.of(component, times));
+			return this;
+		}
+		public Message add(ComponentType componentType, Component... components){
+			return add(componentType, null, components);
+		}
+		public Message add(ComponentType componentType, Title.Times times, Component... components){
+			Component finalComponent = null;
+			for (Component component : components){
+				if (finalComponent== null){
+					finalComponent = component;
+				} else {
+					component = component.append(component);
+				}
+			}
+			if (finalComponent==null){
+				return this;
+			}
+			if (times == null){
+				componentPart.put(componentType, ComponentPart.of(finalComponent));
+				return this;
+			}
+			componentPart.put(componentType, ComponentPart.of(finalComponent, times));
 			return this;
 		}
 
