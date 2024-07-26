@@ -182,7 +182,6 @@ public abstract class AbstractMessenger implements Messenger {
 						if (receiver == null){
 							continue;
 						}
-						System.out.println(receiver.getClass());
 						Delay delay = messageInfo.getDelay();
 						if (isASync()){
 							getAsync()
