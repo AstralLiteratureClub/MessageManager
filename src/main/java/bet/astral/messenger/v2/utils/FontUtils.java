@@ -1,4 +1,4 @@
-package bet.astral.messenger.utils;
+package bet.astral.messenger.v2.utils;
 
 import net.kyori.adventure.text.Component;
 import org.intellij.lang.annotations.RegExp;
