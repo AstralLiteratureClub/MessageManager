@@ -114,10 +114,8 @@ public abstract class AbstractMessenger implements Messenger {
 			component = component.replaceText(b->b.match("%(?i)"+entry.getKey()+"%").replacement(entry.getValue().getValue()));
 		}
 
-		if (!prefixDisabledForNextParse) {
-			if (getPrefix() != null && !prefixDisabled) {
-				component = getPrefix().append(component);
-			}
+		if (!this.prefixDisabledForNextParse && this.getPrefix() != null && !this.prefixDisabled) {
+			component = Component.empty().append(getPrefix()).append(component);
 		}
 
 		prefixDisabledForNextParse = false;
