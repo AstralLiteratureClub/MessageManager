@@ -6,9 +6,10 @@ plugins {
     id 'io.freefair.lombok' version '5.1.0'
 }
 
-group 'bet.astral'
-version '2.0.2'
-
+allprojects {
+    group = 'bet.astral'
+    version = '2.0.2'
+}
 repositories {
     mavenLocal()
     mavenCentral()
