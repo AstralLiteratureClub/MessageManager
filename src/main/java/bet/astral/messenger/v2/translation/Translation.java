@@ -82,7 +82,7 @@ public class Translation implements TranslationKey {
 				if (finalComponent== null){
 					finalComponent = component;
 				} else {
-					component = component.append(component);
+					finalComponent = finalComponent.append(component);
 				}
 			}
 			if (finalComponent==null){
