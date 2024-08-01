@@ -2,10 +2,12 @@ package bet.astral.messenger.v2.receiver;
 
 import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.task.IScheduler;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,6 +21,10 @@ public interface Receiver extends ForwardingAudience, Permissionable {
 	 */
 	static ForwardingReceiver of(@NotNull Collection<Receiver> receivers){
 		return new ForwardingReceiverImpl(receivers);
+	}
+
+	static Receiver of(@NotNull Audience... audience){
+		return new AudienceReceiver(audience);
 	}
 
 	/**

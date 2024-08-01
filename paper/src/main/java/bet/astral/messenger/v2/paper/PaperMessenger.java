@@ -17,11 +17,18 @@ import java.util.Random;
 
 public class PaperMessenger extends AbstractMessenger {
 	public static Plugin PLUGIN = null;
-	private static PlayerManager playerManager;
+	protected static PlayerManager playerManager;
 
 	public static void init(Plugin plugin){
 		if (PLUGIN != null && PLUGIN.isEnabled()){
 			return;
+		}
+
+		try {
+			new PaperPlatform();
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			plugin.getComponentLogger().error("Tried to initialize paper platform, but encountered an exception", e);
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
 		}
 
 		DefaultScheduler.ASYNC_SCHEDULER = ASyncScheduler.SCHEDULER;
@@ -29,6 +36,7 @@ public class PaperMessenger extends AbstractMessenger {
 		playerManager = new PlayerManager();
 		plugin.getServer().getPluginManager().registerEvents(playerManager, plugin);
 	}
+
 	public PaperMessenger(Logger logger) {
 		super(logger);
 		registerReceiverConverter(o->{
