@@ -7,7 +7,6 @@ import bet.astral.messenger.v2.info.MultiMessageInfo;
 import bet.astral.messenger.v2.locale.LanguageTable;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.permission.Permission;
-import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.GlobalPlaceholderManager;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
@@ -286,4 +285,16 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @return logger
 	 */
 	Logger getLogger();
+
+	/**
+	 * Returns if the receiver of a message should receive a translation key, if no message component was found
+	 * @return true, if sends translation key, else false
+	 */
+	boolean shouldSendTranslationKey();
+
+	/**
+	 * Makes the message handler send the translation key, to the message if no message is found.
+	 * @param value true if send the translation key, else false
+	 */
+	void setSendTranslationKey(boolean value);
 }

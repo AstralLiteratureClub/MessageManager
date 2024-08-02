@@ -50,6 +50,7 @@ public abstract class AbstractMessenger implements Messenger {
 	private boolean prefixDisabled = false;
 	@Getter
 	private boolean prefixDisabledForNextParse;
+	private boolean sendTranslationKey = true;
 	public AbstractMessenger(Logger logger) {
 		this(logger, Randomly.RANDOM);
 	}
@@ -174,13 +175,46 @@ public abstract class AbstractMessenger implements Messenger {
 				if (messageInfo.getReceivers().isEmpty()){
 					continue;
 				}
+				Map<Object, Boolean> empty = new HashMap<>();
+				Map<Object, Locale> locales = new HashMap<>();
 				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()){
 					for (Object receiverObj : messageInfo.getReceivers()) {
 						Receiver receiver = convertReceiver(receiverObj);
 						if (receiver == null){
 							continue;
 						}
+						if (empty.get(receiver) != null && empty.get(receiver)){
+							continue;
+						}
+						Locale locale = locales.get(receiver);
+						if (locale == null){
+							if (messageInfo.tryToUseReceiverLocale()){
+								locale = receiver.getLocale();
+							} else if (isUseReceiverLocale()) {
+								locale = receiver.getLocale();
+							} else {
+								locale = getLocale();
+							}
+							locales.put(receiver, locale);
+						}
+						ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
+						if (componentBase==null||componentBase.isDisabled()){
+							empty.put(receiver, true);
+							continue;
+						}
 						Delay delay = messageInfo.getDelay();
+						if (componentBase.getParts() == null || componentBase.getParts().isEmpty()){
+							empty.put(receiver, true);
+							if (shouldSendTranslationKey()) {
+								if (isASync()) {
+									getAsync().runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+								} else {
+									receiver.getScheduler().runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+								}
+							}
+							continue;
+						}
+
 						if (isASync()){
 							getAsync()
 									.runLater(t->{
@@ -713,5 +747,15 @@ public abstract class AbstractMessenger implements Messenger {
 	public Messenger disablePrefix() {
 		this.prefixDisabled = true;
 		return this;
+	}
+
+	@Override
+	public boolean shouldSendTranslationKey() {
+		return sendTranslationKey;
+	}
+
+	@Override
+	public void setSendTranslationKey(boolean value) {
+		this.sendTranslationKey = value;
 	}
 }
