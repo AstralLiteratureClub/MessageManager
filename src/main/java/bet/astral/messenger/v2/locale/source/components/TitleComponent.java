@@ -3,12 +3,14 @@ package bet.astral.messenger.v2.locale.source.components;
 import bet.astral.messenger.v2.delay.Delay;
 import bet.astral.messenger.v2.delay.DurationLike;
 import lombok.Getter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
 @Getter
 @Deprecated(forRemoval = true)
+@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
 public class TitleComponent extends BasicComponent{
 	private final Duration fadeIn;
 	private final Duration stay;
