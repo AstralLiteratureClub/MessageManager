@@ -23,6 +23,11 @@ class PlaceholderImpl extends AbstractPlaceholder{
 	}
 
 	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return value;
+	}
+
+	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		return clone(getKey());
 	}
