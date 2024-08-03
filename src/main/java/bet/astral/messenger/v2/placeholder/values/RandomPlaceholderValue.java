@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * A random placeholder value returns a random value each time {@link #value()} is used.
+ * A random placeholder value returns a random value each time {@link #getPossibleValues()} is used.
  */
 public interface RandomPlaceholderValue extends PlaceholderValue, Randomly {
 	/**

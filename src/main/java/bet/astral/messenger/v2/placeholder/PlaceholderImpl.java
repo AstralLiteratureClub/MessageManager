@@ -5,15 +5,15 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 class PlaceholderImpl extends AbstractPlaceholder{
-	private final Component value;
+	private final PlaceholderValue value;
 
 	protected PlaceholderImpl(@NotNull String key, @NotNull Component value) {
 		super(key);
-		this.value = value;
+		this.value = PlaceholderValue.of(value);
 	}
 	protected PlaceholderImpl(@NotNull String key, @NotNull PlaceholderValue placeholderValue){
 		super(key);
-		this.value = placeholderValue.getValue();
+		this.value = placeholderValue;
 	}
 
 
@@ -29,6 +29,6 @@ class PlaceholderImpl extends AbstractPlaceholder{
 
 	@Override
 	public @NotNull Component getValue() {
-		return value;
+		return value.getValue();
 	}
 }

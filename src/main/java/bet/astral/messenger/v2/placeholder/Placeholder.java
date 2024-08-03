@@ -1,8 +1,10 @@
 package bet.astral.messenger.v2.placeholder;
 
 import bet.astral.messenger.v2.CloneableWithName;
+import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import bet.astral.messenger.v2.placeholder.values.RandomPlaceholderValue;
+import bet.astral.messenger.v2.translation.TranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -145,9 +147,28 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 		return new RandomPlaceholderImpl(key, randomPlaceholderValue);
 	}
 
+	/**
+	 * Creates a new placeholder with the given translation.
+	 * @param key key
+	 * @param translationKey translation
+	 * @param type type
+	 * @return value
+	 */
+	@Contract(value = "_, _, _ -> new", pure = true)
+	static @NotNull PlaceholderValue translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type){
+		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type));
+	}
+
 	@NotNull
 	@Override
 	Placeholder clone(@NotNull String name);
+
+	/**
+	 * Returns the placeholder value associated with given placeholder.
+	 * @return placeholder value
+	 */
+	@NotNull
+	PlaceholderValue getPlaceholderValue();
 
 	/**
 	 * Returns the placeholder key

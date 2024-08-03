@@ -60,6 +60,11 @@ class RandomPlaceholderImpl extends AbstractPlaceholder implements Randomly, Ran
 		return new RandomPlaceholderImpl(name, this);
 	}
 
+	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return this;
+	}
+
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	protected Object clone() throws CloneNotSupportedException {

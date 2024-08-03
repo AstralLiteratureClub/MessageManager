@@ -1,6 +1,8 @@
 package bet.astral.messenger.v2.placeholder.values;
 
+import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.placeholder.Placeholder;
+import bet.astral.messenger.v2.translation.TranslationKey;
 import com.google.gson.JsonElement;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -38,6 +40,16 @@ public interface PlaceholderValue extends ComponentLike, Cloneable {
 	 */
 	static PlaceholderValue plain(@NotNull String plainString){
 		return new PlaceholderValueImpl(Component.text(plainString));
+	}
+
+	/**
+	 * Creates a new placeholder with the given translation.
+	 * @param translationKey translation
+	 * @param type type
+	 * @return value
+	 */
+	static PlaceholderValue translation(@NotNull TranslationKey translationKey, @NotNull ComponentType type){
+		return new TranslationPlaceholderValueImpl(translationKey, type);
 	}
 
 	/**
