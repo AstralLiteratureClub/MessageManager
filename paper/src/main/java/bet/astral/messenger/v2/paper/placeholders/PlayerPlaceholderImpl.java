@@ -2,6 +2,7 @@ package bet.astral.messenger.v2.paper.placeholders;
 
 import bet.astral.messenger.v2.placeholder.AbstractPlaceholder;
 import bet.astral.messenger.v2.placeholder.Placeholder;
+import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,11 @@ class PlayerPlaceholderImpl extends AbstractPlaceholder implements PlayerPlaceho
 	@Override
 	public @NotNull Placeholder clone(@NotNull String s) {
 		return new PlayerPlaceholderImpl(s, player, value);
+	}
+
+	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return this;
 	}
 
 	@Override

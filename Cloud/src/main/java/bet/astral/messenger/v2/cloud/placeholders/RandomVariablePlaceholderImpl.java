@@ -71,6 +71,11 @@ class RandomVariablePlaceholderImpl extends AbstractPlaceholder implements Varia
 		return new RandomVariablePlaceholderImpl(name, this);
 	}
 
+	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return this;
+	}
+
 	@SuppressWarnings({"MethodDoesntCallSuperMethod", "CloneDoesntDeclareCloneNotSupportedException"})
 	protected Object clone() {
 		return this.clone(this.getKey());

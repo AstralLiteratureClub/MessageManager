@@ -29,6 +29,11 @@ class VariablePlaceholderImpl extends AbstractPlaceholder implements VariablePla
 	}
 
 	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return this;
+	}
+
+	@Override
 	public @NotNull Component asComponent() {
 		return VariablePlaceholder.super.asComponent();
 	}

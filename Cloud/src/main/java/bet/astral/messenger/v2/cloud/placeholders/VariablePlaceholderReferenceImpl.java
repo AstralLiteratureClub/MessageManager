@@ -1,6 +1,7 @@
 package bet.astral.messenger.v2.cloud.placeholders;
 
 import bet.astral.messenger.v2.placeholder.Placeholder;
+import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,11 @@ class VariablePlaceholderReferenceImpl implements VariablePlaceholderReference {
 	@Override
 	public @NotNull Placeholder clone(@NotNull String s) {
 		return new VariablePlaceholderReferenceImpl(placeholder.clone(s));
+	}
+
+	@Override
+	public @NotNull PlaceholderValue getPlaceholderValue() {
+		return this;
 	}
 
 	@Override
