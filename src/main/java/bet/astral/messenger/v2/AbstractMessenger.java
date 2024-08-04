@@ -19,6 +19,7 @@ import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.placeholder.values.TranslationPlaceholderValue;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
+import bet.astral.messenger.v2.task.ITask;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import bet.astral.tuples.Pair;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class AbstractMessenger implements Messenger {
@@ -37,7 +39,7 @@ public abstract class AbstractMessenger implements Messenger {
 	private final Set<Function<Object, Receiver>> receiverConverterSet = new HashSet<>();
 	private final TranslationKeyRegistry translationKeyRegistry;
 	private PlaceholderHookManager placeholderHookManager = PlaceholderHookManager.getGlobal();
-	private PlaceholderManager placeholderLoader = PlaceholderManager.create();
+	private PlaceholderManager placeholderManager = PlaceholderManager.create();
 	private Component prefix;
 	private final Random random;
 	private final Logger logger;
@@ -191,25 +193,25 @@ public abstract class AbstractMessenger implements Messenger {
 
 	@Override
 	public void send(@NotNull MultiMessageInfo... multiMessageInformation) throws ClassCastException {
-		for (MultiMessageInfo info : multiMessageInformation){
-			for (MessageInfo messageInfo : info.getMessages()){
-				if (messageInfo.getReceivers().isEmpty()){
+		for (MultiMessageInfo info : multiMessageInformation) {
+			for (MessageInfo messageInfo : info.getMessages()) {
+				if (messageInfo.getReceivers().isEmpty()) {
 					continue;
 				}
 				Map<Object, Boolean> empty = new HashMap<>();
 				Map<Object, Locale> locales = new HashMap<>();
-				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()){
+				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()) {
 					for (Object receiverObj : messageInfo.getReceivers()) {
 						Receiver receiver = convertReceiver(receiverObj);
-						if (receiver == null){
+						if (receiver == null) {
 							continue;
 						}
-						if (empty.get(receiver) != null && empty.get(receiver)){
+						if (empty.get(receiver) != null && empty.get(receiver)) {
 							continue;
 						}
 						Locale locale = locales.get(receiver);
-						if (locale == null){
-							if (messageInfo.tryToUseReceiverLocale()){
+						if (locale == null) {
+							if (messageInfo.tryToUseReceiverLocale()) {
 								locale = receiver.getLocale();
 							} else if (isUseReceiverLocale()) {
 								locale = receiver.getLocale();
@@ -219,41 +221,43 @@ public abstract class AbstractMessenger implements Messenger {
 							locales.put(receiver, locale);
 						}
 						ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
-						if (componentBase==null||componentBase.isDisabled()){
+						if (componentBase == null || componentBase.isDisabled()) {
 							empty.put(receiver, true);
 							continue;
 						}
+						IScheduler scheduler = receiver.getScheduler();
+						if (sendASync) {
+							scheduler = getAsync();
+						}
 						Delay delay = messageInfo.getDelay();
-						if (componentBase.getParts() == null || componentBase.getParts().isEmpty()){
+						if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
 							empty.put(receiver, true);
 							if (shouldSendTranslationKey()) {
-								if (isASync()) {
-									getAsync().runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+								if (delay.delay() > 0) {
+									scheduler.runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
 								} else {
-									receiver.getScheduler().runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+									scheduler.run(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())));
 								}
 							}
 							continue;
 						}
 
-						if (isASync()){
-							getAsync()
-									.runLater(t->{
-										ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
-										if (part == null){
-											return;
-										}
-										componentType.forward(receiver, part);
-									}, delay);
+						if (delay.delay() > 0) {
+							scheduler.runLater(t -> {
+								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+								if (part == null) {
+									return;
+								}
+								componentType.forward(receiver, part);
+							}, delay);
 						} else {
-							receiver.getScheduler()
-									.runLater(t->{
-										ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
-										if (part == null){
-											return;
-										}
-										componentType.forward(receiver, part);
-									}, delay);
+							scheduler.run(t -> {
+								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+								if (part == null) {
+									return;
+								}
+								componentType.forward(receiver, part);
+							});
 						}
 					}
 				}
@@ -351,13 +355,13 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void setPlaceholderManager(@NotNull PlaceholderManager loader) {
-		this.placeholderLoader = loader;
+	public void setPlaceholderManager(@NotNull PlaceholderManager manager) {
+		this.placeholderManager = manager;
 	}
 
 	@Override
 	public @NotNull PlaceholderManager getPlaceholderManager() {
-		return placeholderLoader;
+		return placeholderManager;
 	}
 
 	@Override

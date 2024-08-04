@@ -79,7 +79,7 @@ public interface Messenger extends Randomly, MessageSender {
 
 	void setPlaceholderHookManager(@NotNull PlaceholderHookManager hookManager);
 	@NotNull PlaceholderHookManager getPlaceholderHookManager();
-	void setPlaceholderManager(@NotNull PlaceholderManager loader);
+	void setPlaceholderManager(@NotNull PlaceholderManager placeholderManager);
 	@NotNull PlaceholderManager getPlaceholderManager();
 
 	void registerLanguageTable(@NotNull Locale locale, @NotNull LanguageTable table);
