@@ -155,7 +155,7 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	 * @return value
 	 */
 	@Contract(value = "_, _, _ -> new", pure = true)
-	static @NotNull PlaceholderValue translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type){
+	static @NotNull Placeholder translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type){
 		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type));
 	}
 
