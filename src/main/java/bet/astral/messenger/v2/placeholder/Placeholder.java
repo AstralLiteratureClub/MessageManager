@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DateFormat;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -157,6 +159,64 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	@Contract(value = "_, _, _ -> new", pure = true)
 	static @NotNull Placeholder translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type){
 		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type));
+	}
+
+	/**
+	 * Creates a new placeholder with given date and parses it using given date format
+	 * @param key key
+	 * @param date date
+	 * @param dateFormat format
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, @NotNull Date date, DateFormat dateFormat){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(dateFormat.format(date)));
+	}
+	/**
+	 * Creates a new placeholder with given date and parses it using given date format
+	 * @param key key
+	 * @param date date
+	 * @param dateFormat format
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, @NotNull Instant date, DateFormat dateFormat){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(dateFormat.format(Date.from(date))));
+	}
+	/**
+	 * Creates a new placeholder with given date and parses it using given date format
+	 * @param key key
+	 * @param date date
+	 * @param dateFormat format
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, long date, DateFormat dateFormat){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(dateFormat.format(new Date(date))));
+	}
+	/**
+	 * Creates a new placeholder with given date and parses it using {@link DateFormat#getInstance()}
+	 * @param key key
+	 * @param date date
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, @NotNull Date date){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(DateFormat.getInstance().format(date)));
+	}
+	/**
+	 * Creates a new placeholder with given date and parses it using {@link DateFormat#getInstance()}
+	 * @param key key
+	 * @param date date
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, @NotNull Instant date){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(DateFormat.getInstance().format(Date.from(date))));
+	}
+	/**
+	 * Creates a new placeholder with given date and parses it using {@link DateFormat#getInstance()}
+	 * @param key key
+	 * @param date date
+	 * @return placeholder
+	 */
+	static @NotNull Placeholder date(@NotNull String key, long date){
+		return new PlaceholderImpl(key, PlaceholderValue.plain(DateFormat.getInstance().format(new Date(date))));
 	}
 
 	@NotNull
