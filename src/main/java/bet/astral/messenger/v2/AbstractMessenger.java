@@ -14,13 +14,14 @@ import bet.astral.messenger.v2.locale.LanguageTable;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.GlobalPlaceholderManager;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
+import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.placeholder.values.TranslationPlaceholderValue;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
+import bet.astral.tuples.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -36,7 +37,7 @@ public abstract class AbstractMessenger implements Messenger {
 	private final Set<Function<Object, Receiver>> receiverConverterSet = new HashSet<>();
 	private final TranslationKeyRegistry translationKeyRegistry;
 	private PlaceholderHookManager placeholderHookManager = PlaceholderHookManager.getGlobal();
-	private GlobalPlaceholderManager placeholderLoader = null;
+	private PlaceholderManager placeholderLoader = PlaceholderManager.create();
 	private Component prefix;
 	private final Random random;
 	private final Logger logger;
@@ -96,7 +97,9 @@ public abstract class AbstractMessenger implements Messenger {
 				return null;
 			}
 		}
-		ComponentBase base = getBaseComponent(messageInfo.getTranslationKey(), locale, true);
+		Pair<ComponentBase, LanguageTable> pair = getBaseComponentAndTable(messageInfo.getTranslationKey(), locale, true);
+		LanguageTable languageTable = pair.getSecond();
+		ComponentBase base = pair.getFirst();
 		if (base == null || base.isDisabled()){
 			return null;
 		}
@@ -108,7 +111,9 @@ public abstract class AbstractMessenger implements Messenger {
 			return null;
 		}
 		Component component = part.getTextComponent();
-		Map<String, Placeholder> placeholderMap = new HashMap<>(messageInfo.getPlaceholders());
+		Map<String, Placeholder> placeholderMap = new HashMap<>(getPlaceholderManager().getGlobalPlaceholders());
+		placeholderMap.putAll(languageTable.getPlaceholderManager().getGlobalPlaceholders());
+		placeholderMap.putAll(messageInfo.getPlaceholders());
 		if (base.getPlaceholders()!=null) {
 			placeholderMap.putAll(base.getPlaceholders());
 		}
@@ -151,6 +156,14 @@ public abstract class AbstractMessenger implements Messenger {
 			languageTable = getLanguageTable();
 		}
 		return languageTable.getComponentFallBack(key);
+	}
+
+	protected @NotNull Pair<ComponentBase, LanguageTable> getBaseComponentAndTable(TranslationKey translationKey, Locale locale, boolean tryFallBack){
+		LanguageTable languageTable = getLanguageTable(locale);
+		if (languageTable == null){
+			languageTable = getLanguageTable();
+		}
+		return Pair.immutable(languageTable.getComponentFallBack(translationKey), languageTable);
 	}
 
 	@Override
@@ -338,12 +351,12 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void setPlaceholderLoader(@NotNull GlobalPlaceholderManager loader) {
+	public void setPlaceholderManager(@NotNull PlaceholderManager loader) {
 		this.placeholderLoader = loader;
 	}
 
 	@Override
-	public @NotNull GlobalPlaceholderManager getPlaceholderLoader() {
+	public @NotNull PlaceholderManager getPlaceholderManager() {
 		return placeholderLoader;
 	}
 

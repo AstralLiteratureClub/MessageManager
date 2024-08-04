@@ -2,6 +2,7 @@ package bet.astral.messenger.v2.locale;
 
 import bet.astral.messenger.v2.component.ComponentBase;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
+import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,8 @@ public class LanguageTableImpl implements LanguageTable{
 	private final LanguageSource languageSource;
 	private final Locale locale;
 	private LanguageTable fallback;
-private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<>();
+	private final PlaceholderManager placeholderManager = PlaceholderManager.create();
+	private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<>();
 
 	public LanguageTableImpl(TranslationKeyRegistry registry, LanguageSource languageSource, Locale locale) {
 		this.registry = registry;
@@ -99,5 +101,10 @@ private final Map<TranslationKey, ComponentBase> componentBaseMap = new HashMap<
 	@Override
 	public void addComponentBase(@NotNull TranslationKey translationKey, @NotNull ComponentBase componentBase) {
 		componentBaseMap.put(translationKey, componentBase);
+	}
+
+	@Override
+	public @NotNull PlaceholderManager getPlaceholderManager() {
+		return placeholderManager;
 	}
 }

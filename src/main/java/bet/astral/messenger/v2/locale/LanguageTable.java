@@ -3,6 +3,7 @@ package bet.astral.messenger.v2.locale;
 import bet.astral.messenger.v2.component.ComponentBase;
 import bet.astral.messenger.v2.component.ComponentBaseBuilder;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
+import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import bet.astral.messenger.v2.annotations.Immutable;
@@ -122,4 +123,12 @@ public interface LanguageTable {
 	default void addComponentBase(@NotNull TranslationKey translationKey, @NotNull ComponentBaseBuilder componentBaseBuilder) {
 		this.addComponentBase(translationKey, componentBaseBuilder.build());
 	}
+
+	/**
+	 * Returns the placeholder global placeholder manager for this language table.
+	 * These placeholders are only used in messages with this language's messages
+	 * @return placeholder manager
+	 */
+	@NotNull
+	PlaceholderManager getPlaceholderManager();
 }

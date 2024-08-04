@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    implementation("bet.astral:tuples:1.0.0")
 
     implementation 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'

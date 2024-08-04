@@ -8,8 +8,8 @@ import bet.astral.messenger.v2.locale.LanguageTable;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.GlobalPlaceholderManager;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
+import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
@@ -79,8 +79,8 @@ public interface Messenger extends Randomly, MessageSender {
 
 	void setPlaceholderHookManager(@NotNull PlaceholderHookManager hookManager);
 	@NotNull PlaceholderHookManager getPlaceholderHookManager();
-	void setPlaceholderLoader(@NotNull GlobalPlaceholderManager loader);
-	@NotNull GlobalPlaceholderManager getPlaceholderLoader();
+	void setPlaceholderManager(@NotNull PlaceholderManager loader);
+	@NotNull PlaceholderManager getPlaceholderManager();
 
 	void registerLanguageTable(@NotNull Locale locale, @NotNull LanguageTable table);
 
