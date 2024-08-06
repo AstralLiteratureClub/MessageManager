@@ -25,7 +25,16 @@ public interface CaptionTranslationKey extends TranslationKey, Caption {
 	 */
 	static CaptionTranslationKey of(@NotNull Caption caption){
 		return new CaptionTranslationImpl(caption.key());
-	}	/**
+	}
+	/**
+	 * Returns a new instance of the caption translation key.
+	 * @param translationKey translation key
+	 * @return new translation key
+	 */
+	static CaptionTranslationKey of(@NotNull TranslationKey translationKey){
+		return new CaptionTranslationImpl(translationKey.getKey());
+	}
+	/**
 	 * Converts this translation key to a {@link TranslatableCaption} which is sent by cloud as translatable.
 	 * @return translatable caption
 	 */

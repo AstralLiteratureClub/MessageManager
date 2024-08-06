@@ -130,7 +130,7 @@ public interface Messenger extends Randomly, MessageSender {
 	 */
 	@Nullable
 	default Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType) {
-		return parseComponent(messageInfo, componentType, getEmptyReceiver(), false);
+		return parseComponent(messageInfo, componentType, getEmptyReceiver());
 	}
 
 	/**
@@ -138,11 +138,10 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @param messageInfo message info
 	 * @param componentType the component type which to get from the base component
 	 * @param receiver the receiver who this component part is parsed for
-	 * @param useReceiverLocale should the receiver's locale be used
 	 * @return component if could parse, else null
 	 */
 	@Nullable
-	Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver, boolean useReceiverLocale);
+	Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver);
 	/**
 	 * Parses given the translation key using given locale and placeholders.
 	 * @param translationKey translation key
@@ -182,11 +181,10 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @param messageInfo message info
 	 * @param componentType the component type which to get from the base component
 	 * @param receiver the receiver who this component part is parsed for
-	 * @param useReceiverLocale should the receiver's locale be used
 	 * @return component if could parse, else null
 	 */
-	default @Nullable ParsedComponentPart parseComponentPart(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver, boolean useReceiverLocale) {
-		Component component = parseComponent(messageInfo, componentType, receiver, useReceiverLocale);
+	default @Nullable ParsedComponentPart parseComponentPart(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver) {
+		Component component = parseComponent(messageInfo, componentType, receiver);
 		if (component == null){
 			return null;
 		}

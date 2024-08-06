@@ -85,8 +85,10 @@ public abstract class AbstractMessenger implements Messenger {
 		return DefaultScheduler.ASYNC_SCHEDULER;
 	}
 
+
+
 	@Override
-	public @Nullable Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver, boolean useReceiverLocale) {
+	public @Nullable Component parseComponent(@NotNull MessageInfo messageInfo, @NotNull ComponentType componentType, @NotNull Receiver receiver) {
 		Locale locale = useReceiverLocale ? receiver.getLocale() : messageInfo.getLocale();
 		if (locale==null){
 			locale = this.locale;

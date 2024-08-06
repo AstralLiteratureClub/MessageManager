@@ -14,8 +14,6 @@ import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +29,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 		if (receiver == null){
 			return Component.text(caption);
 		}
+
 		Component component = parseComponent(
 				createMessage(CaptionTranslationKey.of(captionKey))
 						.withReceiver(receiver)
@@ -38,11 +37,13 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 						.withLocale(getLocale())
 						.addPlaceholders(VariablePlaceholderCollections.toList(variables))
 						.create(),
-				ComponentType.CHAT);
+				ComponentType.CHAT,
+				receiver);
 		if (component == null){
 			return Component.text(caption);
 		}
-		return component;	}
+		return component;
+	}
 
 	@Override
 	@NonNull
@@ -55,14 +56,17 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 		if (tryToUseReceiverLocale() && receiver.isLocaleSupported()){
 			locale = receiver.getLocale();
 		}
+
 		Component component = parseComponent(
 				createMessage(CaptionTranslationKey.of(captionKey))
 						.withReceiver(receiver)
 						.useReceiverLocale(tryToUseReceiverLocale())
-						.withLocale(getLocale())
+						.withLocale(locale)
 						.addPlaceholders(VariablePlaceholderCollections.toList(variables))
 						.create(),
-				ComponentType.CHAT);
+				ComponentType.CHAT,
+				receiver
+				);
 		if (component == null){
 			return Component.text(caption);
 		}
@@ -76,20 +80,8 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 			return null;
 		}
 
-		Locale locale = getLocale();
-		if (tryToUseReceiverLocale()){
-			try {
-				Method method  = recipient.getClass().getMethod("getLocale");
-				locale = (Locale) method.invoke(recipient);
-			} catch (NoSuchMethodException ignore) { }
-			catch (InvocationTargetException e) {
-				throw new RuntimeException(e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-		}
 		CaptionTranslationKey captionTranslationKey = CaptionTranslationKey.of(caption);
-		Component component = parseComponent(createMessage(captionTranslationKey).withLocale(locale).create(), ComponentType.CHAT);
+		Component component = parseComponent(createMessage(captionTranslationKey).withLocale(receiver.getLocale()).create(), ComponentType.CHAT, receiver);
 		if (component == null){
 			return null;
 		}

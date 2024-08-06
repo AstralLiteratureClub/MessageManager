@@ -2,7 +2,7 @@ package bet.astral.messenger.v2.cloud.placeholders;
 
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.PlaceholderReference;
+import bet.astral.messenger.v2.placeholder.PlaceholderList;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import bet.astral.messenger.v2.placeholder.values.RandomPlaceholderValue;
 import net.kyori.adventure.text.Component;
@@ -27,9 +27,23 @@ public interface VariablePlaceholder extends Placeholder, RichVariable, Variable
 	 * @param placeholder placeholder
 	 * @return variable placeholder
 	 */
-	static @NotNull PlaceholderReference reference(@NotNull Placeholder placeholder){
+	static @NotNull VariablePlaceholder reference(@NotNull Placeholder placeholder){
 		return new VariablePlaceholderReferenceImpl(placeholder);
 	}
+	/**
+	 * Returns a new placeholder reference which extends variable placeholder
+	 * @param placeholders placeholders
+	 * @return variable placeholder
+	 */
+	static @NotNull VariablePlaceholder[] reference(@NotNull Placeholder... placeholders){
+		PlaceholderList placeholderList = new PlaceholderList();
+		for (@NotNull Placeholder placeholder : placeholders) {
+			placeholderList.add(reference(placeholder));
+		}
+		return placeholderList.stream().map(p->(VariablePlaceholder) p).toArray(VariablePlaceholder[]::new);
+	}
+
+
 	/**
 	 * Converts given placeholder to a variable placeholder.
 	 * Checks if placeholder is a random placeholder and returns a random and returns random placeholder placeholder.
@@ -67,6 +81,20 @@ public interface VariablePlaceholder extends Placeholder, RichVariable, Variable
 		}
 		return new VariablePlaceholderImpl(captionVariable.key(), captionVariable.value());
 	}
+
+	/**
+	 * Returns a new placeholder reference which extends variable placeholder
+	 * @param variables placeholders
+	 * @return variable placeholder
+	 */
+	static @NotNull VariablePlaceholder[] of(@NotNull CaptionVariable... variables){
+		PlaceholderList placeholderList = new PlaceholderList();
+		for (@NotNull CaptionVariable placeholder : variables) {
+			placeholderList.add(of(placeholder));
+		}
+		return placeholderList.stream().map(p->(VariablePlaceholder) p).toArray(VariablePlaceholder[]::new);
+	}
+
 
 	/**
 	 * Returns a new caption variable using given key and given value.
