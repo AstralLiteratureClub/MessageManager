@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class PaperMessenger extends AbstractMessenger {
 	public static Plugin PLUGIN = null;
-	protected static PlayerManager playerManager;
+	public static PlayerManager playerManager;
 
 	public static void init(Plugin plugin){
 		if (PLUGIN != null && PLUGIN.isEnabled()){
