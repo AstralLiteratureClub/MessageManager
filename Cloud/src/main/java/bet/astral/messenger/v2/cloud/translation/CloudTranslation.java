@@ -1,15 +1,12 @@
 package bet.astral.messenger.v2.cloud.translation;
 
 import bet.astral.messenger.v2.translation.TranslationKey;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-class CaptionTranslationImpl implements CaptionTranslationKey{
-	private final String key;
-
-	public CaptionTranslationImpl(String key) {
-		this.key = key;
+public class CloudTranslation extends bet.astral.messenger.v2.translation.Translation implements CaptionTranslationKey {
+	public CloudTranslation(String key) {
+		super(key);
 	}
 
 	@Override
@@ -21,11 +18,6 @@ class CaptionTranslationImpl implements CaptionTranslationKey{
 
 	@Override
 	public int hashCode() {
-		return 23*Objects.hash(getKey());
-	}
-
-	@Override
-	public @NotNull String getKey() {
-		return key;
+		return 23 * Objects.hash(getKey());
 	}
 }

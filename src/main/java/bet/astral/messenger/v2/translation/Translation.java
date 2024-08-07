@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Translation implements TranslationKey {
 	private final String key;
@@ -107,5 +108,17 @@ public class Translation implements TranslationKey {
 		public Map<ComponentType, ComponentPart> getComponentParts() {
 			return componentPart;
 		}
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (!(object instanceof TranslationKey that)) return false;
+		return Objects.equals(getKey(), that.getKey());
+	}
+
+	@Override
+	public int hashCode() {
+		return 23*Objects.hash(getKey());
 	}
 }

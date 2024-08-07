@@ -9,10 +9,10 @@ record TranslationKeyImpl(@NotNull String translationKey) implements Translation
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) return true;
-		if (object == null || getClass() != object.getClass()) return false;
-		TranslationKeyImpl that = (TranslationKeyImpl) object;
-		return Objects.equals(translationKey, that.translationKey);
+		if (!(object instanceof TranslationKey that)) return false;
+		return Objects.equals(getKey(), that.getKey());
 	}
+
 
 	@Override
 	public int hashCode() {

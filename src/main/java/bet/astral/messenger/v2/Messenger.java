@@ -276,7 +276,7 @@ public interface Messenger extends Randomly, MessageSender {
 	 * @return converter
 	 */
 	@Nullable
-	Receiver convertReceiver(@NotNull Object object);
+	Receiver convertReceiver(@NotNull Object object) throws ClassCastException;
 
 	/**
 	 * Returns logger of this messenger

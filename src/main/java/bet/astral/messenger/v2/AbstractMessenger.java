@@ -246,7 +246,7 @@ public abstract class AbstractMessenger implements Messenger {
 
 						if (delay.delay() > 0) {
 							scheduler.runLater(t -> {
-								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
 								if (part == null) {
 									return;
 								}
@@ -254,7 +254,7 @@ public abstract class AbstractMessenger implements Messenger {
 							}, delay);
 						} else {
 							scheduler.run(t -> {
-								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver, isUseReceiverLocale());
+								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
 								if (part == null) {
 									return;
 								}
