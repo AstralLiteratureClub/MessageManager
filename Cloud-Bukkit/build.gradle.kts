@@ -3,9 +3,6 @@ plugins {
     id("maven-publish")
 }
 
-group = "bet.astral"
-version = "2.0.4"
-
 repositories {
     mavenLocal()
     mavenCentral()

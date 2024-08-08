@@ -2,7 +2,6 @@ package bet.astral.messenger.v2.paper;
 
 import bet.astral.messenger.v2.AbstractMessenger;
 import bet.astral.messenger.v2.DefaultScheduler;
-import bet.astral.messenger.v2.bukkit.PlayerManager;
 import bet.astral.messenger.v2.paper.receiver.ConsoleReceiver;
 import bet.astral.messenger.v2.paper.scheduler.ASyncScheduler;
 import bet.astral.messenger.v2.receiver.Receiver;
