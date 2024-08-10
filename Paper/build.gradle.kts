@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation("bet.astral:tuples:1.0.0")
+    implementation("bet.astral:more4j:1.0.0")
     // Self
     compileOnly(project(":"))
     compileOnly(project(":Bukkit"))

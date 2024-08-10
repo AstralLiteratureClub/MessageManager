@@ -4,7 +4,7 @@ import bet.astral.messenger.v2.delay.Delay;
 import bet.astral.messenger.v2.task.IDelayedTask;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.task.ITask;
-import bet.astral.tuples.Pair;
+import bet.astral.more4j.tuples.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

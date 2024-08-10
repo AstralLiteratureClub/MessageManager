@@ -19,10 +19,9 @@ import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.placeholder.values.TranslationPlaceholderValue;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
-import bet.astral.messenger.v2.task.ITask;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
-import bet.astral.tuples.Pair;
+import bet.astral.more4j.tuples.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -31,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class AbstractMessenger implements Messenger {
