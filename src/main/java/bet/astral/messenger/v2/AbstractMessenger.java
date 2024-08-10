@@ -17,6 +17,7 @@ import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
 import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.placeholder.values.TranslationPlaceholderValue;
+import bet.astral.messenger.v2.receiver.ForwardingReceiver;
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
@@ -203,65 +204,74 @@ public abstract class AbstractMessenger implements Messenger {
 				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()) {
 					for (Object receiverObj : messageInfo.getReceivers()) {
 						Receiver receiver = convertReceiver(receiverObj);
+						if (receiver instanceof ForwardingReceiver forwardingReceiver){
+							for (Receiver receiver1 : forwardingReceiver) {
+								send(empty, locales, receiver1, messageInfo, componentType);
+							}
+						}
 						if (receiver == null) {
 							continue;
 						}
-						if (empty.get(receiver) != null && empty.get(receiver)) {
-							continue;
-						}
-						Locale locale = locales.get(receiver);
-						if (locale == null) {
-							if (messageInfo.tryToUseReceiverLocale()) {
-								locale = receiver.getLocale();
-							} else if (isUseReceiverLocale()) {
-								locale = receiver.getLocale();
-							} else {
-								locale = getLocale();
-							}
-							locales.put(receiver, locale);
-						}
-						ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
-						if (componentBase == null || componentBase.isDisabled()) {
-							empty.put(receiver, true);
-							continue;
-						}
-						IScheduler scheduler = receiver.getScheduler();
-						if (sendASync) {
-							scheduler = getAsync();
-						}
-						Delay delay = messageInfo.getDelay();
-						if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
-							empty.put(receiver, true);
-							if (shouldSendTranslationKey()) {
-								if (delay.delay() > 0) {
-									scheduler.runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
-								} else {
-									scheduler.run(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())));
-								}
-							}
-							continue;
-						}
-
-						if (delay.delay() > 0) {
-							scheduler.runLater(t -> {
-								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
-								if (part == null) {
-									return;
-								}
-								componentType.forward(receiver, part);
-							}, delay);
-						} else {
-							scheduler.run(t -> {
-								ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
-								if (part == null) {
-									return;
-								}
-								componentType.forward(receiver, part);
-							});
-						}
+						send(empty, locales, receiver, messageInfo, componentType);
 					}
 				}
 			}
+		}
+	}
+
+	private void send(Map<Object, Boolean> empty, Map<Object, Locale> locales, Receiver receiver, MessageInfo messageInfo, ComponentType componentType){
+		if (empty.get(receiver) != null && empty.get(receiver)) {
+			return;
+		}
+		Locale locale = locales.get(receiver);
+		if (locale == null) {
+			if (messageInfo.tryToUseReceiverLocale()) {
+				locale = receiver.getLocale();
+			} else if (isUseReceiverLocale()) {
+				locale = receiver.getLocale();
+			} else {
+				locale = getLocale();
+			}
+			locales.put(receiver, locale);
+		}
+		ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
+		if (componentBase == null || componentBase.isDisabled()) {
+			empty.put(receiver, true);
+			return;
+		}
+		IScheduler scheduler = receiver.getScheduler();
+		if (sendASync) {
+			scheduler = getAsync();
+		}
+		Delay delay = messageInfo.getDelay();
+		if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
+			empty.put(receiver, true);
+			if (shouldSendTranslationKey()) {
+				if (delay.delay() > 0) {
+					scheduler.runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+				} else {
+					scheduler.run(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())));
+				}
+			}
+			return;
+		}
+
+		if (delay.delay() > 0) {
+			scheduler.runLater(t -> {
+				ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
+				if (part == null) {
+					return;
+				}
+				componentType.forward(receiver, part);
+			}, delay);
+		} else {
+			scheduler.run(t -> {
+				ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
+				if (part == null) {
+					return;
+				}
+				componentType.forward(receiver, part);
+			});
 		}
 	}
 

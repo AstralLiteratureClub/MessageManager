@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Works the same as forwarding audience from adventure. Forwards messages received to the sub receivers.
  */
-public interface ForwardingReceiver extends Receiver, ForwardingAudience {
+public interface ForwardingReceiver extends Receiver, ForwardingAudience, Iterable<Receiver> {
 	/**
 	 * Returns the receivers this forwarder is super to
 	 * @return sub receivers

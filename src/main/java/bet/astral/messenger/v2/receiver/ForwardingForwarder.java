@@ -4,6 +4,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Works the same as adventure audiences, forwards messages to the next person
@@ -15,4 +16,7 @@ public interface ForwardingForwarder extends ForwardingReceiver, Forwarder, Forw
 	 */
 	@Override
 	@NotNull Collection<? extends Forwarder> getReceivers();
+
+	@Override
+	@NotNull Iterator<Receiver> iterator();
 }

@@ -6,6 +6,7 @@ import bet.astral.messenger.v2.task.IScheduler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class ForwardingReceiverImpl implements ForwardingReceiver{
@@ -38,5 +39,10 @@ public class ForwardingReceiverImpl implements ForwardingReceiver{
 	@Override
 	public boolean hasPermission(@NotNull String s) {
 		return false;
+	}
+
+	@Override
+	public @NotNull Iterator<Receiver> iterator() {
+		return receivers.iterator();
 	}
 }
