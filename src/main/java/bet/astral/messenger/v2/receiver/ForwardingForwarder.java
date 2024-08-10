@@ -15,7 +15,7 @@ public interface ForwardingForwarder extends ForwardingReceiver, Forwarder, Forw
 	 * @return receivers
 	 */
 	@Override
-	@NotNull Collection<? extends Forwarder> getReceivers();
+	@NotNull Collection<? extends Receiver> getReceivers();
 
 	@Override
 	@NotNull Iterator<Receiver> iterator();
