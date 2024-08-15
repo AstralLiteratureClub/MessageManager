@@ -20,8 +20,8 @@ public interface PlaceholderValue extends ComponentLike, Cloneable {
 	 * @param value value
 	 * @return new placeholder value
 	 */
-	static PlaceholderValue of(Component value){
-		return new PlaceholderValueImpl(value);
+	static PlaceholderValue of(ComponentLike value){
+		return new PlaceholderValueImpl(value.asComponent());
 	}
 
 	/**

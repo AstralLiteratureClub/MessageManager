@@ -6,8 +6,8 @@ import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.permission.PredicatePermission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
-import bet.astral.messenger.v2.receiver.Receiver;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -114,7 +114,7 @@ public class MessageInfoBuilder {
 	}
 
 	public MessageInfo create() {
-		return new MessageInfoImpl(translation, locale, delay, tryToUseReceiverLocale, receivers, permission, PlaceholderList.toMap(placeholders));
+		return new MessageInfoImpl(translation, locale, delay, tryToUseReceiverLocale, receivers, permission, PlaceholderCollection.map(placeholders));
 	}
 
 	public MessageInfoBuilder send(@NotNull Messenger messenger){

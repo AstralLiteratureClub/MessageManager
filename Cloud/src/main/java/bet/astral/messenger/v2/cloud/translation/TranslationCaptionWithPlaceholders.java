@@ -2,8 +2,7 @@ package bet.astral.messenger.v2.cloud.translation;
 
 import bet.astral.messenger.v2.cloud.placeholders.VariablePlaceholder;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
-import bet.astral.messenger.v2.translation.Translation;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;

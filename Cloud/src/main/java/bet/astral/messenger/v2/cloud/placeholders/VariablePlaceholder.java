@@ -2,7 +2,7 @@ package bet.astral.messenger.v2.cloud.placeholders;
 
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import bet.astral.messenger.v2.placeholder.values.RandomPlaceholderValue;
 import net.kyori.adventure.text.Component;

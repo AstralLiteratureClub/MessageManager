@@ -2,7 +2,8 @@ package bet.astral.messenger.v2.info;
 
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.placeholder.Placeholder;
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class MultiMessageInfoBuilder {
 	}
 
 	public MultiMessageInfo create() {
-		return new MultiMessageInfoImpl(messages, PlaceholderList.toMap(placeholders));
+		return new MultiMessageInfoImpl(messages, PlaceholderCollection.map(placeholders));
 	}
 
 	public void send(@NotNull Messenger messenger){

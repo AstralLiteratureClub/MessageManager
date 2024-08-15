@@ -5,7 +5,7 @@ import bet.astral.messenger.v2.cloud.placeholders.VariablePlaceholderCollections
 import bet.astral.messenger.v2.cloud.translation.CaptionTranslationKey;
 import bet.astral.messenger.v2.cloud.translation.TranslationCaptionWithPlaceholders;
 import bet.astral.messenger.v2.component.ComponentType;
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import bet.astral.messenger.v2.receiver.Receiver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;

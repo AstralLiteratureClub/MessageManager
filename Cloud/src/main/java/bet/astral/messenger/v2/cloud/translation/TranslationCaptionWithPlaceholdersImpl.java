@@ -1,6 +1,6 @@
 package bet.astral.messenger.v2.cloud.translation;
 
-import bet.astral.messenger.v2.placeholder.PlaceholderList;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 
 public class TranslationCaptionWithPlaceholdersImpl extends CaptionTranslationImpl implements TranslationCaptionWithPlaceholders{
 	private final PlaceholderList placeholders;
