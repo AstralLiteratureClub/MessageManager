@@ -12,7 +12,6 @@ import java.util.List;
 
 public class MultiMessageInfoBuilder {
 	private final ArrayList<MessageInfo> messages = new ArrayList<>();
-	private List<Placeholder> placeholders = new LinkedList<>();
 
 	public MultiMessageInfoBuilder and(@NotNull MessageInfo messageInfo){
 		messages.add(messageInfo);
@@ -22,13 +21,9 @@ public class MultiMessageInfoBuilder {
 		messages.add(messageInfoBuilder.create());
 		return this;
 	}
-	public MultiMessageInfoBuilder setPlaceholders(List<? extends Placeholder> placeholders) {
-		this.placeholders = new LinkedList<>(placeholders);
-		return this;
-	}
 
 	public MultiMessageInfo create() {
-		return new MultiMessageInfoImpl(messages, PlaceholderCollection.map(placeholders));
+		return new MultiMessageInfoImpl(messages);
 	}
 
 	public void send(@NotNull Messenger messenger){

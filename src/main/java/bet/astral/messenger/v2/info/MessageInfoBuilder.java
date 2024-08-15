@@ -7,8 +7,8 @@ import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.permission.PredicatePermission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
-import bet.astral.messenger.v2.placeholder.collection.PlaceholderList;
 import bet.astral.messenger.v2.translation.TranslationKey;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,17 +70,41 @@ public class MessageInfoBuilder {
 		return this;
 	}
 
-	public MessageInfoBuilder addPlaceholder(@NotNull Placeholder placeholder){
+	public MessageInfoBuilder withPlaceholder(@NotNull Placeholder placeholder){
 		this.placeholders.add(placeholder);
 		return this;
+
 	}
 
-	public MessageInfoBuilder addPlaceholders(@NotNull Placeholder... placeholders){
+	@Deprecated(forRemoval = true)
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
+	public MessageInfoBuilder addPlaceholder(@NotNull Placeholder placeholder){
+		return withPlaceholder(placeholder);
+	}
+
+	public MessageInfoBuilder withPlaceholders(@NotNull Placeholder... placeholders){
 		this.placeholders.addAll(List.of(placeholders));
 		return this;
 	}
-	public MessageInfoBuilder addPlaceholders(@NotNull Collection<? extends Placeholder> placeholders){
+
+	@Deprecated(forRemoval = true)
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
+	public MessageInfoBuilder addPlaceholders(@NotNull Placeholder... placeholders){
+		return withPlaceholders(placeholders);
+	}
+	public MessageInfoBuilder withPlaceholders(@NotNull Collection<? extends Placeholder> placeholders){
 		this.placeholders.addAll(placeholders);
+		return this;
+	}
+
+	@Deprecated(forRemoval = true)
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
+	public MessageInfoBuilder addPlaceholders(@NotNull Collection<? extends Placeholder> placeholders){
+		return withPlaceholders(placeholders);
+	}
+
+	public MessageInfoBuilder withPlaceholders(@NotNull PlaceholderCollection placeholders){
+		this.placeholders.addAll(placeholders.toList());
 		return this;
 	}
 

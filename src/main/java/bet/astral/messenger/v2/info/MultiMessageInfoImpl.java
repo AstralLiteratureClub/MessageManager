@@ -10,11 +10,9 @@ import java.util.*;
 @Immutable
 class MultiMessageInfoImpl implements MultiMessageInfo {
 	private final ArrayList<MessageInfo> messages;
-	private final Map<String, Placeholder> placeholders;
 
-	public MultiMessageInfoImpl(ArrayList<MessageInfo> messages, Map<String, Placeholder> placeholders) {
+	public MultiMessageInfoImpl(ArrayList<MessageInfo> messages) {
 		this.messages = messages;
-		this.placeholders = placeholders;
 	}
 
 	@Override
@@ -30,11 +28,6 @@ class MultiMessageInfoImpl implements MultiMessageInfo {
 	@Override
 	public int size() {
 		return messages.size();
-	}
-
-	@Override
-	public @NotNull Map<String, Placeholder> getPlaceholders() {
-		return placeholders;
 	}
 
 	@NotNull

@@ -39,14 +39,6 @@ public interface MultiMessageInfo extends Iterable<MessageInfo> {
 	int size();
 
 	/**
-	 * Returns the placeholders which are shared between all the messages in the queue
-	 * @return placeholders
-	 */
-	@NotNull
-	@Immutable
-	Map<String, Placeholder> getPlaceholders();
-
-	/**
 	 * Sends the multi message info to correct receivers with given messenger
 	 * @param messenger messenger
 	 */
