@@ -17,8 +17,7 @@ dependencies {
     implementation("bet.astral:more4j:1.0.0")
     // Self
     compileOnly(project(":"))
-    // Adventure
-    // Paper
+
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT") // The Spigot API with no shadowing. Requires the OSS repo.
     compileOnly("org.projectlombok:lombok:1.18.26")
     compileOnly("org.apiguardian:apiguardian-api:1.1.2")

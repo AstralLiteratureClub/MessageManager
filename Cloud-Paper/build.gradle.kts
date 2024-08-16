@@ -12,7 +12,6 @@ repositories {
 dependencies {
     compileOnly(project(":"))
     compileOnly(project(":Cloud"))
-    compileOnly(project(":Cloud-Bukkit"))
     compileOnly(project(":Paper"))
 
     compileOnly("org.incendo:cloud-core:2.0.0-rc.1")
