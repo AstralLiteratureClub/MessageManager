@@ -375,12 +375,12 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, translation, placeholderList, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), permission, delay, translation, placeholderList, placeholders);
 	}
 
@@ -395,12 +395,12 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), permission, translation, placeholderList);
 	}
 
 	@Override
-	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), permission, delay, translation, placeholderList);
 	}
 
@@ -415,12 +415,12 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void broadcast(@NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), translation, placeholderList, placeholders);
 	}
 
 	@Override
-	public void broadcast(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void broadcast(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		this.message(broadcast(), delay, translation, placeholderList, placeholders);
 	}
 
@@ -435,38 +435,38 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void broadcast(@NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), translation, placeholderList);
 	}
 
 	@Override
-	public void broadcast(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void broadcast(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		this.message(broadcast(), delay, translation, placeholderList);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(Delay.NONE)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholderList)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholderList)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
@@ -477,7 +477,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
@@ -489,30 +489,30 @@ public abstract class AbstractMessenger implements Messenger {
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
+				.withPlaceholders(placeholderList)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withPermission(permission)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
+				.withPlaceholders(placeholderList)
 				.send(this);
 	}
 
@@ -538,25 +538,25 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholderList)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
+	public void message(@NotNull Receiver receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholderList)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
@@ -566,7 +566,7 @@ public abstract class AbstractMessenger implements Messenger {
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
@@ -577,33 +577,33 @@ public abstract class AbstractMessenger implements Messenger {
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholders)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
+				.withPlaceholders(placeholderList)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Receiver receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) {
+	public void message(@NotNull Receiver receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) {
 		createMessage(translation)
 				.withReceivers(receiver)
 				.withLocale(useReceiverLocale ? receiver.isLocaleSupported() ? receiver.getLocale() : getLocale() : getLocale())
 				.withDelay(delay)
 				.useReceiverLocale(tryToUseReceiverLocale())
-				.addPlaceholders(placeholderList)
+				.withPlaceholders(placeholderList)
 				.send(this);
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -612,7 +612,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -639,7 +639,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -648,7 +648,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -675,7 +675,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @NotNull TranslationKey translation, Collection<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @NotNull TranslationKey translation, Iterable<? extends Placeholder> placeholderList, @NotNull Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -684,7 +684,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList, Placeholder... placeholders) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -711,7 +711,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;
@@ -720,7 +720,7 @@ public abstract class AbstractMessenger implements Messenger {
 	}
 
 	@Override
-	public void message(@NotNull Object receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<? extends Placeholder> placeholderList) throws ClassCastException {
+	public void message(@NotNull Object receiver, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholderList) throws ClassCastException {
 		Receiver converted = convertReceiver(receiver);
 		if (converted == null){
 			return;

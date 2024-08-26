@@ -92,8 +92,10 @@ public class MessageInfoBuilder {
 	public MessageInfoBuilder addPlaceholders(@NotNull Placeholder... placeholders){
 		return withPlaceholders(placeholders);
 	}
-	public MessageInfoBuilder withPlaceholders(@NotNull Collection<? extends Placeholder> placeholders){
-		this.placeholders.addAll(placeholders);
+	public MessageInfoBuilder withPlaceholders(@NotNull Iterable<? extends Placeholder> placeholders){
+		for (Placeholder placeholder : placeholders) {
+			this.placeholders.add(placeholder);
+		}
 		return this;
 	}
 
