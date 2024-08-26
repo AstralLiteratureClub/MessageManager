@@ -3,10 +3,13 @@ package bet.astral.messenger.v2.cloud.suggestion;
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.info.MessageInfo;
+import bet.astral.messenger.v2.receiver.Receiver;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 record MessengerTooltipSuggestionImpl(Messenger messenger, MessageInfo messageInfo,
                                              String suggestion) implements MessengerTooltipSuggestion {
@@ -18,7 +21,16 @@ record MessengerTooltipSuggestionImpl(Messenger messenger, MessageInfo messageIn
 
 	@Override
 	public @Nullable Component tooltip() {
-		return messageInfo.parseAsComponent(messenger, ComponentType.CHAT);
+		if (messageInfo.getReceivers().isEmpty()) {
+			return messageInfo.parseAsComponent(messenger, ComponentType.CHAT);
+		} else {
+			Object receiverObj = List.copyOf(messageInfo.getReceivers()).get(0);
+			Receiver receiver = messenger.convertReceiver(receiverObj);
+			if (receiver == null){
+				return messageInfo.parseAsComponent(messenger, ComponentType.CHAT);
+			}
+			return messenger.parseComponent(messageInfo, ComponentType.CHAT, receiver);
+		}
 	}
 
 	@Override

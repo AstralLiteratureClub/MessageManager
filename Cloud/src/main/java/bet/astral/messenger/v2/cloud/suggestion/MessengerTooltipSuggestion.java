@@ -2,6 +2,7 @@ package bet.astral.messenger.v2.cloud.suggestion;
 
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.info.MessageInfo;
+import bet.astral.messenger.v2.info.MessageInfoBuilder;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import org.incendo.cloud.minecraft.extras.suggestion.ComponentTooltipSuggestion;
@@ -24,7 +25,16 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 	static MessengerTooltipSuggestion of(String suggestion, Messenger messenger, MessageInfo messageInfo) {
 		return new MessengerTooltipSuggestionImpl(messenger, messageInfo, suggestion);
 	}
-
+	/**
+	 * Returns a new getMessenger tooltip.
+	 * @param suggestion suggestion
+	 * @param messenger getMessenger
+	 * @param messageInfo message info
+	 * @return new getMessenger tooltip suggestion
+	 */
+	static MessengerTooltipSuggestion of(String suggestion, Messenger messenger, MessageInfoBuilder messageInfo) {
+		return new MessengerTooltipSuggestionImpl(messenger, messageInfo.create(), suggestion);
+	}
 	/**
 	 * Returns a new getMessenger tooltip.
 	 * @param suggestion suggestion
@@ -39,7 +49,7 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 				.createMessage(translationKey)
 				.withLocale(locale)
 				.useReceiverLocale(false)
-				.addPlaceholders(placeholders)
+				.withPlaceholders(placeholders)
 				.create();
 		return of(suggestion, messenger, info);
 	}
