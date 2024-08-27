@@ -30,7 +30,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders collection
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
 		message(permission, Delay.NONE, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -42,7 +42,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders
 	 * @param placeholders placeholders array
 	 */
-	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
 		getMessenger().message(this, permission, delay, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -71,7 +71,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@Nullable Permission permission, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection) {
 		message(permission, Delay.NONE, translation, placeholdersCollection);
 	}
 	/**
@@ -82,7 +82,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@Nullable Permission permission, @Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection) {
 		message(permission, delay, translation, placeholdersCollection, new Placeholder[0]);
 	}
 	/**
@@ -111,7 +111,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders
 	 * @param placeholders placeholders
 	 */
-	default void message(@NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
+	default void message(@NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders) {
 		message(Permission.empty(), Delay.NONE, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -122,7 +122,7 @@ public interface Forwarder extends Receiver{
 	 * @param placeholdersCollection placeholders
 	 * @param placeholders placeholders
 	 */
-	default void message(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders){
+	default void message(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection, @NotNull Placeholder... placeholders){
 		message(Permission.empty(), delay, translation, placeholdersCollection, placeholders);
 	}
 	/**
@@ -148,7 +148,7 @@ public interface Forwarder extends Receiver{
 	 * @param translation translation key
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection) {
 		message(Permission.empty(), Delay.NONE, translation, placeholdersCollection, new Placeholder[0]);
 	}
 	/**
@@ -158,7 +158,7 @@ public interface Forwarder extends Receiver{
 	 * @param delay delay before sending the given message
 	 * @param placeholdersCollection placeholders
 	 */
-	default void message(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Collection<Placeholder> placeholdersCollection) {
+	default void message(@Nullable Delay delay, @NotNull TranslationKey translation, @NotNull Iterable<? extends Placeholder> placeholdersCollection) {
 		message(Permission.empty(), delay, translation, placeholdersCollection, new Placeholder[0]);
 	}
 }
