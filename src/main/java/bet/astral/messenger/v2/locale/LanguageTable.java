@@ -131,4 +131,18 @@ public interface LanguageTable {
 	 */
 	@NotNull
 	PlaceholderManager getPlaceholderManager();
+
+	/**
+	 * Returns the additional language sources hooked up to this language table.
+	 * @return language sources
+	 */
+	@NotNull
+	LanguageSource[] getAdditionalSources();
+
+	/**
+	 * Adds a new language source to this language table.
+	 * Given the language source is used when no translations are found in the main language source.
+	 * @param source source
+	 */
+	void addAdditionalLanguageSource(LanguageSource source);
 }

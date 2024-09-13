@@ -325,12 +325,20 @@ public abstract class AbstractMessenger implements Messenger {
 	@Override
 	public void loadTranslations(@NotNull Locale locale, @NotNull List<TranslationKey> translationKeys) {
 		LanguageTable table = languages.get(locale);
-		if (table == null){
+		if (table == null) {
 			return;
 		}
+
+		for (LanguageSource source : table.getAdditionalSources()) {
+			source.loadAllComponents(translationKeys)
+					.thenAccept((map) -> {
+						map.values().stream().filter(Objects::nonNull).forEach(component -> table.addComponentBase(component.getTranslationKey(), component));
+					});
+		}
+
 		table.getLanguageSource().loadAllComponents(translationKeys)
-				.thenAccept((map)-> {
-					map.values().stream().filter(Objects::nonNull).forEach(component->table.addComponentBase(component.getTranslationKey(), component));
+				.thenAccept((map) -> {
+					map.values().stream().filter(Objects::nonNull).forEach(component -> table.addComponentBase(component.getTranslationKey(), component));
 				});
 	}
 
