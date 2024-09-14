@@ -2,6 +2,7 @@ package bet.astral.messenger.v2.placeholder;
 
 import bet.astral.messenger.v2.CloneableWithName;
 import bet.astral.messenger.v2.component.ComponentType;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import bet.astral.messenger.v2.placeholder.values.RandomPlaceholderValue;
 import bet.astral.messenger.v2.translation.TranslationKey;
@@ -156,11 +157,21 @@ public interface Placeholder extends ComponentLike, CloneableWithName, Placehold
 	 * @param type type
 	 * @return value
 	 */
-	@Contract(value = "_, _, _ -> new", pure = true)
-	static @NotNull Placeholder translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type){
-		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type));
+	@Contract(value = "_, _, _, _ -> new", pure = true)
+	static @NotNull Placeholder translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type, @NotNull PlaceholderCollection collection){
+		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type, collection));
 	}
-
+	/**
+	 * Creates a new placeholder with the given translation.
+	 * @param key key
+	 * @param translationKey translation
+	 * @param type type
+	 * @return value
+	 */
+	@Contract(value = "_, _, _, _ -> new", pure = true)
+	static @NotNull Placeholder translation(@NotNull String key, @NotNull TranslationKey translationKey, @NotNull ComponentType type, Placeholder... placeholders){
+		return new PlaceholderImpl(key, PlaceholderValue.translation(translationKey, type, placeholders));
+	}
 	/**
 	 * Creates a new placeholder with given date and parses it using given date format
 	 * @param key key

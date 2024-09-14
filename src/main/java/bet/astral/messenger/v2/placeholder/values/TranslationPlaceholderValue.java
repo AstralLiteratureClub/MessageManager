@@ -1,6 +1,7 @@
 package bet.astral.messenger.v2.placeholder.values;
 
 import bet.astral.messenger.v2.component.ComponentType;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,4 +22,11 @@ public interface TranslationPlaceholderValue extends PlaceholderValue {
 	 */
 	@NotNull
 	TranslationKey getTranslationKey();
+
+	/**
+	 * Returns placeholders meant for this translation parse.
+	 * @return placeholders
+	 */
+	@NotNull
+	PlaceholderCollection getPlaceholders();
 }

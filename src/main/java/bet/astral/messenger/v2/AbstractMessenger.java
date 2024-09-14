@@ -14,6 +14,7 @@ import bet.astral.messenger.v2.locale.LanguageTable;
 import bet.astral.messenger.v2.locale.source.LanguageSource;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
+import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
 import bet.astral.messenger.v2.placeholder.hooks.PlaceholderHookManager;
 import bet.astral.messenger.v2.placeholder.manager.PlaceholderManager;
 import bet.astral.messenger.v2.placeholder.values.TranslationPlaceholderValue;
@@ -124,7 +125,10 @@ public abstract class AbstractMessenger implements Messenger {
 			Placeholder placeholder = entry.getValue();
 			Component value = placeholder.getValue();
 			if (placeholder.getValue() instanceof TranslationPlaceholderValue translationPlaceholderValue){
-				value = parseComponent(translationPlaceholderValue.getTranslationKey(), locale, translationPlaceholderValue.getValueComponentType(), placeholderMap.values().toArray(Placeholder[]::new));
+				//noinspection unchecked
+				PlaceholderCollection collection = PlaceholderCollection.map(placeholderMap);
+				collection.addAll(translationPlaceholderValue.getPlaceholders());
+				value = parseComponent(translationPlaceholderValue.getTranslationKey(), locale, translationPlaceholderValue.getValueComponentType(), collection.toArray());
 			}
 
 			final Component finalValue = value;
