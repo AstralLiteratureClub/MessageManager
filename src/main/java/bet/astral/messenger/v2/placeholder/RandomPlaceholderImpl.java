@@ -1,6 +1,6 @@
 package bet.astral.messenger.v2.placeholder;
 
-import bet.astral.messenger.v2.Randomly;
+import bet.astral.messenger.v2.utils.Randomly;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
 import bet.astral.messenger.v2.placeholder.values.RandomPlaceholderValue;
 import net.kyori.adventure.text.Component;

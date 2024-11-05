@@ -14,12 +14,15 @@ import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
-import net.kyori.adventure.text.Component;
+import bet.astral.messenger.v2.utils.MessageSender;
+import bet.astral.messenger.v2.utils.Randomly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -151,7 +154,7 @@ public interface Messenger extends Randomly, MessageSender {
 	 */
 	@Nullable
 	default Component parseComponent(@NotNull TranslationKey translationKey, @NotNull Locale locale, @NotNull ComponentType componentType, @NotNull Placeholder... placeholders) {
-		return parseComponent(createMessage(translationKey).withLocale(locale).addPlaceholders(placeholders).create(), componentType);
+		return parseComponent(createMessage(translationKey).withLocale(locale).withPlaceholders(placeholders).create(), componentType);
 	}
 
 	/**

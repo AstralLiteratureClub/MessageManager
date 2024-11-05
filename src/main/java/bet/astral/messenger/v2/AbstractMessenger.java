@@ -23,10 +23,11 @@ import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
+import bet.astral.messenger.v2.utils.Randomly;
+import net.kyori.adventure.text.Component;
 import bet.astral.more4j.tuples.Pair;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -251,10 +252,12 @@ public abstract class AbstractMessenger implements Messenger {
 		if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
 			empty.put(receiver, true);
 			if (shouldSendTranslationKey()) {
+				// Don't make useless text components if the translation key already is an text component
+				Component component = Component.translatable(messageInfo.getTranslationKey());
 				if (delay.delay() > 0) {
-					scheduler.runLater(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())), delay);
+					scheduler.runLater(t -> receiver.sendMessage(component), delay);
 				} else {
-					scheduler.run(t -> receiver.sendMessage(Component.translatable(messageInfo.getTranslationKey())));
+					scheduler.run(t -> receiver.sendMessage(component));
 				}
 			}
 			return;

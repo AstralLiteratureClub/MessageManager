@@ -142,7 +142,7 @@ public interface MessageInfo {
 				.withPermission(getPermission())
 				.withDelay(getDelay())
 				.withReceivers(getReceivers())
-				.addPlaceholders(PlaceholderCollection.list(getPlaceholders()))
+				.withPlaceholders(PlaceholderCollection.list(getPlaceholders()))
 				.useReceiverLocale(tryToUseReceiverLocale());
 
 	}

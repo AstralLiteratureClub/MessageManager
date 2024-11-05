@@ -1,6 +1,6 @@
 package bet.astral.messenger.v2.placeholder;
 
-import bet.astral.messenger.v2.CloneableWithName;
+import bet.astral.messenger.v2.utils.CloneableWithName;
 import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
 import bet.astral.messenger.v2.placeholder.values.PlaceholderValue;
