@@ -24,8 +24,8 @@ import bet.astral.messenger.v2.task.IScheduler;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import bet.astral.messenger.v2.utils.Randomly;
-import net.kyori.adventure.text.Component;
 import bet.astral.more4j.tuples.Pair;
+import net.kyori.adventure.text.Component;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public abstract class AbstractMessenger implements Messenger {
+	@Getter
 	private final Map<Locale, LanguageTable> languages = new HashMap<>();
 	private final Set<Function<Object, Receiver>> receiverConverterSet = new HashSet<>();
 	private final TranslationKeyRegistry translationKeyRegistry;
@@ -310,6 +311,11 @@ public abstract class AbstractMessenger implements Messenger {
 	@Override
 	public @NotNull Locale getLocale() {
 		return locale;
+	}
+
+	@Override
+	public @NotNull Locale getLocaleFromReceiver(@NotNull Receiver receiver) {
+		return useReceiverLocale ? receiver.getLocale() : getLocale();
 	}
 
 	@Override

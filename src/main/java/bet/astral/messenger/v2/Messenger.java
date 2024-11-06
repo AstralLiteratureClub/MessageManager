@@ -127,6 +127,24 @@ public interface Messenger extends Randomly, MessageSender {
 	Locale getLocale();
 
 	/**
+	 * Returns the receiver from given receiver. Returns the global locale if the receiver's locale is not used.
+	 * @param receiver receiver to receive locale from.
+	 * @return locale
+	 */
+	@NotNull
+	Locale getLocaleFromReceiver(@NotNull Receiver receiver);
+	/**
+	 * Returns the receiver from given receiver. Returns the global locale if the receiver's locale is not used and returns null if the receiver is null or cannot be converted.
+	 * @param receiverObj receiver to receive locale from.
+	 * @return locale
+	 */
+	@Nullable
+    default Locale getLocaleFromReceiver(@NotNull Object receiverObj) {
+		Receiver receiver = convertReceiver(receiverObj);
+		return receiver != null ? getLocaleFromReceiver(receiver) : null;
+	}
+
+	/**
 	 * Parses given message info. Does not use receiver to try to use placeholder hooks in the given message.
 	 * @param messageInfo message info
 	 * @return component if could parse, else null
