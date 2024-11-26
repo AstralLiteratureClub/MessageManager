@@ -16,6 +16,7 @@ import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.translation.TranslationKeyRegistry;
 import bet.astral.messenger.v2.utils.MessageSender;
 import bet.astral.messenger.v2.utils.Randomly;
+import bet.astral.messenger.v3.reflection.MessengerReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.kyori.adventure.text.Component;
@@ -28,7 +29,7 @@ import java.util.function.Function;
 /**
  * Represents a messenger which translates and is the handler of placeholder parsing in messages.
  */
-public interface Messenger extends Randomly, MessageSender {
+public interface Messenger extends Randomly, MessageSender, MessengerReflectionHelper {
 	@NotNull
 	static IScheduler getScheduler() {
 		return DefaultScheduler.ASYNC_SCHEDULER;
@@ -41,6 +42,11 @@ public interface Messenger extends Randomly, MessageSender {
 	static Messenger of(Logger logger){
 //		return new MessengerImpl(logger);
 		return null;
+	}
+
+	@Override
+    default Messenger getMessenger() {
+		return this;
 	}
 
 	/**
