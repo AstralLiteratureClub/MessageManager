@@ -214,6 +214,7 @@ public abstract class AbstractMessenger implements Messenger {
 							for (Receiver receiver1 : forwardingReceiver) {
 								send(empty, locales, receiver1, messageInfo, componentType);
 							}
+							continue;
 						}
 						if (receiver == null) {
 							continue;
