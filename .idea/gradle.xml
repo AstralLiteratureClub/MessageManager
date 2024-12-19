@@ -9,11 +9,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Bukkit" />
-            <option value="$PROJECT_DIR$/Cloud" />
-            <option value="$PROJECT_DIR$/Cloud-Bukkit" />
-            <option value="$PROJECT_DIR$/Cloud-Paper" />
-            <option value="$PROJECT_DIR$/Paper" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -50,6 +50,23 @@ public class Translation implements TranslationKey {
 		messages.add(componentType, times, components);
 		return this;
 	}
+	public Translation add(ComponentType componentType, Component component, boolean hidePrefix){
+		messages.add(componentType, component, hidePrefix);
+		return this;
+	}
+	public Translation add(ComponentType componentType, Component component, Title.Times times, boolean hidePrefix){
+		messages.add(componentType, times, component, hidePrefix);
+		return this;
+	}
+
+	public Translation add(ComponentType componentType, boolean hidePrefix, Component... components){
+		messages.add(componentType, hidePrefix, components);
+		return this;
+	}
+	public Translation add(ComponentType componentType, Title.Times times, boolean hidePrefix, Component... components){
+		messages.add(componentType, times, hidePrefix, components);
+		return this;
+	}
 
 	public Message getMessage() {
 		return messages;
@@ -75,12 +92,11 @@ public class Translation implements TranslationKey {
 			return add(componentType, times, component, false);
 		}
 		public Message add(ComponentType componentType, Title.Times times, Component component, boolean hidePrefix){
-			disablePrefix.put(componentType, hidePrefix);
 			if (times == null){
-				componentPart.put(componentType, ComponentPart.of(component));
+				componentPart.put(componentType, ComponentPart.of(component, hidePrefix));
 				return this;
 			}
-			componentPart.put(componentType, ComponentPart.of(component, times));
+			componentPart.put(componentType, ComponentPart.title(component, times, hidePrefix));
 			return this;
 		}
 		public Message add(ComponentType componentType, boolean hidePrefix, Component... components){
@@ -106,10 +122,10 @@ public class Translation implements TranslationKey {
 			}
 			disablePrefix.put(componentType, hidePrefix);
 			if (times == null){
-				componentPart.put(componentType, ComponentPart.of(finalComponent));
+				componentPart.put(componentType, ComponentPart.of(finalComponent, hidePrefix));
 				return this;
 			}
-			componentPart.put(componentType, ComponentPart.of(finalComponent, times));
+			componentPart.put(componentType, ComponentPart.title(finalComponent, times, hidePrefix));
 			return this;
 		}
 

@@ -1,7 +1,1 @@
 rootProject.name = 'messenger'
-include 'Cloud'
-include 'Bukkit'
-include 'Paper'
-include 'Cloud-Bukkit'
-include 'Cloud-Paper'
-
