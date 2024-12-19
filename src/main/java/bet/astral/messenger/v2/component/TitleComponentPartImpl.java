@@ -11,11 +11,17 @@ public class TitleComponentPartImpl extends ComponentPartImpl implements TitleCo
 	private final Duration out;
 
 	public TitleComponentPartImpl(Component component, Duration in, Duration stay, Duration out) {
-		super(component);
+		super(component, false);
 		this.in = in;
 		this.stay = stay;
 		this.out = out;
 	}
+	public TitleComponentPartImpl(Component component, Duration in, Duration stay, Duration out, boolean hidePrefix) {
+		super(component, hidePrefix);
+		this.in = in;
+		this.stay = stay;
+		this.out = out;
+    }
 
 	@Override
 	public @NotNull Duration getFadeIn() {

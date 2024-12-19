@@ -10,8 +10,8 @@ import bet.astral.messenger.v2.info.MessageInfo;
 import bet.astral.messenger.v2.info.MessageInfoBuilder;
 import bet.astral.messenger.v2.info.MultiMessageInfo;
 import bet.astral.messenger.v2.info.MultiMessageInfoBuilder;
-import bet.astral.messenger.v2.locale.LanguageTable;
-import bet.astral.messenger.v2.locale.source.LanguageSource;
+import bet.astral.messenger.v2.source.LanguageTable;
+import bet.astral.messenger.v2.source.source.LanguageSource;
 import bet.astral.messenger.v2.permission.Permission;
 import bet.astral.messenger.v2.placeholder.Placeholder;
 import bet.astral.messenger.v2.placeholder.collection.PlaceholderCollection;
@@ -137,7 +137,9 @@ public abstract class AbstractMessenger implements Messenger {
 			component = component.replaceText(b->b.match("%(?i)"+entry.getKey()+"%").replacement(finalValue));
 		}
 
-		if (!this.prefixDisabledForNextParse && this.getPrefix() != null && !this.prefixDisabled) {
+		if (!this.prefixDisabledForNextParse && this.getPrefix() != null && !this.prefixDisabled &&
+				// Disable prefix from message file and message info builder
+				!messageInfo.isPrefixHidden() && !part.isPrefixHidden()) {
 			component = Component.empty().append(getPrefix()).append(component);
 		}
 

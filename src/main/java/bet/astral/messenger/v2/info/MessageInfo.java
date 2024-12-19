@@ -57,6 +57,12 @@ public interface MessageInfo {
 	boolean tryToUseReceiverLocale();
 
 	/**
+	 * Returns true if the parser should NOT include the default prefix in the message
+	 * @return true if it should hide the prefix, else false
+	 */
+	boolean isPrefixHidden();
+
+	/**
 	 * Returns the delay this message is being sent on.
 	 * @return delay
 	 */

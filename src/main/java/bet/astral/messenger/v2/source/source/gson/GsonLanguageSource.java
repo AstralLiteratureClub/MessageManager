@@ -107,13 +107,15 @@ public class GsonLanguageSource extends AbstractFileLanguageSource implements Re
 							continue;
 						}
 
+						boolean hidePrefix = typeObject.get("hidePrefix") != null && typeObject.get("hidePrefix").getAsBoolean();
+
 						if (type == ComponentType.SUBTITLE || type == ComponentType.TITLE) {
 							Duration in = typeObject.get("in") != null ? Ticks.duration(typeObject.get("in").getAsInt()) : Ticks.duration(10);
 							Duration stay = typeObject.get("stay") != null ? Ticks.duration(typeObject.get("stay").getAsInt()) : Ticks.duration(70);
 							Duration out = typeObject.get("out") != null ? Ticks.duration(typeObject.get("out").getAsInt()) : Ticks.duration(20);
-							part = ComponentPart.of(value, in, stay, out);
+							part = ComponentPart.title(value, in, stay, out, hidePrefix);
 						} else {
-							part = ComponentPart.of(value);
+							part = ComponentPart.of(value, hidePrefix);
 						}
 					} else if (typeElement.isJsonArray()) {
 						Component value = null;

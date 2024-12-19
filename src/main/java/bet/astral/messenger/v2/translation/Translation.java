@@ -57,16 +57,25 @@ public class Translation implements TranslationKey {
 
 	public static class Message {
 		private final Map<ComponentType, ComponentPart> componentPart = new HashMap<>();
+		private final Map<ComponentType, Boolean> disablePrefix = new HashMap<>();
 		private final Translation translation;
 		public Message(Translation translation){
 			this.translation = translation;
 		}
 
-		public Message add(ComponentType componentType, Component component){
+		public Message add(ComponentType componentType, Component component, boolean hidePrefix){
 			componentPart.put(componentType, ComponentPart.of(component));
+			disablePrefix.put(componentType, hidePrefix);
 			return this;
 		}
+		public Message add(ComponentType componentType, Component component){
+			return add(componentType, component, false);
+		}
 		public Message add(ComponentType componentType, Title.Times times, Component component){
+			return add(componentType, times, component, false);
+		}
+		public Message add(ComponentType componentType, Title.Times times, Component component, boolean hidePrefix){
+			disablePrefix.put(componentType, hidePrefix);
 			if (times == null){
 				componentPart.put(componentType, ComponentPart.of(component));
 				return this;
@@ -74,10 +83,16 @@ public class Translation implements TranslationKey {
 			componentPart.put(componentType, ComponentPart.of(component, times));
 			return this;
 		}
+		public Message add(ComponentType componentType, boolean hidePrefix, Component... components){
+			return add(componentType, null, hidePrefix, components);
+		}
 		public Message add(ComponentType componentType, Component... components){
-			return add(componentType, null, components);
+			return add(componentType, null, false, components);
 		}
 		public Message add(ComponentType componentType, Title.Times times, Component... components){
+			return add(componentType, times, false, components);
+		}
+		public Message add(ComponentType componentType, Title.Times times, boolean hidePrefix, Component... components) {
 			Component finalComponent = null;
 			for (Component component : components){
 				if (finalComponent== null){
@@ -89,6 +104,7 @@ public class Translation implements TranslationKey {
 			if (finalComponent==null){
 				return this;
 			}
+			disablePrefix.put(componentType, hidePrefix);
 			if (times == null){
 				componentPart.put(componentType, ComponentPart.of(finalComponent));
 				return this;
@@ -98,7 +114,7 @@ public class Translation implements TranslationKey {
 		}
 
 		public boolean useObject(){
-			return componentPart.size()>1 || componentPart.get(ComponentType.CHAT)==null;
+			return componentPart.size()>1 || componentPart.get(ComponentType.CHAT)==null || disablePrefix.containsValue(true);
 		}
 
 		public Translation asTranslation(){
@@ -107,6 +123,10 @@ public class Translation implements TranslationKey {
 
 		public Map<ComponentType, ComponentPart> getComponentParts() {
 			return componentPart;
+		}
+
+		public Map<ComponentType, Boolean> getDisablePrefix() {
+			return disablePrefix;
 		}
 	}
 

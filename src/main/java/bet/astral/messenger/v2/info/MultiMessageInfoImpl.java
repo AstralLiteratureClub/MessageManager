@@ -1,7 +1,6 @@
 package bet.astral.messenger.v2.info;
 
 import bet.astral.messenger.v2.annotations.Immutable;
-import bet.astral.messenger.v2.placeholder.Placeholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 

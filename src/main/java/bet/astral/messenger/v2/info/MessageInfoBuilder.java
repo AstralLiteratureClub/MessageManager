@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * Simple builder to create new instances of {@link MessageInfo}
+ */
 public class MessageInfoBuilder {
 	private final @NotNull TranslationKey translation;
 	private @NotNull Permission permission;
@@ -24,6 +27,7 @@ public class MessageInfoBuilder {
 	private @NotNull Delay delay;
 	private final @NotNull Collection<Object> receivers;
 	private final @NotNull List<Placeholder> placeholders;
+	private boolean hidePrefix;
 
 	public MessageInfoBuilder(@NotNull TranslationKey translation) {
 		this.translation = translation;
@@ -76,33 +80,16 @@ public class MessageInfoBuilder {
 
 	}
 
-	@Deprecated(forRemoval = true)
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
-	public MessageInfoBuilder addPlaceholder(@NotNull Placeholder placeholder){
-		return withPlaceholder(placeholder);
-	}
-
 	public MessageInfoBuilder withPlaceholders(@NotNull Placeholder... placeholders){
 		this.placeholders.addAll(List.of(placeholders));
 		return this;
 	}
 
-	@Deprecated(forRemoval = true)
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
-	public MessageInfoBuilder addPlaceholders(@NotNull Placeholder... placeholders){
-		return withPlaceholders(placeholders);
-	}
 	public MessageInfoBuilder withPlaceholders(@NotNull Iterable<? extends Placeholder> placeholders){
 		for (Placeholder placeholder : placeholders) {
 			this.placeholders.add(placeholder);
 		}
 		return this;
-	}
-
-	@Deprecated(forRemoval = true)
-	@ApiStatus.ScheduledForRemoval(inVersion = "2.1.0")
-	public MessageInfoBuilder addPlaceholders(@NotNull Collection<? extends Placeholder> placeholders){
-		return withPlaceholders(placeholders);
 	}
 
 	public MessageInfoBuilder withPlaceholders(@NotNull PlaceholderCollection placeholders){
@@ -134,13 +121,30 @@ public class MessageInfoBuilder {
 		return this;
 	}
 
-	public MessageInfoBuilder clearReceivers(){
-		this.receivers.clear();
+	/**
+	 * Marks the prefix to be hidden, when the message is parsed and sent
+	 * @return this
+	 */
+	public MessageInfoBuilder hidePrefix(){
+		this.hidePrefix = true;
 		return this;
 	}
 
+	/**
+	 * Builds a new instance of {@link MessageInfo}
+	 * @return new instance
+	 */
+	public MessageInfo build() {
+		return new MessageInfoImpl(translation, locale, delay, tryToUseReceiverLocale, receivers, permission, PlaceholderCollection.map(placeholders), hidePrefix);
+	}
+	/**
+	 * @deprecated use {@link #build()}
+	 * @return new instance of message info
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.ScheduledForRemoval(inVersion = "2.5.0")
 	public MessageInfo create() {
-		return new MessageInfoImpl(translation, locale, delay, tryToUseReceiverLocale, receivers, permission, PlaceholderCollection.map(placeholders));
+		return build();
 	}
 
 	public MessageInfoBuilder send(@NotNull Messenger messenger){

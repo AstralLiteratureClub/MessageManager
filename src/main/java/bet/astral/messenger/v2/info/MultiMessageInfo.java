@@ -2,12 +2,10 @@ package bet.astral.messenger.v2.info;
 
 import bet.astral.messenger.v2.Messenger;
 import bet.astral.messenger.v2.annotations.Immutable;
-import bet.astral.messenger.v2.placeholder.Placeholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Represents a message info group. Sends messages in order to receivers

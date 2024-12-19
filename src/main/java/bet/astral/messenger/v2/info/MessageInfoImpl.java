@@ -28,8 +28,9 @@ final class MessageInfoImpl implements MessageInfo {
 	private final Permission permission;
 	@NotNull
 	private final Map<String, Placeholder> placeholders;
+	private final boolean isPrefixHidden;
 
-	public MessageInfoImpl(@NotNull TranslationKey translation, @Nullable Locale locale, @NotNull Delay delay, boolean tryToUseReceiverLocale, @NotNull Collection<Object> receivers, @NotNull Permission permission, @NotNull Map<String, Placeholder> placeholders) {
+	public MessageInfoImpl(@NotNull TranslationKey translation, @Nullable Locale locale, @NotNull Delay delay, boolean tryToUseReceiverLocale, @NotNull Collection<Object> receivers, @NotNull Permission permission, @NotNull Map<String, Placeholder> placeholders, boolean isPrefixHidden) {
 		this.translation = translation;
 		this.locale = locale;
 		this.delay = delay;
@@ -37,7 +38,8 @@ final class MessageInfoImpl implements MessageInfo {
 		this.receivers = receivers;
 		this.permission = permission;
 		this.placeholders = placeholders;
-	}
+        this.isPrefixHidden = isPrefixHidden;
+    }
 
 	@Override
 	public @NotNull TranslationKey getTranslationKey() {
@@ -62,6 +64,11 @@ final class MessageInfoImpl implements MessageInfo {
 	@Override
 	public boolean tryToUseReceiverLocale() {
 		return tryToUseReceiverLocale;
+	}
+
+	@Override
+	public boolean isPrefixHidden() {
+		return isPrefixHidden;
 	}
 
 	@Override

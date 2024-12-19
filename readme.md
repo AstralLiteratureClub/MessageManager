@@ -7,45 +7,46 @@ Messenger is a multi-language supporting messaging API to talk to players from s
 import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v2.Messenger;
-import bet.astral.messenger.v2.locale.LanguageTable;
-import bet.astral.messenger.v2.locale.source.LanguageSource;
-import bet.astral.messenger.v2.locale.source.FileLanguageSource;
+import bet.astral.messenger.v2.source.LanguageTable;
+import bet.astral.messenger.v2.source.source.LanguageSource;
+import bet.astral.messenger.v2.source.source.FileLanguageSource;
+
 import java.io.File;
 import java.util.*;
 
 public class Init {
 
-	private Messenger messenger;
-	private File dataFolder = getDataFolder();
-	private TranslationKey ONE_MESSAGE = TranslationKey.of("hello-key");
-	private TranslationKey TWO_MESSAGE = TranslationKey.of("bye-key");
+    private Messenger messenger;
+    private File dataFolder = getDataFolder();
+    private TranslationKey ONE_MESSAGE = TranslationKey.of("hello-key");
+    private TranslationKey TWO_MESSAGE = TranslationKey.of("bye-key");
 
-	public void init() {
-	Locale defaultLocale = Locale.US;
-	org.slf4j.Logger logger = getLogger();
+    public void init() {
+        Locale defaultLocale = Locale.US;
+        org.slf4j.Logger logger = getLogger();
 
-	messenger = Messenger.of(logger,
-			new Random(System.currentTimeMillis()),
-			defaultLocale);
+        messenger = Messenger.of(logger,
+                new Random(System.currentTimeMillis()),
+                defaultLocale);
 
-	Locale[] locales = new Locale[]{Locale.US, Locale.GERMAN};
-	for (Locale locale : locales) {
-		String localeName = locale.getLanguage() + "_" + locale.getCountry();
-		File file = new File(dataFolder, localeName + ".json");
-		if (!file.exists()) {
-			file.createNewFile();
-			// Import the data to the file blah blah blah
-		}
-		LanguageSource source = FileLanguageSource.gson(messenger, locale, file, MiniMessage.miniMessage());
-		LanguageTable table = LanguageTable.of(source);
-		messenger.registerLanguageTable(table);
-		messenger.loadTranslations(locale, ONE_MESSAGE, TWO_MESSAGE);
-	}
+        Locale[] locales = new Locale[]{Locale.US, Locale.GERMAN};
+        for (Locale locale : locales) {
+            String localeName = locale.getLanguage() + "_" + locale.getCountry();
+            File file = new File(dataFolder, localeName + ".json");
+            if (!file.exists()) {
+                file.createNewFile();
+                // Import the data to the file blah blah blah
+            }
+            LanguageSource source = FileLanguageSource.gson(messenger, locale, file, MiniMessage.miniMessage());
+            LanguageTable table = LanguageTable.of(source);
+            messenger.registerLanguageTable(table);
+            messenger.loadTranslations(locale, ONE_MESSAGE, TWO_MESSAGE);
+        }
 
-	Receiver receiver = messenger.console();
-	
-	messenger.message(receiver, ONE_MESSAGE);
-	messenger.message(receiver, TWO_MESSAGE);
-	}
+        Receiver receiver = messenger.console();
+
+        messenger.message(receiver, ONE_MESSAGE);
+        messenger.message(receiver, TWO_MESSAGE);
+    }
 }
 ```

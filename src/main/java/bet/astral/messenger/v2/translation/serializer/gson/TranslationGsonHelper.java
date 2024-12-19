@@ -36,6 +36,7 @@ public class TranslationGsonHelper {
 						for (Map.Entry<ComponentType, ComponentPart> entry : message.getComponentParts().entrySet()) {
 							ComponentType type = entry.getKey();
 							ComponentPart part = entry.getValue();
+							boolean hidePrefix = translation.getMessage().getDisablePrefix().get(type);
 
 							if (part instanceof TitleComponentPart title) {
 								JsonObject titleObj = new JsonObject();
@@ -43,9 +44,19 @@ public class TranslationGsonHelper {
 								titleObj.addProperty("stay", title.getStay().toMillis());
 								titleObj.addProperty("out", title.getFadeOut().toMillis());
 								titleObj.addProperty("value", serializer.serialize(part.getTextComponent()));
+								if (hidePrefix){
+									titleObj.addProperty("hidePrefix", hidePrefix);
+								}
 								current.add(type.getName(), titleObj);
 							} else {
-								current.addProperty(type.getName(), serializer.serialize(part.getTextComponent()));
+								if (hidePrefix){
+									JsonObject obj = new JsonObject();
+									obj.addProperty("value", serializer.serialize(part.getTextComponent()));
+									obj.addProperty("hidePrefix", hidePrefix);
+									current.add(type.getName(), obj);
+								} else {
+									current.addProperty(type.getName(), serializer.serialize(part.getTextComponent()));
+								}
 							}
 						}
 						element = current;
