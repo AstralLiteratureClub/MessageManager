@@ -11,17 +11,17 @@ allprojects {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
 
     maven {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation("bet.astral:more4j:1.0.2")
+    implementation 'com.github.AstralLiteratureClub:MoreForJava:-SNAPSHOT'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
