@@ -1,4 +1,6 @@
 # Messenger
+[![](https://jitpack.io/v/AstralLiteratureClub/MessageManager.svg)](https://jitpack.io/#AstralLiteratureClub/MessageManager)
+
 Messenger is a multi-language supporting messaging API to talk to players from server. Messenger can be used client side only too, but all of the parsing of the messages happens in the server, not client. (AKA implement server features in client to work it in client)
 
 # How to use it
