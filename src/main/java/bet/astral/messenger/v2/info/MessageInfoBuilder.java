@@ -148,7 +148,7 @@ public class MessageInfoBuilder {
 	}
 
 	public MessageInfoBuilder send(@NotNull Messenger messenger){
-		messenger.send(this.create());
+		messenger.send(this.build());
 		return this;
 	}
 	@NotNull

@@ -18,7 +18,7 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 	/**
 	 * Returns a new getMessenger tooltip.
 	 * @param suggestion suggestion
-	 * @param messenger getMessenger
+	 * @param messenger getMessecnger
 	 * @param messageInfo message info
 	 * @return new getMessenger tooltip suggestion
 	 */
@@ -33,7 +33,7 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 	 * @return new getMessenger tooltip suggestion
 	 */
 	static MessengerTooltipSuggestion of(String suggestion, Messenger messenger, MessageInfoBuilder messageInfo) {
-		return new MessengerTooltipSuggestionImpl(messenger, messageInfo.create(), suggestion);
+		return new MessengerTooltipSuggestionImpl(messenger, messageInfo.build(), suggestion);
 	}
 	/**
 	 * Returns a new getMessenger tooltip.
@@ -50,7 +50,7 @@ public interface MessengerTooltipSuggestion extends ComponentTooltipSuggestion {
 				.withLocale(locale)
 				.useReceiverLocale(false)
 				.withPlaceholders(placeholders)
-				.create();
+				.build();
 		return of(suggestion, messenger, info);
 	}
 

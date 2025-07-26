@@ -113,7 +113,7 @@ public interface MessageInfo {
 				return null;
 			}
 		}
-		return messenger.parseComponent(toBuilder().withLocale(locale).withReceiver(receiver).create(), componentType, receiver);
+		return messenger.parseComponent(toBuilder().withLocale(locale).withReceiver(receiver).build(), componentType, receiver);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public interface MessageInfo {
 	 * @return parsed as component
 	 */
 	default @Nullable Component parseAsComponent(@NotNull Messenger messenger, @NotNull Locale locale, @NotNull ComponentType componentType) {
-		return messenger.parseComponent(toBuilder().withLocale(locale).create(), componentType, messenger.getEmptyReceiver());
+		return messenger.parseComponent(toBuilder().withLocale(locale).build(), componentType, messenger.getEmptyReceiver());
 	}
 
 	/**

@@ -31,14 +31,15 @@ public class BukkitPlatform extends Platform {
 		return toReceiversPlayer(Bukkit.getOnlinePlayers());
 	}
 
-	public @NotNull Collection<@NotNull ? extends Audience> getPlayersAsAudiences(){
+	public @NotNull Collection<? extends @NotNull Audience> getPlayersAsAudiences(){
 		Collection<Audience> audiences = new LinkedList<>();
-		for (Player player : Bukkit.getOnlinePlayers()){
-			if (player instanceof Audience audience){
-				audiences.add(audience);
-				continue;
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			// Might be used in bukkit servers so just make it simple and allow non audience members to be converted.
+			if (!(player instanceof Audience)) {
+				audiences.add(this.audiences.player(player));
 			}
-			audiences.add(this.audiences.player(player));
+			audiences.add(player);
+			continue;
 		}
 		return audiences;
 	}

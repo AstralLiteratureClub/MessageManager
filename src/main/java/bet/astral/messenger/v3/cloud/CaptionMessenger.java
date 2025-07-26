@@ -54,7 +54,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 						.useReceiverLocale(tryToUseReceiverLocale())
 						.withLocale(getLocale())
 						.withPlaceholders(VariablePlaceholderCollections.toList(variables))
-						.create(),
+						.build(),
 				ComponentType.CHAT,
 				receiver);
 		if (component == null){
@@ -83,7 +83,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 						.useReceiverLocale(tryToUseReceiverLocale())
 						.withLocale(locale)
 						.withPlaceholders(VariablePlaceholderCollections.toList(variables))
-						.create(),
+						.build(),
 				ComponentType.CHAT,
 				receiver
 				);
@@ -109,7 +109,7 @@ public interface CaptionMessenger<C> extends Messenger, ComponentCaptionFormatte
 			placeholders = new PlaceholderList();
 		}
 
-		Component component = parseComponent(createMessage(captionTranslationKey).withLocale(receiver.getLocale()).withPlaceholders(placeholders).create(), ComponentType.CHAT, receiver);
+		Component component = parseComponent(createMessage(captionTranslationKey).withLocale(receiver.getLocale()).withPlaceholders(placeholders).build(), ComponentType.CHAT, receiver);
 		if (component == null){
 			return null;
 		}

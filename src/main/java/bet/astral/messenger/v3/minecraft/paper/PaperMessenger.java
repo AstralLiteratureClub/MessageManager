@@ -86,7 +86,7 @@ public class PaperMessenger extends AbstractMessenger {
 	 */
 	@Nullable
 	public ItemLore itemLore(TranslationKey translationKey){
-		return itemLore(createMessage(translationKey).create());
+		return itemLore(createMessage(translationKey).build());
 	}
 	/**
 	 * Parses message component using CHAT component type and returns given message split with "\n". Returns split message in {@link ItemLore}
@@ -96,7 +96,7 @@ public class PaperMessenger extends AbstractMessenger {
 	 */
 	@Nullable
 	public ItemLore itemLore(TranslationKey translationKey, Locale locale){
-		return itemLore(createMessage(translationKey).withLocale(locale).create());
+		return itemLore(createMessage(translationKey).withLocale(locale).build());
 	}
 	/**
 	 * Parses message component using CHAT component type and returns given message split with "\n". Returns split message in {@link ItemLore}
@@ -106,7 +106,7 @@ public class PaperMessenger extends AbstractMessenger {
 	 */
 	@Nullable
 	public ItemLore itemLore(TranslationKey translationKey, Receiver receiver){
-		return itemLore(createMessage(translationKey).withReceiver(receiver).create());
+		return itemLore(createMessage(translationKey).withReceiver(receiver).build());
 	}
 	/**
 	 * Parses message component using CHAT component type and returns given message split with "\n". Returns split message in {@link ItemLore}
@@ -115,7 +115,7 @@ public class PaperMessenger extends AbstractMessenger {
 	 * @return lore, else null
 	 */
 	public ItemLore itemLore(TranslationKey translationKey, Object receiver){
-		return itemLore(createMessage(translationKey).withReceiver(receiver).create());
+		return itemLore(createMessage(translationKey).withReceiver(receiver).build());
 	}
 	/**
 	 * Parses message component using CHAT component type and returns given message split with "\n". Returns split message in {@link ItemLore}

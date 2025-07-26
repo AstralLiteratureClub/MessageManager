@@ -18,7 +18,7 @@ public class MultiMessageInfoBuilder {
 		return this;
 	}
 	public MultiMessageInfoBuilder and(@NotNull MessageInfoBuilder messageInfoBuilder){
-		messages.add(messageInfoBuilder.create());
+		messages.add(messageInfoBuilder.build());
 		return this;
 	}
 

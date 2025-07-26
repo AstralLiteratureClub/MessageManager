@@ -178,7 +178,7 @@ public interface Messenger extends Randomly, MessageSender, MessengerReflectionH
 	 */
 	@Nullable
 	default Component parseComponent(@NotNull TranslationKey translationKey, @NotNull Locale locale, @NotNull ComponentType componentType, @NotNull Placeholder... placeholders) {
-		return parseComponent(createMessage(translationKey).withLocale(locale).withPlaceholders(placeholders).create(), componentType);
+		return parseComponent(createMessage(translationKey).withLocale(locale).withPlaceholders(placeholders).build(), componentType);
 	}
 
 	/**
