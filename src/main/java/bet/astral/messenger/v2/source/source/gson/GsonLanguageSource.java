@@ -137,7 +137,20 @@ public class GsonLanguageSource extends AbstractFileLanguageSource implements Re
 				}
 			}
 		} else {
-			builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(componentSerializer.deserialize(element.getAsString())));
+			if (element.isJsonArray()) {
+				Component component = null;
+				for (JsonElement arrayPart : element.getAsJsonArray()) {
+					if (component == null) {
+						component = componentSerializer.deserialize(arrayPart.getAsString());
+					} else {
+						component = component.append(componentSerializer.deserialize(arrayPart.getAsString()));
+					}
+				}
+				ComponentPart part = ComponentPart.of(component);
+				builder.setComponentPart(ComponentType.CHAT, part);
+			} else {
+				builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(componentSerializer.deserialize(element.getAsString())));
+			}
 		}
 		return builder.build();
 	}
