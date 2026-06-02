@@ -31,7 +31,8 @@ public final class ComponentSplit {
      * @return A list of new components
      */
     @Contract(pure = true)
-    public static @NotNull List<? extends Component> split(final @NotNull Component self, final @NotNull @RegExp String separator) {
+    public static @NotNull List<? extends Component> split(final @NotNull Component self, final @NotNull @RegExp String... separators) {
+        for (String lines)
         // First split component content
         List<Component> lines = splitComponentContent(self, separator);
 

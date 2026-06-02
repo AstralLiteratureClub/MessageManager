@@ -4,6 +4,7 @@ import bet.astral.messenger.v2.component.ComponentPart;
 import bet.astral.messenger.v2.component.ComponentType;
 import bet.astral.messenger.v2.component.TitleComponentPart;
 import bet.astral.messenger.v2.translation.Translation;
+import bet.astral.messenger.v2.translation.TranslationKey;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -64,6 +65,8 @@ public class TranslationGsonHelper {
 						element = gson.toJsonTree(serializer.serialize(((ComponentPart) (List.of(message.getComponentParts().values().toArray()).get(0))).getTextComponent()));
 					}
 					fullObject.add(translation.getKey(), element);
+				} else if (object instanceof TranslationKey translationKey) {
+					fullObject.addProperty(translationKey.getKey(), translationKey.getKey());
 				}
 			}
 		}

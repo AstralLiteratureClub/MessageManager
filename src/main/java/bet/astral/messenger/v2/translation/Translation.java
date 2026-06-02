@@ -130,7 +130,7 @@ public class Translation implements TranslationKey {
 		}
 
 		public boolean useObject(){
-			return componentPart.size()>1 || componentPart.get(ComponentType.CHAT)==null || disablePrefix.containsValue(true);
+			return componentPart.size() > 1 || componentPart.get(ComponentType.CHAT)==null || disablePrefix.containsValue(true);
 		}
 
 		public Translation asTranslation(){
