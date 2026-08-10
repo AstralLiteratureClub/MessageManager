@@ -18,7 +18,16 @@ public class GlobalScheduler implements IScheduler {
 	}
 
 	@Override
-	public void runLater(@NotNull Consumer<@NotNull IDelayedTask> consumer, @NotNull Delay delay) {
-		Bukkit.getScheduler().runTaskLaterAsynchronously(BukkitMessenger.PLUGIN, task->consumer.accept(new BukkitTask(task, this)), delay.toTicks());
+	public IDelayedTask runLater(@NotNull Consumer<@NotNull IDelayedTask> consumer, @NotNull Delay delay) {
+		BukkitTask task = new BukkitTask(null, this);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(BukkitMessenger.PLUGIN, bukkitTask-> {
+			if (task.isCanceled()) {
+				return;
+			}
+			task.update(bukkitTask);
+			consumer.accept(new BukkitTask(bukkitTask, this));
+		}, delay.toTicks());
+
+		return task;
 	}
 }

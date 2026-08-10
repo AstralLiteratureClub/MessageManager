@@ -14,12 +14,13 @@ import java.util.function.Consumer;
 
 public class BukkitTask implements ITask, IDelayedTask {
 	private static int LATEST_ID = 0;
-	private final org.bukkit.scheduler.BukkitTask task;
+	private org.bukkit.scheduler.BukkitTask task;
 	private final IScheduler scheduler;
 	private final int currentId = LATEST_ID++;
 	private List<Consumer<ITask>> runAfter;
 	private List<Pair<Consumer<IDelayedTask>, Delay>> runAfterLater;
 	private final Delay delay;
+	private boolean cancel = false;
 
 	public BukkitTask(org.bukkit.scheduler.BukkitTask task, IScheduler scheduler) {
 		this.task = task;
@@ -35,12 +36,14 @@ public class BukkitTask implements ITask, IDelayedTask {
 
 	@Override
 	public void cancel() {
+		cancel = true;
+		if (task == null) return;
 		task.cancel();
 	}
 
 	@Override
 	public boolean isCanceled() {
-		return task.isCancelled();
+		return cancel;
 	}
 
 	@Override
@@ -87,5 +90,9 @@ public class BukkitTask implements ITask, IDelayedTask {
 	@Override
 	public @NotNull Delay getDelay() {
 		return delay != null ? delay : Delay.NONE;
+	}
+
+	public void update(org.bukkit.scheduler.BukkitTask bukkitTask) {
+		this.task = bukkitTask;
 	}
 }

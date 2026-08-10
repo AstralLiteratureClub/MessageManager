@@ -21,6 +21,7 @@ public class PaperTask implements ITask, IDelayedTask {
 	private List<Consumer<ITask>> runAfter;
 	private List<Pair<Consumer<IDelayedTask>, Delay>> runAfterLater;
 	private final Delay delay;
+	private boolean cancel = false;
 
 	public PaperTask(ScheduledTask task, IScheduler scheduler) {
 		this.task = task;
@@ -34,12 +35,16 @@ public class PaperTask implements ITask, IDelayedTask {
 	}
 	@Override
 	public void cancel() {
+		cancel = true;
+		if (task == null){
+			return;
+		}
 		task.cancel();
 	}
 
 	@Override
 	public boolean isCanceled() {
-		return task.isCancelled();
+		return cancel;
 	}
 
 	@Override
@@ -86,5 +91,9 @@ public class PaperTask implements ITask, IDelayedTask {
 	@Override
 	public @NotNull Delay getDelay() {
 		return delay != null ? delay : Delay.NONE;
+	}
+
+	public void update(ScheduledTask bukkitTask) {
+
 	}
 }

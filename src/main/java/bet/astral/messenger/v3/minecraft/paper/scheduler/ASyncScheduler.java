@@ -18,7 +18,16 @@ public class ASyncScheduler implements IScheduler {
 	}
 
 	@Override
-	public void runLater(@NotNull Consumer<@NotNull IDelayedTask> consumer, @NotNull Delay delay) {
-		Bukkit.getAsyncScheduler().runDelayed(PaperMessenger.PLUGIN, t->consumer.accept(new PaperTask(t, this)), delay.delay(), delay.timeUnit());
+	public IDelayedTask runLater(@NotNull Consumer<@NotNull IDelayedTask> consumer, @NotNull Delay delay) {
+		PaperTask task = new PaperTask(null, this);
+		Bukkit.getAsyncScheduler().runDelayed(PaperMessenger.PLUGIN, paperTask-> {
+			if (task.isCanceled()) {
+				return;
+			}
+			task.update(paperTask);
+			consumer.accept(task);
+		}, delay.delay(), delay.timeUnit());
+
+		return task;
 	}
 }
