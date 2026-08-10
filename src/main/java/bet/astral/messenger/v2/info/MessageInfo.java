@@ -93,7 +93,7 @@ public interface MessageInfo {
 			}
 			receivers.add(receiver);
 		}
-		return Receiver.of(receivers);
+		return Receiver.ofReceivers(receivers);
 	}
 
 	/**

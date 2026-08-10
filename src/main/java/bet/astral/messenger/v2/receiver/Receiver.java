@@ -4,10 +4,11 @@ import bet.astral.messenger.v2.permission.Permissionable;
 import bet.astral.messenger.v2.task.IScheduler;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,11 +20,36 @@ public interface Receiver extends ForwardingAudience, Permissionable {
 	 * @param receivers receivers
 	 * @return combined receiver
 	 */
-	static ForwardingReceiver of(@NotNull Collection<Receiver> receivers){
+	@Contract(value = "_ -> new", pure = true)
+	static @NonNull ForwardingReceiver ofReceivers(@NotNull Collection<? extends Receiver> receivers){
+		return new ForwardingReceiverImpl(receivers);
+	}
+	/**
+	 * Returns a forwarding receiver for all given receivers
+	 * @param receivers receivers
+	 * @return combined receiver
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	static @NonNull ForwardingReceiver of(@NotNull Receiver... receivers){
 		return new ForwardingReceiverImpl(receivers);
 	}
 
-	static Receiver of(@NotNull Audience... audience){
+	/**
+	 * Creates a receiver which the messenger can process.
+	 * @param audience audience
+	 * @return receiver
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	static @NonNull Receiver ofAudiences(@NotNull Collection<? extends Audience> audience){
+		return new AudienceReceiver(audience);
+	}
+	/**
+	 * Creates a receiver which the messenger can process.
+	 * @param audience audience
+	 * @return receiver
+	 */
+	@Contract(value = "_ -> new", pure = true)
+	static @NonNull Receiver of(@NotNull Audience... audience){
 		return new AudienceReceiver(audience);
 	}
 

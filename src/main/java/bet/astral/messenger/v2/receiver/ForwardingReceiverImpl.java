@@ -7,13 +7,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 public class ForwardingReceiverImpl implements ForwardingReceiver{
-	private final Collection<Receiver> receivers;
+	private final Collection<? extends Receiver> receivers;
 
-	public ForwardingReceiverImpl(Collection<Receiver> receivers) {
+	public ForwardingReceiverImpl(Collection<? extends Receiver> receivers) {
 		this.receivers = receivers;
+	}
+	public ForwardingReceiverImpl(Receiver... receivers) {
+		this.receivers = List.of(receivers);
 	}
 
 	@Override
@@ -43,6 +47,6 @@ public class ForwardingReceiverImpl implements ForwardingReceiver{
 
 	@Override
 	public @NotNull Iterator<Receiver> iterator() {
-		return receivers.iterator();
+		return (Iterator<Receiver>) receivers.iterator();
 	}
 }

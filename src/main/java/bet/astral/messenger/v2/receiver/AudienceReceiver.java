@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class AudienceReceiver implements Receiver, Audience {
-	private final Collection<Audience> audience;
+	private final Collection<? extends Audience> audience;
 
-	public AudienceReceiver(Collection<Audience> audience) {
+	public AudienceReceiver(Collection<? extends Audience> audience) {
 		this.audience = audience;
 	}
 	public AudienceReceiver(Audience... audience) {

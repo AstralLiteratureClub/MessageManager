@@ -254,7 +254,7 @@ public interface Messenger extends Randomly, MessageSender, MessengerReflectionH
 	default Receiver broadcast() {
 		List<Receiver> receivers = new LinkedList<>(getPlayers());
 		receivers.add(console());
-		return Receiver.of(receivers);
+		return Receiver.ofReceivers(receivers);
 	}
 
 	/**
@@ -268,7 +268,7 @@ public interface Messenger extends Randomly, MessageSender, MessengerReflectionH
 			receivers.add(console());
 		}
 		receivers.addAll(getPlayers().stream().filter(player->player.hasPermission(permission)).toList());
-		return Receiver.of(receivers);
+		return Receiver.ofReceivers(receivers);
 	}
 
 	/**
