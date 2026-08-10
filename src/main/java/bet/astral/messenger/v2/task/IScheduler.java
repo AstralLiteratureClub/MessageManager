@@ -7,5 +7,5 @@ import java.util.function.Consumer;
 
 public interface IScheduler {
 	void run(@NotNull Consumer<@NotNull ITask> taskConsumer);
-	void runLater(@NotNull Consumer<@NotNull IDelayedTask> taskConsumer, @NotNull Delay delay);
+	IDelayedTask runLater(@NotNull Consumer<@NotNull IDelayedTask> taskConsumer, @NotNull Delay delay);
 }
