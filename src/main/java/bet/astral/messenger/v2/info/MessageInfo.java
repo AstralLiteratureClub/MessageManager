@@ -137,7 +137,7 @@ public interface MessageInfo {
 	default Component parseAsComponent(@NotNull Messenger messenger, @NotNull ComponentType componentType){
 		Locale locale = getLocale();
 		if (locale == null){
-			return null;
+			locale = messenger.getLocale();
 		}
 		return parseAsComponent(messenger, locale, componentType);
 	}

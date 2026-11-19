@@ -114,20 +114,23 @@ public class PaperMessenger extends AbstractMessenger {
 	 * @param receiver receiver who the lore is being parsed for. Converts given receiver using {@link #convertReceiver(Object)}
 	 * @return lore, else null
 	 */
+	@Nullable
 	public ItemLore itemLore(TranslationKey translationKey, Object receiver){
 		return itemLore(createMessage(translationKey).withReceiver(receiver).build());
 	}
+
 	/**
 	 * Parses message component using CHAT component type and returns given message split with "\n". Returns split message in {@link ItemLore}
 	 * @param messageInfo message info
 	 * @return lore, else null
 	 */
+	@Nullable
 	public ItemLore itemLore(MessageInfo messageInfo){
 		Component component = messageInfo.parseAsComponent(this, ComponentType.CHAT);
 		if (component == null){
 			if (shouldSendTranslationKey()) {
 				component = Component.text(messageInfo.getTranslationKey().getKey());
-			}else {
+			} else {
 				return null;
 			}
 		}
