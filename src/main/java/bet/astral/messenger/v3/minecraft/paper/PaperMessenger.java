@@ -8,7 +8,7 @@ import bet.astral.messenger.v2.receiver.Receiver;
 import bet.astral.messenger.v2.translation.TranslationKey;
 import bet.astral.messenger.v3.minecraft.paper.receiver.ConsoleReceiver;
 import bet.astral.messenger.v3.minecraft.paper.scheduler.ASyncScheduler;
-import de.cubbossa.translations.ComponentSplit;
+import bet.astral.messenger.v3.utils.ComponentSplit;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
@@ -125,7 +125,11 @@ public class PaperMessenger extends AbstractMessenger {
 	public ItemLore itemLore(MessageInfo messageInfo){
 		Component component = messageInfo.parseAsComponent(this, ComponentType.CHAT);
 		if (component == null){
-			return null;
+			if (shouldSendTranslationKey()) {
+				component = Component.text(messageInfo.getTranslationKey().getKey());
+			}else {
+				return null;
+			}
 		}
 
 		List<? extends Component> split = ComponentSplit.split(component, "\n");
