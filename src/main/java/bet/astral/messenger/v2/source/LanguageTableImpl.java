@@ -36,7 +36,10 @@ public class LanguageTableImpl implements LanguageTable{
 	}
 
 	@Override
-	public @NotNull Locale getFallbackLocale() {
+	public @Nullable Locale getFallbackLocale() {
+		if (fallback == null) {
+			return null;
+		}
 		return fallback.getLocale();
 	}
 

@@ -1,10 +1,6 @@
 package bet.astral.messenger.v2;
 
-import bet.astral.messenger.v2.component.ComponentBase;
-import bet.astral.messenger.v2.component.ComponentPart;
-import bet.astral.messenger.v2.component.ComponentType;
-import bet.astral.messenger.v2.component.ComponentTypeRegistry;
-import bet.astral.messenger.v2.component.ParsedComponentPart;
+import bet.astral.messenger.v2.component.*;
 import bet.astral.messenger.v2.delay.Delay;
 import bet.astral.messenger.v2.info.MessageInfo;
 import bet.astral.messenger.v2.info.MessageInfoBuilder;
@@ -155,18 +151,63 @@ public abstract class AbstractMessenger implements Messenger {
 		return placeholderMap;
 	}
 
+	/**
+	 * Returns the base component
+	 * @param key translation key for the base component
+	 * @param locale locale
+	 * @return base component
+	 */
 	@Override
 	public @Nullable ComponentBase getBaseComponent(@NotNull TranslationKey key, @NotNull Locale locale) {
 		return getBaseComponent(key, locale, true);
 	}
 
+	/**
+	 * Gets a base component from the server falling back to fallback locale if the locale does not have the given translation.
+	 * @param key translation key for the base component
+	 * @param locale locale
+	 * @param tryFallBack should the system try
+	 *                       to find a message from fall back language tables if no language was found in the language table.
+	 * @return
+	 */
 	@Override
-	public @Nullable ComponentBase getBaseComponent(@NotNull TranslationKey key, @NotNull Locale locale, boolean tryFallBack) {
+	public @NotNull ComponentBase getBaseComponent(@NotNull TranslationKey key, @NotNull Locale locale, boolean tryFallBack) {
+
+		//TODO I AM AN ISSUE TO THE SOCIETY
+
+
 		LanguageTable languageTable = getLanguageTable(locale);
 		if (languageTable == null){
 			languageTable = getLanguageTable();
 		}
-		return languageTable.getComponentFallBack(key);
+		if (!languageTable.getTranslationkeyRegistry().isRegistered(key)) {
+			languageTable.getTranslationkeyRegistry().register(key);
+
+			// Load the key
+			loadTranslations(locale, List.of(key));
+
+			if (languageTable.getComponent(key) == null) {
+				Locale fallbackLocale = languageTable.getFallbackLocale();
+				if (fallbackLocale == null) {
+					ComponentBaseBuilder builder = new ComponentBaseBuilder(key);
+					builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(Component.translatable(key)));
+					return builder.build();
+				} else {
+					return getBaseComponent(key, fallbackLocale, tryFallBack);
+				}
+			} else {
+				return languageTable.getComponent(key);
+			}
+		} else {
+			if (languageTable.getComponent(key) == null) {
+				loadTranslations(locale, List.of(key));
+
+				ComponentBaseBuilder builder = new ComponentBaseBuilder(key);
+				builder.setComponentPart(ComponentType.CHAT, ComponentPart.of(Component.translatable(key)));
+				return builder.build();
+			}
+			return languageTable.getComponentFallBack(key);
+		}
 	}
 
 	protected @NotNull Pair<ComponentBase, LanguageTable> getBaseComponentAndTable(TranslationKey translationKey, Locale locale, boolean tryFallBack){
@@ -204,83 +245,144 @@ public abstract class AbstractMessenger implements Messenger {
 	public void send(@NotNull MultiMessageInfo... multiMessageInformation) throws ClassCastException {
 		for (MultiMessageInfo info : multiMessageInformation) {
 			for (MessageInfo messageInfo : info.getMessages()) {
-				if (messageInfo.getReceivers().isEmpty()) {
+				if (messageInfo.getReceivers().isEmpty()) { // No receivers -> Ignore receivers -> Continue
 					continue;
 				}
-				Map<Object, Boolean> empty = new HashMap<>();
-				Map<Object, Locale> locales = new HashMap<>();
+				// Loop through all component types (title, chat, hotbat)
 				for (ComponentType componentType : getComponentTypeRegistry().getRegisteredComponentTypes()) {
+
+					// Loop through receivers
 					for (Object receiverObj : messageInfo.getReceivers()) {
 						Receiver receiver = convertReceiver(receiverObj);
-						if (receiver instanceof ForwardingReceiver forwardingReceiver){
-							for (Receiver receiver1 : forwardingReceiver) {
-								send(empty, locales, receiver1, messageInfo, componentType);
-							}
-							continue;
-						}
+
+						// Receiver cannot be null
 						if (receiver == null) {
 							continue;
 						}
-						send(empty, locales, receiver, messageInfo, componentType);
+
+						// forwarding messenger -> Forwards to multiple receivers by their own
+						if (receiver instanceof ForwardingReceiver forwardingReceiver){
+							for (Receiver receiver1 : forwardingReceiver) {
+								// Send to the receivers
+								send(receiver1, messageInfo, componentType);
+							}
+							// We are done with this object now
+							continue;
+						}
+
+						// Okay it is a normal player receiver (or console)
+						send(receiver, messageInfo, componentType);
 					}
 				}
 			}
 		}
 	}
 
-	private void send(Map<Object, Boolean> empty, Map<Object, Locale> locales, Receiver receiver, MessageInfo messageInfo, ComponentType componentType){
-		if (empty.get(receiver) != null && empty.get(receiver)) {
-			return;
+	/**
+	 *
+	 * @param receiver the receivers
+	 * @param messageInfo
+	 * @param componentType
+	 */
+	private void send(Receiver receiver, MessageInfo messageInfo, ComponentType componentType) {
+		// Look for locale from the receiver
+		Locale locale = null;
+		// Try to use the locale of the player
+		if (messageInfo.tryToUseReceiverLocale()) {
+			locale = receiver.getLocale();
+
+			// Welp now force using the receiver locale
+		} else if (isUseReceiverLocale()) {
+			locale = receiver.getLocale();
+
+			// Use default locale
+		} else {
+			locale = getLocale();
 		}
-		Locale locale = locales.get(receiver);
-		if (locale == null) {
-			if (messageInfo.tryToUseReceiverLocale()) {
-				locale = receiver.getLocale();
-			} else if (isUseReceiverLocale()) {
-				locale = receiver.getLocale();
-			} else {
-				locale = getLocale();
-			}
-			locales.put(receiver, locale);
-		}
-		ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
-		if (componentBase == null || componentBase.isDisabled()) {
-			empty.put(receiver, true);
-			return;
-		}
+
+
+		// Scheduler for the message
 		IScheduler scheduler = receiver.getScheduler();
 		if (sendASync) {
+			// Sending async always if send async is true
 			scheduler = getAsync();
 		}
+
+		// Delay
 		Delay delay = messageInfo.getDelay();
-		if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
-			empty.put(receiver, true);
+
+
+		// Find the base component for the actual message now. Includes CHAT, TITLE, HOTBAR, etc
+		ComponentBase componentBase = getBaseComponent(messageInfo.getTranslationKey(), locale);
+		if (componentBase == null || componentBase.isDisabled()) {
+			// Couldn't message so checking if translation message should be sent
+
+			/*
 			if (shouldSendTranslationKey()) {
 				// Don't make useless text components if the translation key already is an text component
 				Component component = Component.translatable(messageInfo.getTranslationKey());
+
+				// If delay is set -> Run it later
 				if (delay.delay() > 0) {
+					// Send message later
 					scheduler.runLater(t -> receiver.sendMessage(component), delay);
 				} else {
+					// Send it now
+					scheduler.run(t -> receiver.sendMessage(component));
+				}
+			}
+			 */
+
+			receiver.sendMessage(Component.text("ISSUE FOUND !"));
+			return;
+		}
+
+
+		// Check if component base is empty or has no parts
+		if (componentBase.getParts() == null || componentBase.getParts().isEmpty()) {
+
+			// Check if should send debug key to the player
+			if (shouldSendTranslationKey()) {
+				// Don't make useless text components if the translation key already is an text component
+				Component component = Component.translatable(messageInfo.getTranslationKey());
+
+				// If delay is set -> Run it later
+				if (delay.delay() > 0) {
+					// Send message later
+					scheduler.runLater(t -> receiver.sendMessage(component), delay);
+				} else {
+					// Send it now
 					scheduler.run(t -> receiver.sendMessage(component));
 				}
 			}
 			return;
 		}
 
+		// Found a delay so sending it later
 		if (delay.delay() > 0) {
+
 			scheduler.runLater(t -> {
+
+				// Parsing the component here for updated receiver info..?
 				ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
+				// No part shoot!
 				if (part == null) {
 					return;
 				}
+
+				// Sending the part now
 				componentType.forward(receiver, part);
 			}, delay);
 		} else {
+			// Sending it now
 			scheduler.run(t -> {
+				// Parsing the part
 				ParsedComponentPart part = parseComponentPart(messageInfo, componentType, receiver);
 				if (part == null) {
 					return;
 				}
+
+				//Sent !
 				componentType.forward(receiver, part);
 			});
 		}

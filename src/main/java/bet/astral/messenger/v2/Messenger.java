@@ -215,6 +215,7 @@ public interface Messenger extends Randomly, MessageSender, MessengerReflectionH
 		if (component == null){
 			return null;
 		}
+		// POSSIBLY CONVERT TO messenger#getComponentBase()
 		ComponentBase base = getLanguageTable().getComponentFallBack(messageInfo.getTranslationKey());
 		if (base == null || base.isDisabled()){
 			return null;
